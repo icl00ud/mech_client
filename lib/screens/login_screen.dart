@@ -79,7 +79,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  margin: EdgeInsets.only(bottom: 35.0),
+                  margin: const EdgeInsets.only(bottom: 35.0),
                   width: 300,
                   height: 50,
                   child: ElevatedButton(
@@ -98,7 +98,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 35.0, bottom: 100),
+                  margin: const EdgeInsets.only(top: 35.0, bottom: 100),
                   child: RichText(
                     text: const TextSpan(
                       children: [
