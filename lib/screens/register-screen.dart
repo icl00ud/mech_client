@@ -270,10 +270,28 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-}
 
-bool isValidEmail(String email) {
-  final RegExp regex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$');
+  buttonRegister() {
+    String nome = _nameController.text;
+    String cpf = _cpfController.text;
+    String telefone = _phoneController.text;
+    String email = _emailController.text;
+    String cep = 'implementar';
+    String numero = 'implementar';
+    String senha = _passwordController.text   ;
 
-  return regex.hasMatch(email);
+    if (_formkey.currentState!.validate()) {
+      print("Form válido");
+      _authServices.registerUser(
+          nome: nome,
+          cpf: cpf,
+          telefone: telefone,
+          email: email,
+          cep: cep,
+          numero: numero,
+          senha: senha);
+    } else {
+      print("Form inválido");
+    }
+  }
 }
