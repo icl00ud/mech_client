@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/screens/register-screen.dart';
+import 'package:mech_client/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'config/firebase_config.dart';
 
@@ -10,7 +10,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(LoginApp());
+  runApp(const LoginApp());
 }
 
 class LoginApp extends StatelessWidget {
@@ -18,8 +18,8 @@ class LoginApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: RegisterPage(),
+    return MaterialApp(
+      home: LoginPage(),
     );
   }
 }
