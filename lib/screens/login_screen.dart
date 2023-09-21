@@ -117,7 +117,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 35.0, bottom: 100),
+                  margin: const EdgeInsets.only(top: 35.0, bottom: 100),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -134,7 +134,7 @@ class LoginPage extends StatelessWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) =>
-                                  RegisterPage(), // Substitua TelaDeDestino pela classe da tela de destino
+                                  const RegisterPage(), // Substitua TelaDeDestino pela classe da tela de destino
                             ),
                           );
                         },

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Vehicle extends StatelessWidget {
   const Vehicle({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Scaffold(
         body: SafeArea(
           child: RegisterVehicle(),
@@ -15,49 +17,73 @@ class Vehicle extends StatelessWidget {
   }
 }
 
-class RegisterVehicle extends StatelessWidget {
+class RegisterVehicle extends StatefulWidget {
   const RegisterVehicle({Key? key}) : super(key: key);
 
-  static const IconData directions_car_outlined =
-      IconData(0xefc6, fontFamily: 'MaterialIcons');
-  static const IconData add_circle_rounded =
-      IconData(0xf52d, fontFamily: 'MaterialIcons');
+  @override
+  _RegisterVehicleState createState() => _RegisterVehicleState();
+}
+
+class _RegisterVehicleState extends State<RegisterVehicle> {
+  List<String> vehicles = []; // Lista de veículos do usuário
+
+  @override
+  void initState() {
+    super.initState();
+    // Chamada para buscar a lista de veículos do usuário
+    fetchUserVehicles();
+  }
+
+  Future<void> fetchUserVehicles() async {
+    try {
+      await Firebase.initializeApp();
+
+      var userVehiclesCollection = FirebaseFirestore.instance.collection('Vehicles');
+
+      var querySnapshot = await userVehiclesCollection.get();
+
+      print(querySnapshot);
+
+
+      setState(() {
+        vehicles = querySnapshot.docs.map((doc) => doc['name'] as String).toList();
+      });
+    } catch (e) {
+      print('Erro ao buscar veículos: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
         padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            const Icon(
-              directions_car_outlined,
-              size: 50,
-            ),
-            const SizedBox(
-              height: 16.0,
-            ),
-            const Text(
-              "Veículo",
-              style: TextStyle(
-                fontSize: 18,
-                color: Color(0xFFFF5C00),
-              ),
-            ),
-            const SizedBox(
-              height: 16.0,
-            ),
-            IconButton(
-              onPressed: () {},
-              color: const Color(0xFFFF5C00),
-              iconSize: 40,
-              icon: const Icon(add_circle_rounded),
-            ),
-            const SizedBox(
-              height: 16.0,
-            ),
-            const Text("Nenhum veículo cadastrado"),
-          ],
+        child: ListView.builder(
+          itemCount: vehicles.length + 1, // +1 para o botão "Adicionar Veículo"
+          itemBuilder: (BuildContext context, int index) {
+            if (index == vehicles.length) {
+              // Último item da lista para adicionar um veículo
+              return GestureDetector(
+                onTap: () {
+                  // Implemente aqui a lógica para adicionar um veículo ao Firebase
+                },
+                child: const Card(
+                  child: ListTile(
+                    leading: Icon(Icons.add_circle_rounded),
+                    title: Text('Adicionar Veículo'),
+                  ),
+                ),
+              );
+            } else {
+              // Item da lista correspondente a um veículo cadastrado
+              return Card(
+                child: ListTile(
+                  leading: const Icon(Icons.directions_car_outlined),
+                  title: Text(vehicles[index]),
+                ),
+              );
+            }
+          },
         ),
       ),
     );

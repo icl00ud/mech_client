@@ -19,11 +19,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _numberController = TextEditingController();
+  final TextEditingController _zipController = TextEditingController();
+  final TextEditingController _complementController = TextEditingController();
 
   final _formkey = GlobalKey<FormState>();
 
@@ -99,10 +101,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.only(
-                    left: 15, right: 30, top: 5, bottom: 20),
-                margin: const EdgeInsets.only(
-                    left: 20, right: 20, top: 50, bottom: 50),
+                padding: const EdgeInsets.only(left: 15, right: 30, top: 5, bottom: 20),
+                margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -178,13 +178,53 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(padding),
-                      child: TextFormField(
-                        controller: _addressController,
-                        decoration:
-                            const InputDecoration(labelText: "Endereço"),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: padding, bottom: padding),
+                            child: TextFormField(
+                              controller: _addressController,
+                              decoration: const InputDecoration(labelText: "Rua"),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 30),
+                            child: TextFormField(
+                              controller: _numberController,
+                              decoration: const InputDecoration(labelText: "Nº"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: padding, bottom: padding),
+                            child: TextFormField(
+                              controller: _zipController,
+                              decoration: const InputDecoration(labelText: "CEP"),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 30),
+                            child: TextFormField(
+                              controller: _complementController,
+                              decoration: const InputDecoration(labelText: "Complemento"),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       children: [
@@ -193,8 +233,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             padding: EdgeInsets.all(padding),
                             child: TextFormField(
                               controller: _passwordController,
-                              decoration:
-                                  const InputDecoration(labelText: "Senha"),
+                              decoration: const InputDecoration(labelText: "Senha"),
                               obscureText: true,
                             ),
                           ),
@@ -205,8 +244,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             padding: EdgeInsets.all(padding),
                             child: TextFormField(
                               controller: _confirmPasswordController,
-                              decoration: const InputDecoration(
-                                  labelText: "Confirmar senha"),
+                              decoration: const InputDecoration(labelText: "Confirmar senha"),
                               obscureText: true,
                             ),
                           ),

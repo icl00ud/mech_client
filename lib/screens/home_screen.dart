@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          'MechClient',
+          'Meus veículos',
           style: TextStyle(
             color: Color(0xFFFF5C00), // Cor do título da AppBar
           ),

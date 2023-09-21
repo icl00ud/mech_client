@@ -26,13 +26,13 @@ class EditScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Nome'),
+                    decoration: const InputDecoration(labelText: 'Nome'),
                   ),
                   Row(
                     children: <Widget>[
                       Expanded(
                         child: TextFormField(
-                          decoration: InputDecoration(labelText: 'CPF'),
+                          decoration: const InputDecoration(labelText: 'CPF'),
                         ),
                       ),
                       const SizedBox(
@@ -40,30 +40,30 @@ class EditScreen extends StatelessWidget {
                               16.0), // Espaçamento entre os campos CPF e Telefone
                       Expanded(
                         child: TextFormField(
-                          decoration: InputDecoration(labelText: 'Telefone'),
+                          decoration: const InputDecoration(labelText: 'Telefone'),
                         ),
                       ),
                     ],
                   ),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Email'),
+                    decoration: const InputDecoration(labelText: 'Email'),
                   ),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'CEP'),
+                    decoration: const InputDecoration(labelText: 'CEP'),
                   ),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Número'),
+                    decoration: const InputDecoration(labelText: 'Número'),
                   ),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Senha'),
+                    decoration: const InputDecoration(labelText: 'Senha'),
                     obscureText: true,
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
                       // Lógica para editar os dados aqui
                     },
-                    child: Text('Editar'),
+                    child: const Text('Editar'),
                   ),
                 ],
               ),
