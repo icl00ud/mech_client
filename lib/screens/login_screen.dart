@@ -1,13 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mech_client/screens/home_screen.dart';
-import 'package:mech_client/screens/register-screen.dart';
-import 'package:mech_client/services/authentication.dart';
+import 'package:mech_client/screens/register_screen.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final Authentication _authServices = Authentication();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +101,7 @@ class LoginPage extends StatelessWidget {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      buttonLogin(context);
+                      loginUser(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF5C00),
@@ -133,8 +133,7 @@ class LoginPage extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const RegisterPage(), // Substitua TelaDeDestino pela classe da tela de destino
+                              builder: (context) => const RegisterPage(),
                             ),
                           );
                         },
@@ -158,23 +157,46 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  void buttonLogin(BuildContext context) async {
-    String email = _emailController.text;
-    String password = _passwordController.text;
+  void loginUser(BuildContext context) async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      print("Por favor, preencha todos os campos.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos obrigatórios.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
       return;
-    } else {
-      try {
-        await _authServices.singUser(email: email, password: password);
+    }
+    try {
+      UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      // verifica se o login foi bem-sucedido
+      if (userCredential != null) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => Home(),
+            builder: (context) => HomeScreen(),
           ),
         );
-      } catch (e) {
-        print("Erro durante o login: $e");
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Usuário não encontrado. Por favor, registre-se.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Senha inválida. Tente novamente.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
       }
     }
   }
