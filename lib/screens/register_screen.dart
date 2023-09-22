@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:mech_client/screens/login_screen.dart';
-import 'package:mech_client/services/authentication.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -13,13 +13,14 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  String _selectedItem = "Cliente"; // Initial value of DropdownMenu
+  String _selectedItem = "Cliente";
   bool _checkBoxValue = false;
   static double padding = 3;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -29,8 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final _formkey = GlobalKey<FormState>();
 
-  final Authentication _authServices = Authentication();
-
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,8 +101,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.only(left: 15, right: 30, top: 5, bottom: 20),
-                margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
+                padding: const EdgeInsets.only(
+                    left: 15, right: 30, top: 5, bottom: 20),
+                margin: const EdgeInsets.only(
+                    left: 20, right: 20, top: 20, bottom: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -174,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           } else if (!isValidEmail(value)) {
                             return 'O e-mail inserido não é válido.';
                           }
-                          return null; // Retorna nulo para indicar que não há erros.
+                          return null;
                         },
                       ),
                     ),
@@ -183,10 +185,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         Expanded(
                           flex: 4,
                           child: Padding(
-                            padding: EdgeInsets.only(top: padding, bottom: padding),
+                            padding:
+                                EdgeInsets.only(top: padding, bottom: padding),
                             child: TextFormField(
                               controller: _addressController,
-                              decoration: const InputDecoration(labelText: "Rua"),
+                              decoration:
+                                  const InputDecoration(labelText: "Rua"),
                             ),
                           ),
                         ),
@@ -196,7 +200,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             padding: const EdgeInsets.only(left: 30),
                             child: TextFormField(
                               controller: _numberController,
-                              decoration: const InputDecoration(labelText: "Nº"),
+                              decoration:
+                                  const InputDecoration(labelText: "Nº"),
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
                             ),
                           ),
                         ),
@@ -207,10 +215,18 @@ class _RegisterPageState extends State<RegisterPage> {
                         Expanded(
                           flex: 1,
                           child: Padding(
-                            padding: EdgeInsets.only(top: padding, bottom: padding),
+                            padding:
+                                EdgeInsets.only(top: padding, bottom: padding),
                             child: TextFormField(
                               controller: _zipController,
-                              decoration: const InputDecoration(labelText: "CEP"),
+                              decoration:
+                                  const InputDecoration(labelText: "CEP"),
+                              inputFormatters: [
+                                MaskTextInputFormatter(
+                                  mask: '#####-###',
+                                  filter: {"#": RegExp(r'[0-9]')},
+                                )
+                              ],
                             ),
                           ),
                         ),
@@ -220,7 +236,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             padding: const EdgeInsets.only(left: 30),
                             child: TextFormField(
                               controller: _complementController,
-                              decoration: const InputDecoration(labelText: "Complemento"),
+                              decoration: const InputDecoration(
+                                  labelText: "Complemento"),
                             ),
                           ),
                         ),
@@ -233,7 +250,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             padding: EdgeInsets.all(padding),
                             child: TextFormField(
                               controller: _passwordController,
-                              decoration: const InputDecoration(labelText: "Senha"),
+                              decoration:
+                                  const InputDecoration(labelText: "Senha"),
                               obscureText: true,
                             ),
                           ),
@@ -244,7 +262,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             padding: EdgeInsets.all(padding),
                             child: TextFormField(
                               controller: _confirmPasswordController,
-                              decoration: const InputDecoration(labelText: "Confirmar senha"),
+                              decoration: const InputDecoration(
+                                  labelText: "Confirmar senha"),
                               obscureText: true,
                             ),
                           ),
@@ -274,8 +293,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          buttonRegister();
-                          insertionRegisterFireStore();
+                          validationRegister();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF5C00),
@@ -330,32 +348,66 @@ class _RegisterPageState extends State<RegisterPage> {
     ));
   }
 
-  buttonRegister() {
-    String nome = _nameController.text;
-    String cpf = _cpfController.text;
-    String telefone = _phoneController.text;
-    String email = _emailController.text;
-    String cep = 'implementar';
-    String numero = 'implementar';
-    String senha = _passwordController.text;
+  void registerUser() async {
+    try {
+      await _firebaseAuth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
 
-    if (_formkey.currentState!.validate()) {
-      print("Form válido");
-      _authServices.registerUser(
-          name: nome,
-          cpf: cpf,
-          phone: telefone,
-          email: email,
-          zip: cep,
-          number: numero,
-          password: senha);
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
+      // obtem a instancia atual do usuario
+      User? user = _firebaseAuth.currentUser;
+
+      // cria um map pro endereço do cliente
+      Map<String, dynamic> addressData = {
+        'address': _addressController.text,
+        'number': _numberController.text,
+        'zip': _zipController.text,
+        'complement': _complementController.text,
+      };
+
+      // armazena na colecao client
+      await FirebaseFirestore.instance.collection('client').doc(user?.uid).set({
+        'name': _nameController.text,
+        'cpf': _cpfController.text,
+        'phone': _phoneController.text,
+        'email': _emailController.text,
+        'address': addressData, // chama o map no cadastro
+        'password': _passwordController.text,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cadastro efetuado com sucesso!'),
+          backgroundColor: Colors.green,
         ),
       );
-    } else {
-      print("Form inválido");
+
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ));
+      });
+
+      // validaçoes do cadastro senha e email firebase
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('A senha é muito fraca. Tente uma senha mais forte.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      } else if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Este e-mail já foi cadastrado. Por favor, faça login ou use outro e-mail.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+      print('Erro no registro: $e');
     }
   }
 
@@ -367,23 +419,60 @@ class _RegisterPageState extends State<RegisterPage> {
     return emailRegex.hasMatch(value);
   }
 
-  void insertionRegisterFireStore() {
-    var collection = FirebaseFirestore.instance.collection('Client');
+  void validationRegister() {
+    // lista para verificar os campos vazios
+    List<TextEditingController> register = [
+      _nameController,
+      _cpfController,
+      _phoneController,
+      _emailController,
+      _addressController,
+      _numberController,
+      _zipController,
+      _complementController,
+      _passwordController,
+      _confirmPasswordController,
+    ];
+    bool empty = false;
 
-    collection
-        .doc(_cpfController.text)
-        .set({
-          'name': _nameController.text,
-          'cpf': _cpfController.text,
-          'phone': _phoneController.text,
-          'email': _emailController.text,
-          'zip': _addressController.text,
-          'number': 'teste',
-          'password': _passwordController.text,
-        })
-        .then((value) => print("Valor inserido com sucesso!"))
-        .catchError((error) {
-          print('Erro ao inserir documento: $error');
-        });
+    for (TextEditingController controller in register) {
+      if (controller.text.isEmpty) {
+        empty = true;
+        break;
+      }
+    }
+
+    if (empty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos obrigatórios.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    } else {
+      // verifica se as senhas coincidem
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('As senhas não coincidem. Por favor, tente novamente.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        return;
+      }
+      // verifica se checkbox esta marcada
+      if (!_checkBoxValue) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Aceite os termos e políticas.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        return;
+      }
+      registerUser();
+    }
   }
 }
