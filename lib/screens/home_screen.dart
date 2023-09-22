@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mech_client/screens/user_screen.dart';
+import 'package:mech_client/screens/login_screen.dart';
+import 'package:mech_client/screens/user_account_screen.dart';
 import 'package:mech_client/screens/vehicle_screen.dart';
 
 class Home extends StatelessWidget {
@@ -19,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   final List<Widget> _pages = [
     Page1(),
     Page2(),
@@ -37,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          'Meus veículos',
+          'MechClient',
           style: TextStyle(
             color: Color(0xFFFF5C00), // Cor do título da AppBar
           ),
@@ -56,9 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.where_to_vote_outlined),
+            color: Color(0xFFFF5C00),
             onPressed: () {
-              // Ação ao pressionar o ícone à direita (busca, por exemplo)
-              print('Ícone à direita pressionado');
+              // Para testar por enquanto
+              singOut();
             },
           ),
         ],
@@ -76,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.toll_outlined),
-            label: 'Concerto',
+            label: 'Conserto',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -84,6 +89,16 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  void singOut() async {
+    await _firebaseAuth.signOut().then(
+          (user) => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => LoginPage(),
+            ),
+          ),
+        );
   }
 }
 
@@ -99,8 +114,8 @@ class Page1 extends StatelessWidget {
 class Page2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: User(),
+    return const MaterialApp(
+      home: UserAccount(),
     );
   }
 }
@@ -108,7 +123,7 @@ class Page2 extends StatelessWidget {
 class Page3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text('Page 3'),
     );
   }
