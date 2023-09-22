@@ -354,6 +354,88 @@ class _UserAccountState extends State<UserAccount> {
     }
   }
 
+  Future<bool> updateUser(BuildContext context, String senhaAtual) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // cria um objeto AuthCredential para reautenticação
+        var credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: senhaAtual,
+        );
+
+        // reautentique o usuário
+        await user.reauthenticateWithCredential(credential);
+
+        // atualiza o email e a senha do usuário
+        await user.updateEmail(_emailController.text);
+        await user.updatePassword(_passwordController.text);
+
+        var collection = FirebaseFirestore.instance.collection('client');
+
+        DocumentSnapshot snapshot = await collection.doc(user.uid).get();
+
+        if (snapshot.exists) {
+          // obtem os dados do documento
+          Map<String, dynamic> userData =
+              snapshot.data() as Map<String, dynamic>;
+
+          // atualize os campos desejados
+          userData['name'] = _nameController.text;
+          userData['email'] = _emailController.text;
+          userData['phone'] = _phoneController.text;
+
+          // atualiza os campos do map endereço
+          Map<String, dynamic> addressData = {
+            'address': _addressController.text,
+            'number': _numberController.text,
+            'zip': _zipController.text,
+            'complement': _complementController.text,
+          };
+          //atualiza o map endereço pelo novo
+          userData['address'] = addressData;
+
+          await collection.doc(user.uid).update(userData);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Cadastro atualizado com sucesso!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          return true;
+        }
+      }
+      return false;
+
+      // validações do FireBaseAuthenticator
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('A senha é muito fraca. Tente uma senha mais forte.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      } else if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Este e-mail já foi cadastrado. Por favor, faça login ou use outro e-mail.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+      return false;
+    } catch (e) {
+      print('Erro ao atualizar informações do usuário: $e');
+
+      return false;
+    }
+  }
+
   bool isValidEmail(String value) {
     final RegExp emailRegex = RegExp(
       r'^[\w\.-]+@[\w\.-]+\.\w+$',
