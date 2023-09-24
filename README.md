@@ -1,14 +1,12 @@
 # 📑 Bem-vindo à Documentação do aplicativo do MechClient!
 <p>O MechClient é um aplicativo Flutter que surgiu para suprir a crescente demanda por serviços de manutenção e reparo de veículos na indústria automotiva. Nesta documentação, você encontrará detalhes abrangentes sobre as APIs que alimentam o aplicativo.</p>
 
-## 🚀💻Tecnoligias utilizadas
+## 🚀💻Tecnologias utilizadas
 
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)
-![Github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
 ![Trello](https://img.shields.io/badge/Trello-0052CC?style=for-the-badge&logo=trello&logoColor=white)
-![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 
 ## Classe UserAccount
 A classe UserAccount é responsável por gerenciar a interface da tela de perfil do usuário em um aplicativo Flutter. Ela permite que o usuário visualize e edite suas informações de perfil, como nome, CPF, telefone, email, endereço e senha.
