@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:mech_client/services/authentication.dart';
+import 'package:mech_client/models/client.dart';
+import 'package:mech_client/services/user_services.dart';
 
 class UserAccount extends StatefulWidget {
   const UserAccount({super.key});
@@ -14,31 +13,20 @@ class UserAccount extends StatefulWidget {
 
 class _UserAccountState extends State<UserAccount> {
   static double padding = 3;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _cpfController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _numberController = TextEditingController();
-  final TextEditingController _zipController = TextEditingController();
-  final TextEditingController _complementController = TextEditingController();
-
   final _formkey = GlobalKey<FormState>();
-
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  Client client = Client();
+  UserServices userServices = UserServices();
 
   bool isEditing = false;
 
   @override
   void initState() {
-    getUser();
+    userServices.getUser(client);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(_emailController.text);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -85,7 +73,7 @@ class _UserAccountState extends State<UserAccount> {
                         child: Padding(
                           padding: EdgeInsets.all(padding),
                           child: TextFormField(
-                            controller: _nameController,
+                            controller: client.name,
                             decoration:
                                 const InputDecoration(labelText: "Nome"),
                             enabled: isEditing,
@@ -98,7 +86,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: _cpfController,
+                                controller: client.cpf,
                                 decoration:
                                     const InputDecoration(labelText: "CPF"),
                                 enabled: false,
@@ -115,7 +103,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: _phoneController,
+                                controller: client.phone,
                                 decoration: const InputDecoration(
                                     labelText: "Telefone"),
                                 enabled: isEditing,
@@ -132,19 +120,11 @@ class _UserAccountState extends State<UserAccount> {
                       Padding(
                         padding: EdgeInsets.all(padding),
                         child: TextFormField(
-                          controller: _emailController,
+                          controller: client.email,
                           decoration: const InputDecoration(
                             labelText: "Email",
                           ),
                           enabled: isEditing,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'O campo de e-mail não pode estar vazio.';
-                            } else if (!isValidEmail(value)) {
-                              return 'O e-mail inserido não é válido.';
-                            }
-                            return null;
-                          },
                         ),
                       ),
                       Row(
@@ -155,7 +135,7 @@ class _UserAccountState extends State<UserAccount> {
                               padding: EdgeInsets.only(
                                   top: padding, bottom: padding),
                               child: TextFormField(
-                                controller: _addressController,
+                                controller: client.address.address,
                                 decoration:
                                     const InputDecoration(labelText: "Rua"),
                                 enabled: isEditing,
@@ -167,7 +147,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: TextFormField(
-                                controller: _numberController,
+                                controller: client.address.number,
                                 decoration:
                                     const InputDecoration(labelText: "Nº"),
                                 enabled: isEditing,
@@ -187,7 +167,7 @@ class _UserAccountState extends State<UserAccount> {
                               padding: EdgeInsets.only(
                                   top: padding, bottom: padding),
                               child: TextFormField(
-                                controller: _zipController,
+                                controller: client.address.zip,
                                 decoration:
                                     const InputDecoration(labelText: "CEP"),
                                 enabled: isEditing,
@@ -205,7 +185,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: TextFormField(
-                                controller: _complementController,
+                                controller: client.address.complement,
                                 decoration: const InputDecoration(
                                     labelText: "Complemento"),
                                 enabled: isEditing,
@@ -220,7 +200,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: _passwordController,
+                                controller: client.password,
                                 decoration:
                                     const InputDecoration(labelText: "Senha"),
                                 enabled: false,
@@ -267,10 +247,10 @@ class _UserAccountState extends State<UserAccount> {
                               height: 40,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  updateUser(
-                                    context,
-                                    _passwordController.text,
-                                  ).then((success) {
+                                  userServices
+                                      .updateUser(
+                                          context, client.password.text, client)
+                                      .then((success) {
                                     if (success) {
                                       setState(() {
                                         isEditing = false;
@@ -301,7 +281,7 @@ class _UserAccountState extends State<UserAccount> {
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFFF5C00),
+                                  backgroundColor: const Color(0xFFFF5C00),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50.0),
                                   ),
@@ -323,124 +303,5 @@ class _UserAccountState extends State<UserAccount> {
         ),
       ),
     );
-  }
-
-  void getUser() async {
-    try {
-      User? user = await _firebaseAuth.currentUser;
-      if (user != null) {
-        var collection = FirebaseFirestore.instance.collection('client');
-        DocumentSnapshot snapshot = await collection.doc(user.uid).get();
-
-        if (snapshot.exists) {
-          Map<String, dynamic> userData =
-              snapshot.data() as Map<String, dynamic>;
-          _nameController.text = userData['name'] ?? 'campo vazio';
-          _cpfController.text = userData['cpf'] ?? 'campo vazio';
-          _phoneController.text = userData['phone'] ?? 'campo vazio';
-          _emailController.text = userData['email'] ?? 'campo vazio';
-          _addressController.text =
-              userData['address']['address'] ?? 'campo vazio';
-          _numberController.text =
-              userData['address']['number'] ?? 'campo vazio';
-          _zipController.text = userData['address']['zip'] ?? 'campo vazio';
-          _complementController.text =
-              userData['address']['complement'] ?? 'campo vazio';
-          _passwordController.text = userData['password'] ?? 'campo vazio';
-        }
-      }
-    } catch (e) {
-      print('Erro ao obter informações do usuário: $e');
-    }
-  }
-
-  Future<bool> updateUser(BuildContext context, String senhaAtual) async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-
-      if (user != null) {
-        // cria um objeto AuthCredential para reautenticação
-        var credential = EmailAuthProvider.credential(
-          email: user.email!,
-          password: senhaAtual,
-        );
-
-        // reautentique o usuário
-        await user.reauthenticateWithCredential(credential);
-
-        // atualiza o email e a senha do usuário
-        await user.updateEmail(_emailController.text);
-        await user.updatePassword(_passwordController.text);
-
-        var collection = FirebaseFirestore.instance.collection('client');
-
-        DocumentSnapshot snapshot = await collection.doc(user.uid).get();
-
-        if (snapshot.exists) {
-          // obtem os dados do documento
-          Map<String, dynamic> userData =
-              snapshot.data() as Map<String, dynamic>;
-
-          // atualize os campos desejados
-          userData['name'] = _nameController.text;
-          userData['email'] = _emailController.text;
-          userData['phone'] = _phoneController.text;
-
-          // atualiza os campos do map endereço
-          Map<String, dynamic> addressData = {
-            'address': _addressController.text,
-            'number': _numberController.text,
-            'zip': _zipController.text,
-            'complement': _complementController.text,
-          };
-          //atualiza o map endereço pelo novo
-          userData['address'] = addressData;
-
-          await collection.doc(user.uid).update(userData);
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Cadastro atualizado com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-
-          return true;
-        }
-      }
-      return false;
-
-      // validações do FireBaseAuthenticator
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('A senha é muito fraca. Tente uma senha mais forte.'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      } else if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Este e-mail já foi cadastrado. Por favor, faça login ou use outro e-mail.'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-      return false;
-    } catch (e) {
-      print('Erro ao atualizar informações do usuário: $e');
-
-      return false;
-    }
-  }
-
-  bool isValidEmail(String value) {
-    final RegExp emailRegex = RegExp(
-      r'^[\w\.-]+@[\w\.-]+\.\w+$',
-      caseSensitive: false,
-    );
-    return emailRegex.hasMatch(value);
   }
 }

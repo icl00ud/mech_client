@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "248257115153",
+    "firebase_url": "https://mechclient-bea53-default-rtdb.firebaseio.com",
+    "project_id": "mechclient-bea53",
+    "storage_bucket": "mechclient-bea53.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248257115153:android:c609d27dcafb5207722db0",
+        "android_client_info": {
+          "package_name": "com.example.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM8HaNb6gm0bntEbuyCrk0POJwbnYF1p0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248257115153:android:695c8157348d2aff722db0",
+        "android_client_info": {
+          "package_name": "com.example.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM8HaNb6gm0bntEbuyCrk0POJwbnYF1p0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248257115153:android:76e42d4b066ab245722db0",
+        "android_client_info": {
+          "package_name": "cynex.net.mech_client"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM8HaNb6gm0bntEbuyCrk0POJwbnYF1p0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

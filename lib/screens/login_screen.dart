@@ -1,13 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mech_client/screens/home_screen.dart';
+import 'package:mech_client/models/client.dart';
+import 'package:mech_client/models/mechanic.dart';
 import 'package:mech_client/screens/register_screen.dart';
+import 'package:mech_client/services/user_services.dart';
 
-class LoginPage extends StatelessWidget {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  Mechanic mechanic = Mechanic();
+  Client client = Client();
+  UserServices userServices = UserServices();
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +62,7 @@ class LoginPage extends StatelessWidget {
                   width: 300,
                   margin: const EdgeInsets.only(top: 100.0),
                   child: TextField(
-                    controller: _emailController,
+                    controller: client.email,
                     obscureText: false,
                     style: const TextStyle(fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
@@ -74,10 +81,10 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Container(
+                SizedBox(
                   width: 300,
                   child: TextField(
-                    controller: _passwordController,
+                    controller: client.password,
                     obscureText: true,
                     decoration: InputDecoration(
                       filled: true,
@@ -101,7 +108,7 @@ class LoginPage extends StatelessWidget {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      loginUser(context);
+                      userServices.loginUser(context, client);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF5C00),
@@ -155,49 +162,5 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void loginUser(BuildContext context) async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Preencha todos os campos obrigatórios.'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-      return;
-    }
-    try {
-      UserCredential userCredential = await _firebaseAuth
-          .signInWithEmailAndPassword(email: email, password: password);
-
-      // verifica se o login foi bem-sucedido
-      if (userCredential != null) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Usuário não encontrado. Por favor, registre-se.'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      } else if (e.code == 'wrong-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Senha inválida. Tente novamente.'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-    }
   }
 }
