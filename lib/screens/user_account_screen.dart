@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:mech_client/models/client.dart';
+import 'package:mech_client/models/account_user.dart';
 import 'package:mech_client/services/user_services.dart';
 
 class UserAccount extends StatefulWidget {
@@ -14,14 +14,14 @@ class UserAccount extends StatefulWidget {
 class _UserAccountState extends State<UserAccount> {
   static double padding = 3;
   final _formkey = GlobalKey<FormState>();
-  Client client = Client();
+  AccountUser accountUser = AccountUser();
   UserServices userServices = UserServices();
 
   bool isEditing = false;
 
   @override
   void initState() {
-    userServices.getUser(client);
+    userServices.getUser(accountUser);
     super.initState();
   }
 
@@ -73,7 +73,7 @@ class _UserAccountState extends State<UserAccount> {
                         child: Padding(
                           padding: EdgeInsets.all(padding),
                           child: TextFormField(
-                            controller: client.name,
+                            controller: accountUser.name,
                             decoration:
                                 const InputDecoration(labelText: "Nome"),
                             enabled: isEditing,
@@ -86,7 +86,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: client.cpf,
+                                controller: accountUser.cpf,
                                 decoration:
                                     const InputDecoration(labelText: "CPF"),
                                 enabled: false,
@@ -103,7 +103,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: client.phone,
+                                controller: accountUser.phone,
                                 decoration: const InputDecoration(
                                     labelText: "Telefone"),
                                 enabled: isEditing,
@@ -120,7 +120,7 @@ class _UserAccountState extends State<UserAccount> {
                       Padding(
                         padding: EdgeInsets.all(padding),
                         child: TextFormField(
-                          controller: client.email,
+                          controller: accountUser.email,
                           decoration: const InputDecoration(
                             labelText: "Email",
                           ),
@@ -135,7 +135,7 @@ class _UserAccountState extends State<UserAccount> {
                               padding: EdgeInsets.only(
                                   top: padding, bottom: padding),
                               child: TextFormField(
-                                controller: client.address.address,
+                                controller: accountUser.address.address,
                                 decoration:
                                     const InputDecoration(labelText: "Rua"),
                                 enabled: isEditing,
@@ -147,7 +147,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: TextFormField(
-                                controller: client.address.number,
+                                controller: accountUser.address.number,
                                 decoration:
                                     const InputDecoration(labelText: "Nº"),
                                 enabled: isEditing,
@@ -167,7 +167,7 @@ class _UserAccountState extends State<UserAccount> {
                               padding: EdgeInsets.only(
                                   top: padding, bottom: padding),
                               child: TextFormField(
-                                controller: client.address.zip,
+                                controller: accountUser.address.zip,
                                 decoration:
                                     const InputDecoration(labelText: "CEP"),
                                 enabled: isEditing,
@@ -185,7 +185,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: TextFormField(
-                                controller: client.address.complement,
+                                controller: accountUser.address.complement,
                                 decoration: const InputDecoration(
                                     labelText: "Complemento"),
                                 enabled: isEditing,
@@ -200,7 +200,7 @@ class _UserAccountState extends State<UserAccount> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: client.password,
+                                controller: accountUser.password,
                                 decoration:
                                     const InputDecoration(labelText: "Senha"),
                                 enabled: false,
@@ -249,7 +249,9 @@ class _UserAccountState extends State<UserAccount> {
                                 onPressed: () {
                                   userServices
                                       .updateUser(
-                                          context, client.password.text, client)
+                                          context,
+                                          accountUser.password.text,
+                                          accountUser)
                                       .then((success) {
                                     if (success) {
                                       setState(() {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/mechanic.dart';
+import 'package:mech_client/models/account_user.dart';
 import 'package:mech_client/services/feedback_utils.dart';
 import 'package:mech_client/services/user_services.dart';
-import '../models/client.dart';
 
 class ValidationUser {
   static bool checkBoxValue = false;
@@ -98,18 +97,19 @@ class ValidationUser {
     return int.parse(cnpj[13]) == digit2;
   }
 
-  static bool validationClientFields(BuildContext context, Client client) {
+  static bool validationFields(
+      BuildContext context, AccountUser accountUser, String select) {
     // lista para verificar os campos vazios
     List<TextEditingController> register = [
-      client.name,
-      client.cpf,
-      client.phone,
-      client.email,
-      client.address.address,
-      client.address.number,
-      client.address.zip,
-      client.password,
-      client.confirmPassword,
+      accountUser.name,
+      if (select == "Cliente") accountUser.cpf else accountUser.cnpj,
+      accountUser.phone,
+      accountUser.email,
+      accountUser.address.address,
+      accountUser.address.number,
+      accountUser.address.zip,
+      accountUser.password,
+      accountUser.confirmPassword,
     ];
 
     bool empty = false;
@@ -122,92 +122,34 @@ class ValidationUser {
       }
     }
 
+    // implementar validacao de CNPJ
     // validaçoes \\
-    if (!empty && !isValidCPF(client.cpf.text)) {
-      FeedbackUtils.showErrorSnackBar(context, 'CPF inválido');
-      return false;
-    }
-
-    if (!empty && !isValidPhone(client.phone.text)) {
-      FeedbackUtils.showErrorSnackBar(
-          context, 'Telefone deve conter 11 dígitos.');
-      return false;
-    }
-
-    if (!empty && !isValidEmail(client.email.text)) {
-      FeedbackUtils.showErrorSnackBar(
-          context, 'O e-mail inserido não é válido.');
-      return false;
-    }
-
-    if (!empty && !isValidCEP(client.address.zip.text)) {
-      FeedbackUtils.showErrorSnackBar(context, 'O CEP deve conter 8 dígitos.');
-      return false;
-    }
-
-    if (!empty && client.password.text != client.confirmPassword.text) {
-      FeedbackUtils.showErrorSnackBar(
-          context, 'As senhas não coincidem. Por favor, tente novamente.');
-      return false;
-    }
-
-    if (!empty && !checkBoxValue) {
-      FeedbackUtils.showErrorSnackBar(context, 'Aceite os termos e políticas.');
-      return false;
-    }
-
-    return !empty;
-  }
-
-  static bool validationMechanicFields(
-      BuildContext context, Mechanic mechanic) {
-    // lista para verificar os campos vazios
-    List<TextEditingController> register = [
-      mechanic.name,
-      mechanic.cnpj,
-      mechanic.phone,
-      mechanic.email,
-      mechanic.address.address,
-      mechanic.address.number,
-      mechanic.address.zip,
-      mechanic.password,
-      mechanic.confirmPassword,
-    ];
-
-    bool empty = false;
-    for (TextEditingController controller in register) {
-      if (controller.text.isEmpty) {
-        empty = true;
-        FeedbackUtils.showErrorSnackBar(
-            context, 'Preencha todos os campos obrigatórios.');
-        break;
+    if (select == "Cliente") {
+      if (!empty && !isValidCPF(accountUser.cpf.text)) {
+        FeedbackUtils.showErrorSnackBar(context, 'CPF inválido');
+        return false;
       }
     }
 
-    // validaçoes \\
-    if (!empty && !isValidCNPJ(mechanic.cnpj.text)) {
-      FeedbackUtils.showErrorSnackBar(context, 'CNPJ inválido');
-      return false;
-    }
-
-    if (!empty && !isValidPhone(mechanic.phone.text)) {
+    if (!empty && !isValidPhone(accountUser.phone.text)) {
       FeedbackUtils.showErrorSnackBar(
           context, 'Telefone deve conter 11 dígitos.');
       return false;
     }
 
-    if (!empty && !isValidEmail(mechanic.email.text)) {
+    if (!empty && !isValidEmail(accountUser.email.text)) {
       FeedbackUtils.showErrorSnackBar(
           context, 'O e-mail inserido não é válido.');
       return false;
     }
 
-    if (!empty && !isValidCEP(mechanic.address.zip.text)) {
+    if (!empty && !isValidCEP(accountUser.address.zip.text)) {
       FeedbackUtils.showErrorSnackBar(context, 'O CEP deve conter 8 dígitos.');
       return false;
     }
 
-    if (!empty && mechanic.password.text != mechanic.confirmPassword.text) {
+    if (!empty &&
+        accountUser.password.text != accountUser.confirmPassword.text) {
       FeedbackUtils.showErrorSnackBar(
           context, 'As senhas não coincidem. Por favor, tente novamente.');
       return false;
@@ -223,14 +165,14 @@ class ValidationUser {
 
   static bool validationLogin(
     BuildContext context,
-    Client client,
+    AccountUser accountUser,
   ) {
-    if (client.email.text.isEmpty || client.password.text.isEmpty) {
+    if (accountUser.email.text.isEmpty || accountUser.password.text.isEmpty) {
       FeedbackUtils.showErrorSnackBar(
           context, 'Preencha todos os campos obrigatórios.');
       return false;
     }
-    if (!ValidationUser.isValidEmail(client.email.text)) {
+    if (!ValidationUser.isValidEmail(accountUser.email.text)) {
       FeedbackUtils.showErrorSnackBar(context, 'Email inválido.');
       return false;
     }

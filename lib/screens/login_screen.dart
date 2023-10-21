@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/client.dart';
-import 'package:mech_client/models/mechanic.dart';
+import 'package:mech_client/models/account_user.dart';
+
 import 'package:mech_client/screens/register_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 
@@ -12,8 +12,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  Mechanic mechanic = Mechanic();
-  Client client = Client();
+  AccountUser accountUser = AccountUser();
   UserServices userServices = UserServices();
 
   @override
@@ -62,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: 300,
                   margin: const EdgeInsets.only(top: 100.0),
                   child: TextField(
-                    controller: client.email,
+                    controller: accountUser.email,
                     obscureText: false,
                     style: const TextStyle(fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
@@ -84,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: 300,
                   child: TextField(
-                    controller: client.password,
+                    controller: accountUser.password,
                     obscureText: true,
                     decoration: InputDecoration(
                       filled: true,
@@ -108,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      userServices.loginUser(context, client);
+                      userServices.loginUser(context, accountUser);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF5C00),
