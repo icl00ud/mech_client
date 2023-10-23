@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/address.dart';
 
-class Mechanic {
+class AccountUser {
   Address address = Address();
 
   TextEditingController name = TextEditingController();
@@ -9,5 +9,7 @@ class Mechanic {
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
   TextEditingController phone = TextEditingController();
+  TextEditingController cpf = TextEditingController();
   TextEditingController cnpj = TextEditingController();
+  String? typeUser;
 }

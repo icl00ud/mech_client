@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:mech_client/models/client.dart';
-import 'package:mech_client/models/mechanic.dart';
+import 'package:mech_client/models/account_user.dart';
 import 'package:mech_client/screens/login_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/services/validationUser.dart';
@@ -18,8 +17,7 @@ class RegisterPageState extends State<RegisterPage> {
   static String _selectedItem = "Cliente";
   static double padding = 3;
 
-  Mechanic mechanic = Mechanic();
-  Client client = Client();
+  AccountUser accountUser = AccountUser();
   ValidationUser validation = ValidationUser();
   UserServices userServices = UserServices();
 
@@ -117,9 +115,7 @@ class RegisterPageState extends State<RegisterPage> {
                         child: Padding(
                           padding: EdgeInsets.all(padding),
                           child: TextFormField(
-                            controller: _selectedItem == "Cliente"
-                                ? client.name
-                                : mechanic.name,
+                            controller: accountUser.name,
                             decoration:
                                 const InputDecoration(labelText: "Nome"),
                           ),
@@ -132,8 +128,8 @@ class RegisterPageState extends State<RegisterPage> {
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
                                 controller: _selectedItem == "Cliente"
-                                    ? client.cpf
-                                    : mechanic.cnpj,
+                                    ? accountUser.cpf
+                                    : accountUser.cnpj,
                                 decoration: InputDecoration(
                                     labelText: _selectedItem == "Cliente"
                                         ? "CPF"
@@ -154,9 +150,7 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: _selectedItem == "Cliente"
-                                    ? client.phone
-                                    : mechanic.phone,
+                                controller: accountUser.phone,
                                 decoration: const InputDecoration(
                                     labelText: "Telefone"),
                                 inputFormatters: [
@@ -172,9 +166,7 @@ class RegisterPageState extends State<RegisterPage> {
                       Padding(
                         padding: EdgeInsets.all(padding),
                         child: TextFormField(
-                          controller: _selectedItem == "Cliente"
-                              ? client.email
-                              : mechanic.email,
+                          controller: accountUser.email,
                           decoration: const InputDecoration(
                             labelText: "Email",
                           ),
@@ -188,9 +180,7 @@ class RegisterPageState extends State<RegisterPage> {
                               padding: EdgeInsets.only(
                                   top: padding, bottom: padding),
                               child: TextFormField(
-                                controller: _selectedItem == "Cliente"
-                                    ? client.address.address
-                                    : mechanic.address.address,
+                                controller: accountUser.address.address,
                                 decoration:
                                     const InputDecoration(labelText: "Rua"),
                               ),
@@ -201,9 +191,7 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: TextFormField(
-                                controller: _selectedItem == "Cliente"
-                                    ? client.address.number
-                                    : mechanic.address.number,
+                                controller: accountUser.address.number,
                                 decoration:
                                     const InputDecoration(labelText: "Nº"),
                                 inputFormatters: <TextInputFormatter>[
@@ -222,9 +210,7 @@ class RegisterPageState extends State<RegisterPage> {
                               padding: EdgeInsets.only(
                                   top: padding, bottom: padding),
                               child: TextFormField(
-                                controller: _selectedItem == "Cliente"
-                                    ? client.address.zip
-                                    : mechanic.address.zip,
+                                controller: accountUser.address.zip,
                                 decoration:
                                     const InputDecoration(labelText: "CEP"),
                                 inputFormatters: [
@@ -241,9 +227,7 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: TextFormField(
-                                controller: _selectedItem == "Cliente"
-                                    ? client.address.complement
-                                    : mechanic.address.complement,
+                                controller: accountUser.address.complement,
                                 decoration: const InputDecoration(
                                     labelText: "Complemento"),
                               ),
@@ -257,9 +241,7 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: _selectedItem == "Cliente"
-                                    ? client.password
-                                    : mechanic.password,
+                                controller: accountUser.password,
                                 decoration:
                                     const InputDecoration(labelText: "Senha"),
                                 obscureText: true,
@@ -271,9 +253,7 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
-                                controller: _selectedItem == "Cliente"
-                                    ? client.confirmPassword
-                                    : mechanic.confirmPassword,
+                                controller: accountUser.confirmPassword,
                                 decoration: const InputDecoration(
                                     labelText: "Confirmar senha"),
                                 obscureText: true,
@@ -305,16 +285,10 @@ class RegisterPageState extends State<RegisterPage> {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () {
-                            if (_selectedItem == "Cliente") {
-                              setState(() {
-                                userServices.registerClient(context, client);
-                              });
-                            } else {
-                              setState(() {
-                                userServices.registerMechanic(
-                                    context, mechanic);
-                              });
-                            }
+                            setState(() {
+                              userServices.registerUser(
+                                  context, accountUser, _selectedItem);
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF5C00),

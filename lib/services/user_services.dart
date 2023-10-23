@@ -1,24 +1,23 @@
-import 'package:mech_client/models/mechanic.dart';
 import 'package:mech_client/services/feedback_utils.dart';
 import 'package:mech_client/services/validationUser.dart';
 import 'spinner_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/client.dart';
+import 'package:mech_client/models/account_user.dart';
 import 'package:mech_client/screens/home_screen.dart';
 import 'package:mech_client/screens/login_screen.dart';
 
 class UserServices {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  void loginUser(BuildContext context, Client client) async {
-    if (ValidationUser.validationLogin(context, client)) {
+  void loginUser(BuildContext context, AccountUser accountUser) async {
+    if (ValidationUser.validationLogin(context, accountUser)) {
       try {
         SpinnerUtils.showSpinner(context);
         await firebaseAuth.signInWithEmailAndPassword(
-          email: client.email.text,
-          password: client.password.text,
+          email: accountUser.email.text,
+          password: accountUser.password.text,
         );
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -42,38 +41,51 @@ class UserServices {
     }
   }
 
-  void registerClient(BuildContext context, Client client) async {
-    if (ValidationUser.validationClientFields(context, client)) {
+  void registerUser(
+      BuildContext context, AccountUser accountUser, String select) async {
+    if (ValidationUser.validationFields(context, accountUser, select)) {
       try {
         // exibe o spinner ao iniciar o registro
         SpinnerUtils.showSpinner(context);
 
         await firebaseAuth.createUserWithEmailAndPassword(
-          email: client.email.text,
-          password: client.password.text,
+          email: accountUser.email.text,
+          password: accountUser.password.text,
         );
 
-        User? user = firebaseAuth.currentUser;
-
         Map<String, dynamic> addressData = {
-          'address': client.address.address.text,
-          'number': client.address.number.text,
-          'zip': client.address.zip.text,
-          'complement': client.address.complement.text,
+          'address': accountUser.address.address.text,
+          'number': accountUser.address.number.text,
+          'zip': accountUser.address.zip.text,
+          'complement': accountUser.address.complement.text,
         };
-
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(user?.uid)
-            .set({
-          'name': client.name.text,
-          'cpf': client.cpf.text,
-          'phone': client.phone.text,
-          'email': client.email.text,
-          'address': addressData,
-          'password': client.password.text,
-        });
-
+        if (select == "Cliente") {
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(accountUser.email.text)
+              .set({
+            'name': accountUser.name.text,
+            'cpf': accountUser.cpf.text,
+            'phone': accountUser.phone.text,
+            'email': accountUser.email.text,
+            'address': addressData,
+            'password': accountUser.password.text,
+            'type': select
+          });
+        } else {
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(accountUser.email.text)
+              .set({
+            'name': accountUser.name.text,
+            'cnpj': accountUser.cnpj.text,
+            'phone': accountUser.phone.text,
+            'email': accountUser.email.text,
+            'address': addressData,
+            'password': accountUser.password.text,
+            'type': select
+          });
+        }
         FeedbackUtils.showSuccessSnackBar(
             context, 'Cadastro efetuado com sucesso!');
 
@@ -97,28 +109,30 @@ class UserServices {
     }
   }
 
-  void getUser(Client client) async {
+  void getUser(AccountUser accountUser) async {
     try {
       User? user = firebaseAuth.currentUser;
       if (user != null) {
+        String? userEmail = user.email;
         var collection = FirebaseFirestore.instance.collection('Users');
-        DocumentSnapshot snapshot = await collection.doc(user.uid).get();
+        DocumentSnapshot snapshot = await collection.doc(userEmail).get();
 
         if (snapshot.exists) {
           Map<String, dynamic> userData =
               snapshot.data() as Map<String, dynamic>;
-          client.name.text = userData['name'] ?? 'campo vazio';
-          client.cpf.text = userData['cpf'] ?? 'campo vazio';
-          client.phone.text = userData['phone'] ?? 'campo vazio';
-          client.email.text = userData['email'] ?? 'campo vazio';
-          client.address.address.text =
+          accountUser.name.text = userData['name'] ?? 'campo vazio';
+          accountUser.cpf.text = userData['cpf'] ?? 'campo vazio';
+          accountUser.phone.text = userData['phone'] ?? 'campo vazio';
+          accountUser.email.text = userData['email'] ?? 'campo vazio';
+          accountUser.address.address.text =
               userData['address']['address'] ?? 'campo vazio';
-          client.address.number.text =
+          accountUser.address.number.text =
               userData['address']['number'] ?? 'campo vazio';
-          client.address.zip.text = userData['address']['zip'] ?? 'campo vazio';
-          client.address.complement.text =
+          accountUser.address.zip.text =
+              userData['address']['zip'] ?? 'campo vazio';
+          accountUser.address.complement.text =
               userData['address']['complement'] ?? 'campo vazio';
-          client.password.text = userData['password'] ?? 'campo vazio';
+          accountUser.password.text = userData['password'] ?? 'campo vazio';
         }
       }
     } catch (e) {
@@ -126,63 +140,8 @@ class UserServices {
     }
   }
 
-  void registerMechanic(BuildContext context, Mechanic mechanic) async {
-    if (ValidationUser.validationMechanicFields(context, mechanic)) {
-      try {
-        // exibe o spinner ao iniciar o registro
-        SpinnerUtils.showSpinner(context);
-
-        await firebaseAuth.createUserWithEmailAndPassword(
-          email: mechanic.email.text,
-          password: mechanic.password.text,
-        );
-
-        User? user = firebaseAuth.currentUser;
-
-        Map<String, dynamic> addressData = {
-          'address': mechanic.address.address.text,
-          'number': mechanic.address.number.text,
-          'zip': mechanic.address.zip.text,
-          'complement': mechanic.address.complement.text,
-        };
-
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(user?.uid)
-            .set({
-          'name': mechanic.name.text,
-          'cnpj': mechanic.cnpj.text,
-          'phone': mechanic.phone.text,
-          'email': mechanic.email.text,
-          'address': addressData,
-          'password': mechanic.password.text,
-        });
-
-        FeedbackUtils.showSuccessSnackBar(
-            context, 'Cadastro efetuado com sucesso!');
-
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const LoginPage(),
-        ));
-      } on FirebaseAuthException catch (e) {
-        SpinnerUtils.hideSpinner(context);
-
-        if (e.code == 'weak-password') {
-          FeedbackUtils.showErrorSnackBar(
-              context, 'A senha é muito fraca. Tente uma senha mais forte.');
-        } else if (e.code == 'email-already-in-use') {
-          FeedbackUtils.showErrorSnackBar(context,
-              'Este e-mail já foi cadastrado. Por favor, faça login ou use outro e-mail.');
-        }
-        print('Erro no registro: $e');
-      }
-    } else {
-      print("Campos invalidos.");
-    }
-  }
-
   Future<bool> updateUser(
-      BuildContext context, String senhaAtual, Client client) async {
+      BuildContext context, String senhaAtual, AccountUser accountUser) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
@@ -197,8 +156,8 @@ class UserServices {
         await user.reauthenticateWithCredential(credential);
 
         // atualiza o email e a senha do usuário
-        await user.updateEmail(client.email.text);
-        await user.updatePassword(client.password.text);
+        await user.updateEmail(accountUser.email.text);
+        await user.updatePassword(accountUser.password.text);
 
         var collection = FirebaseFirestore.instance.collection('Users');
 
@@ -210,16 +169,16 @@ class UserServices {
               snapshot.data() as Map<String, dynamic>;
 
           // atualize os campos desejados
-          userData['name'] = client.name.text;
-          userData['email'] = client.email.text;
-          userData['phone'] = client.phone.text;
+          userData['name'] = accountUser.name.text;
+          userData['email'] = accountUser.email.text;
+          userData['phone'] = accountUser.phone.text;
 
           // atualiza os campos do map endereço
           Map<String, dynamic> addressData = {
-            'address': client.address.address.text,
-            'number': client.address.number.text,
-            'zip': client.address.zip.text,
-            'complement': client.address.complement.text,
+            'address': accountUser.address.address.text,
+            'number': accountUser.address.number.text,
+            'zip': accountUser.address.zip.text,
+            'complement': accountUser.address.complement.text,
           };
           //atualiza o map endereço pelo novo
           userData['address'] = addressData;
