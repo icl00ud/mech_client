@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/client.dart';
-import 'package:mech_client/models/mechanic.dart';
 import 'package:mech_client/services/validationUser.dart';
 
 class RegisterVehiclePage extends StatefulWidget {
@@ -13,8 +11,6 @@ class RegisterVehiclePage extends StatefulWidget {
 class RegisterVehiclePageState extends State<RegisterVehiclePage> {
   static double padding = 3;
 
-  Mechanic mechanic = Mechanic();
-  Client client = Client();
   ValidationUser validation = ValidationUser();
 
   final _formkey = GlobalKey<FormState>();

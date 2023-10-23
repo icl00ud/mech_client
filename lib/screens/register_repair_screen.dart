@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/client.dart';
-import 'package:mech_client/models/mechanic.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/services/validationUser.dart';
 
@@ -14,8 +12,6 @@ class RegisterRepairPage extends StatefulWidget {
 class RegisterRepairPageState extends State<RegisterRepairPage> {
   static double padding = 3;
 
-  Mechanic mechanic = Mechanic();
-  Client client = Client();
   ValidationUser validation = ValidationUser();
   UserServices userServices = UserServices();
 
@@ -99,7 +95,6 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
                         labelText: "Problema Relatado",
                       ),
                     ),
-                    
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
