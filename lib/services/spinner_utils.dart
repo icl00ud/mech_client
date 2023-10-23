@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SpinnerUtils {
   // criar spinner
@@ -9,12 +8,26 @@ class SpinnerUtils {
       barrierDismissible: false,
       builder: (context) {
         return const Center(
-          child: SpinKitFadingCircle(
+          child: CircularProgressIndicator(
             color: Color(0xFFFF5C00),
-            size: 50.0, // Tamanho do spinner
           ),
         );
       },
+    );
+  }
+
+  static showSpinnerMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Text(message),
+          ],
+        ),
+        duration: const Duration(days: 1),
+      ),
     );
   }
 

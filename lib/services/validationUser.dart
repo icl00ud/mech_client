@@ -98,8 +98,8 @@ class ValidationUser {
   }
 
   static bool validationFields(
-      BuildContext context, AccountUser accountUser, String select) {
-    // lista para verificar os campos vazios
+      BuildContext context, AccountUser accountUser, String? select,
+      {bool validateCheckbox = true}) {
     List<TextEditingController> register = [
       accountUser.name,
       if (select == "Cliente") accountUser.cpf else accountUser.cnpj,
@@ -122,13 +122,9 @@ class ValidationUser {
       }
     }
 
-    // implementar validacao de CNPJ
-    // validaçoes \\
-    if (select == "Cliente") {
-      if (!empty && !isValidCPF(accountUser.cpf.text)) {
-        FeedbackUtils.showErrorSnackBar(context, 'CPF inválido');
-        return false;
-      }
+    if (select == "Cliente" && !empty && !isValidCPF(accountUser.cpf.text)) {
+      FeedbackUtils.showErrorSnackBar(context, 'CPF inválido');
+      return false;
     }
 
     if (!empty && !isValidPhone(accountUser.phone.text)) {
@@ -155,7 +151,7 @@ class ValidationUser {
       return false;
     }
 
-    if (!empty && !checkBoxValue) {
+    if (validateCheckbox && !empty && !checkBoxValue) {
       FeedbackUtils.showErrorSnackBar(context, 'Aceite os termos e políticas.');
       return false;
     }

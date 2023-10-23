@@ -48,50 +48,48 @@ class UserServices {
         // exibe o spinner ao iniciar o registro
         SpinnerUtils.showSpinner(context);
 
-        await firebaseAuth.createUserWithEmailAndPassword(
+        final UserCredential userCredential =
+            await firebaseAuth.createUserWithEmailAndPassword(
           email: accountUser.email.text,
           password: accountUser.password.text,
         );
 
-        Map<String, dynamic> addressData = {
-          'address': accountUser.address.address.text,
-          'number': accountUser.address.number.text,
-          'zip': accountUser.address.zip.text,
-          'complement': accountUser.address.complement.text,
-        };
-        if (select == "Cliente") {
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(accountUser.email.text)
-              .set({
-            'name': accountUser.name.text,
-            'cpf': accountUser.cpf.text,
-            'phone': accountUser.phone.text,
-            'email': accountUser.email.text,
-            'address': addressData,
-            'password': accountUser.password.text,
-            'type': select
-          });
-        } else {
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(accountUser.email.text)
-              .set({
-            'name': accountUser.name.text,
-            'cnpj': accountUser.cnpj.text,
-            'phone': accountUser.phone.text,
-            'email': accountUser.email.text,
-            'address': addressData,
-            'password': accountUser.password.text,
-            'type': select
-          });
-        }
-        FeedbackUtils.showSuccessSnackBar(
-            context, 'Cadastro efetuado com sucesso!');
+        final User? user = userCredential.user;
+        if (user != null) {
+          final Map<String, dynamic> addressData = {
+            'address': accountUser.address.address.text,
+            'number': accountUser.address.number.text,
+            'zip': accountUser.address.zip.text,
+            'complement': accountUser.address.complement.text,
+          };
 
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const LoginPage(),
-        ));
+          final Map<String, dynamic> userData = {
+            'name': accountUser.name.text,
+            'email': accountUser.email.text,
+            'phone': accountUser.phone.text,
+            'address': addressData,
+            'password': accountUser.password.text,
+            'type': select,
+          };
+
+          if (select == "Cliente") {
+            userData['cpf'] = accountUser.cpf.text;
+          } else {
+            userData['cnpj'] = accountUser.cnpj.text;
+          }
+
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(user.uid)
+              .set(userData);
+
+          FeedbackUtils.showSuccessSnackBar(
+              context, 'Cadastro efetuado com sucesso!');
+
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ));
+        }
       } on FirebaseAuthException catch (e) {
         SpinnerUtils.hideSpinner(context);
 
@@ -105,95 +103,110 @@ class UserServices {
         print('Erro no registro: $e');
       }
     } else {
-      print("Campos invalidos.");
+      print("Campos inválidos.");
     }
   }
 
-  void getUser(AccountUser accountUser) async {
+  Future<AccountUser?> getUser(AccountUser accountUser) async {
     try {
       User? user = firebaseAuth.currentUser;
       if (user != null) {
-        String? userEmail = user.email;
         var collection = FirebaseFirestore.instance.collection('Users');
-        DocumentSnapshot snapshot = await collection.doc(userEmail).get();
-
+        DocumentSnapshot snapshot = await collection.doc(user.uid).get();
         if (snapshot.exists) {
-          Map<String, dynamic> userData =
-              snapshot.data() as Map<String, dynamic>;
-          accountUser.name.text = userData['name'] ?? 'campo vazio';
-          accountUser.cpf.text = userData['cpf'] ?? 'campo vazio';
-          accountUser.phone.text = userData['phone'] ?? 'campo vazio';
-          accountUser.email.text = userData['email'] ?? 'campo vazio';
+          // Acessar os campos do DocumentSnapshot e atualizar o objeto AccountUser
+          accountUser.name.text = snapshot['name'] ?? '';
+          accountUser.email.text = snapshot['email'] ?? '';
+
+          // Outros campos do AccountUser
+          accountUser.phone.text = snapshot['phone'] ?? '';
+          snapshot['type'] == "Cliente"
+              ? accountUser.cpf.text = snapshot['cpf']
+              : accountUser.cnpj.text = snapshot['cnpj'];
+          accountUser.type = snapshot['type'] ?? '';
+          accountUser.password.text = snapshot['password'];
+          accountUser.confirmPassword.text = snapshot['password'];
+
+          // Mapear os campos de endereço do Firestore para o objeto Address
           accountUser.address.address.text =
-              userData['address']['address'] ?? 'campo vazio';
-          accountUser.address.number.text =
-              userData['address']['number'] ?? 'campo vazio';
-          accountUser.address.zip.text =
-              userData['address']['zip'] ?? 'campo vazio';
+              snapshot['address']['address'] ?? '';
+          accountUser.address.number.text = snapshot['address']['number'] ?? '';
+          accountUser.address.zip.text = snapshot['address']['zip'] ?? '';
           accountUser.address.complement.text =
-              userData['address']['complement'] ?? 'campo vazio';
-          accountUser.password.text = userData['password'] ?? 'campo vazio';
+              snapshot['address']['complement'] ?? '';
+
+          return accountUser;
+        } else {
+          print('Documento não encontrado para o usuário com ID ${user.uid}');
         }
       }
     } catch (e) {
       print('Erro ao obter informações do usuário: $e');
     }
+    return null;
   }
 
   Future<bool> updateUser(
-      BuildContext context, String senhaAtual, AccountUser accountUser) async {
+    BuildContext context,
+    String password,
+    AccountUser accountUser,
+  ) async {
     try {
-      User? user = FirebaseAuth.instance.currentUser;
+      if (ValidationUser.validationFields(
+          context, accountUser, accountUser.type,
+          validateCheckbox: false)) {
+        SpinnerUtils.showSpinnerMessage(context, "Atualizando o cadastro...");
 
-      if (user != null) {
-        // cria um objeto AuthCredential para reautenticação
-        var credential = EmailAuthProvider.credential(
-          email: user.email!,
-          password: senhaAtual,
-        );
+        final User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          final AuthCredential credential = EmailAuthProvider.credential(
+            email: user.email!,
+            password: password,
+          );
 
-        // reautentique o usuário
-        await user.reauthenticateWithCredential(credential);
+          await user.reauthenticateWithCredential(credential);
 
-        // atualiza o email e a senha do usuário
-        await user.updateEmail(accountUser.email.text);
-        await user.updatePassword(accountUser.password.text);
+          await user.updateEmail(accountUser.email.text);
+          await user.updatePassword(accountUser.password.text);
 
-        var collection = FirebaseFirestore.instance.collection('Users');
+          final CollectionReference collection =
+              FirebaseFirestore.instance.collection('Users');
 
-        DocumentSnapshot snapshot = await collection.doc(user.uid).get();
+          final DocumentSnapshot snapshot =
+              await collection.doc(user.uid).get();
 
-        if (snapshot.exists) {
-          // obtem os dados do documento
-          Map<String, dynamic> userData =
-              snapshot.data() as Map<String, dynamic>;
+          if (snapshot.exists) {
+            final Map<String, dynamic> userData =
+                snapshot.data() as Map<String, dynamic>;
 
-          // atualize os campos desejados
-          userData['name'] = accountUser.name.text;
-          userData['email'] = accountUser.email.text;
-          userData['phone'] = accountUser.phone.text;
+            userData['name'] = accountUser.name.text;
+            userData['email'] = accountUser.email.text;
+            userData['phone'] = accountUser.phone.text;
+            userData['password'] = accountUser.password.text;
 
-          // atualiza os campos do map endereço
-          Map<String, dynamic> addressData = {
-            'address': accountUser.address.address.text,
-            'number': accountUser.address.number.text,
-            'zip': accountUser.address.zip.text,
-            'complement': accountUser.address.complement.text,
-          };
-          //atualiza o map endereço pelo novo
-          userData['address'] = addressData;
+            final Map<String, dynamic> addressData = {
+              'address': accountUser.address.address.text,
+              'number': accountUser.address.number.text,
+              'zip': accountUser.address.zip.text,
+              'complement': accountUser.address.complement.text,
+            };
 
-          await collection.doc(user.uid).update(userData);
+            userData['address'] = addressData;
 
-          FeedbackUtils.showSuccessSnackBar(
-              context, 'Cadastro atualizado com sucesso!');
-          return true;
+            await collection.doc(user.uid).update(userData);
+
+            ScaffoldMessenger.of(context)
+                .removeCurrentSnackBar(); // Remove o SnackBar
+            FeedbackUtils.showSuccessSnackBar(
+                context, 'Cadastro atualizado com sucesso!');
+            return true;
+          }
         }
       }
       return false;
-
-      // validações do FireBaseAuthenticator
     } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context)
+          .removeCurrentSnackBar(); // Remove o SnackBar
       if (e.code == 'weak-password') {
         FeedbackUtils.showErrorSnackBar(
             context, 'A senha é muito fraca. Tente uma senha mais forte.');
@@ -203,8 +216,9 @@ class UserServices {
       }
       return false;
     } catch (e) {
+      ScaffoldMessenger.of(context)
+          .removeCurrentSnackBar(); // Remove o SnackBar
       print('Erro ao atualizar informações do usuário: $e');
-
       return false;
     }
   }

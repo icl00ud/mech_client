@@ -31,22 +31,23 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
   void initState() {
     super.initState();
     // Chamada para buscar a lista de veículos do usuário
-    fetchUserVehicles();
+    // fetchUserVehicles();
   }
 
   Future<void> fetchUserVehicles() async {
     try {
       await Firebase.initializeApp();
 
-      var userVehiclesCollection = FirebaseFirestore.instance.collection('Vehicles');
+      var userVehiclesCollection =
+          FirebaseFirestore.instance.collection('Vehicles');
 
       var querySnapshot = await userVehiclesCollection.get();
 
       print(querySnapshot);
 
-
       setState(() {
-        vehicles = querySnapshot.docs.map((doc) => doc['name'] as String).toList();
+        vehicles =
+            querySnapshot.docs.map((doc) => doc['name'] as String).toList();
       });
     } catch (e) {
       print('Erro ao buscar veículos: $e');
