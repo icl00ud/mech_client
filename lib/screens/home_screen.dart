@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mech_client/screens/login_screen.dart';
+import 'package:mech_client/screens/repair_screen.dart';
 import 'package:mech_client/screens/user_account_screen.dart';
 import 'package:mech_client/screens/vehicle_screen.dart';
 
@@ -106,7 +107,7 @@ class Page1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Vehicle(),
+      home: VehiclePage(),
     );
   }
 }
@@ -123,8 +124,8 @@ class Page2 extends StatelessWidget {
 class Page3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Page 3'),
+    return const MaterialApp(
+      home: RepairPage(),
     );
   }
 }
