@@ -1,64 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/screens/register_vehicle_screen.dart';
-import 'package:mech_client/models/vehicle.dart';
-import 'package:mech_client/services/vehicle_services.dart';
+import 'package:mech_client/screens/register_repair_screen.dart';
+import 'package:mech_client/services/repair_services.dart';
+import 'package:mech_client/models/repair.dart';
 
-class VehiclePage extends StatelessWidget {
-  const VehiclePage({Key? key}) : super(key: key);
+class RepairPage extends StatelessWidget {
+  const RepairPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: Scaffold(
         body: SafeArea(
-          child: RegisterVehicle(),
+          child: RegisterRepair(),
         ),
       ),
     );
   }
 }
 
-class RegisterVehicle extends StatefulWidget {
-  const RegisterVehicle({Key? key}) : super(key: key);
+class RegisterRepair extends StatefulWidget {
+  const RegisterRepair({Key? key}) : super(key: key);
 
   @override
-  _RegisterVehicleState createState() => _RegisterVehicleState();
+  _RegisterRepairState createState() => _RegisterRepairState();
 }
 
-class _RegisterVehicleState extends State<RegisterVehicle> {
-  //List<String> vehicles = []; // Lista de veículos do usuário
+class _RegisterRepairState extends State<RegisterRepair> {
+  //List<String> repairs = []; // Lista de veículos do usuário
   static double padding = 3;
-  Vehicle vehicle = Vehicle();
-  VehicleServices vehicleServices = VehicleServices();
+  Repair repair = Repair();
+  RepairServices repairServices = RepairServices();
 
   @override
   void initState() {
-    vehicleServices.getVehicle(vehicle);
+    repairServices.getRepair(repair);
 
     super.initState();
-    // Chamada para buscar a lista de veículos do usuário
-    //fetchUserVehicles();
   }
-
-  /*Future<void> fetchUserVehicles() async {
-    try {
-      await Firebase.initializeApp();
-
-      var userVehiclesCollection =
-          FirebaseFirestore.instance.collection('Vehicles');
-
-      var querySnapshot = await userVehiclesCollection.get();
-
-      print(querySnapshot);
-
-      setState(() {
-        vehicles =
-            querySnapshot.docs.map((doc) => doc['name'] as String).toList();
-      });
-    } catch (e) {
-      print('Erro ao buscar veículos: $e');
-    }
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +49,14 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
               const Column(
                 children: [
                   Icon(
-                    Icons.directions_car_filled_outlined,
+                    Icons.car_repair,
                     size: 50,
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   Text(
-                    'Veículo',
+                    'Conserto',
                     style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -112,7 +90,7 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
                             padding:
                                 EdgeInsets.only(top: padding, bottom: padding),
                             child: TextFormField(
-                              controller: vehicle.plate,
+                              controller: repair.plate,
                               decoration:
                                   const InputDecoration(labelText: "Placa"),
                               enabled: false,
@@ -126,73 +104,23 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
                             padding:
                                 EdgeInsets.only(top: padding, bottom: padding),
                             child: TextFormField(
-                              controller: vehicle.model,
+                              controller: repair.date,
                               decoration:
-                                  const InputDecoration(labelText: "Modelo"),
-                              enabled: false,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 40),
-                        Expanded(
-                          flex: 4,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(top: padding, bottom: padding),
-                            child: TextFormField(
-                              controller: vehicle.brand,
-                              decoration:
-                                  const InputDecoration(labelText: "Marca"),
+                                  const InputDecoration(labelText: "Data"),
                               enabled: false,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(top: padding, bottom: padding),
-                            child: TextFormField(
-                              controller: vehicle.yearFabrication,
-                              decoration:
-                                  const InputDecoration(labelText: "Ano"),
-                              enabled: false,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 40),
-                        Expanded(
-                          flex: 4,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(top: padding, bottom: padding),
-                            child: TextFormField(
-                              controller: vehicle.color,
-                              decoration:
-                                  const InputDecoration(labelText: "Cor"),
-                              enabled: false,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 40),
-                        Expanded(
-                          flex: 4,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(top: padding, bottom: padding),
-                            child: TextFormField(
-                              controller: vehicle.gearShift,
-                              decoration:
-                                  const InputDecoration(labelText: "Câmbio"),
-                              enabled: false,
-                            ),
-                          ),
-                        ),
-                      ],
+                    TextFormField(
+                      controller: repair.description,
+                      maxLines:
+                          null, // ou um número grande, por exemplo, maxLines: 10,
+                      decoration: const InputDecoration(
+                        labelText: "Problema Relatado",
+                      enabled: false,
+                      ),
                     ),
                   ],
                 ),
@@ -201,7 +129,7 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => RegisterVehiclePage()),
+                    MaterialPageRoute(builder: (context) => RegisterRepairPage()),
                   );
                   // Coloque a ação que você deseja realizar ao tocar no card aqui
                 },
@@ -228,7 +156,7 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
                       Icon(Icons.add_circle_rounded,
                           size: 48.0, color: Color(0xFFFF5C00)),
                       SizedBox(height: 8.0),
-                      Text('Adicionar Veículo', textAlign: TextAlign.center),
+                      Text('Relatar Problema', textAlign: TextAlign.center),
                     ],
                   ),
                 ),
