@@ -15,7 +15,7 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
   ValidationUser validation = ValidationUser();
   UserServices userServices = UserServices();
 
-  final _formkey = GlobalKey<FormState>();
+  //final _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {

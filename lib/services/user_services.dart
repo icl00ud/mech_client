@@ -1,3 +1,4 @@
+import 'package:mech_client/screens/home_screen_mech.dart';
 import 'package:mech_client/services/feedback_utils.dart';
 import 'package:mech_client/services/validationUser.dart';
 import 'spinner_utils.dart';
@@ -5,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/account_user.dart';
-import 'package:mech_client/screens/home_screen.dart';
+import 'package:mech_client/screens/home_screen_client.dart';
 import 'package:mech_client/screens/login_screen.dart';
 
 class UserServices {
@@ -19,11 +20,27 @@ class UserServices {
           email: accountUser.email.text,
           password: accountUser.password.text,
         );
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ),
-        );
+        final User? user = firebaseAuth.currentUser;
+        if (user != null) {
+          var collection = FirebaseFirestore.instance.collection('Users');
+          DocumentSnapshot snapshot = await collection.doc(user.uid).get();
+          if (snapshot['type'] == "Cliente") {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => HomeScreenClient(),
+              ),
+            );
+          }
+          if (snapshot['type'] == "Mecânica") {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => HomeScreenMech(),
+              ),
+            );
+          }
+        } else {
+          print("Erro ao direcionar cliente");
+        }
       } on FirebaseAuthException catch (e) {
         // ocultar o spinner em caso de erro
         SpinnerUtils.hideSpinner(context);
@@ -114,11 +131,8 @@ class UserServices {
         var collection = FirebaseFirestore.instance.collection('Users');
         DocumentSnapshot snapshot = await collection.doc(user.uid).get();
         if (snapshot.exists) {
-          // Acessar os campos do DocumentSnapshot e atualizar o objeto AccountUser
           accountUser.name.text = snapshot['name'] ?? '';
           accountUser.email.text = snapshot['email'] ?? '';
-
-          // Outros campos do AccountUser
           accountUser.phone.text = snapshot['phone'] ?? '';
           snapshot['type'] == "Cliente"
               ? accountUser.cpf.text = snapshot['cpf']
@@ -127,7 +141,7 @@ class UserServices {
           accountUser.password.text = snapshot['password'];
           accountUser.confirmPassword.text = snapshot['password'];
 
-          // Mapear os campos de endereço do Firestore para o objeto Address
+          // mapear os campos de endereço
           accountUser.address.address.text =
               snapshot['address']['address'] ?? '';
           accountUser.address.number.text = snapshot['address']['number'] ?? '';

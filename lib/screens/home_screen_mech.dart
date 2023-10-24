@@ -1,25 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mech_client/models/account_user.dart';
+import 'package:mech_client/screens/custom_drawer.dart';
 import 'package:mech_client/screens/login_screen.dart';
 import 'package:mech_client/screens/repair_screen.dart';
 import 'package:mech_client/screens/user_account_screen.dart';
-import 'package:mech_client/screens/vehicle_screen.dart';
+import 'package:mech_client/services/user_services.dart';
 
-class Home extends StatelessWidget {
+class HomeMech extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      home: HomeScreenMech(),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreenMech extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreenMech> {
   int _selectedIndex = 0;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -27,8 +29,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     Page1(),
     Page2(),
-    Page3(),
   ];
+
+  UserServices userServices = UserServices();
+
+  @override
+  void initState() {
+    userServices.getUser(accountUser);
+    super.initState();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -36,46 +45,55 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  AccountUser accountUser = AccountUser();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey, // Adicione a chave global ao Scaffold
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
           'MechClient',
           style: TextStyle(
-            color: Color(0xFFFF5C00), // Cor do título da AppBar
+            color: Color(0xFFFF5C00),
           ),
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(
-          color: Colors.black, // Cor dos ícones na AppBar
+          color: Colors.black,
         ),
         leading: IconButton(
-          icon: const Icon(Icons.sms_outlined),
+          icon: const Icon(
+            Icons.menu,
+            size: 25,
+          ),
           onPressed: () {
-            // Ação ao pressionar o ícone à esquerda (menu, por exemplo)
-            print('Ícone à esquerda pressionado');
+            // Abra o menu lateral ao pressionar o ícone
+            _scaffoldKey.currentState?.openDrawer();
           },
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.where_to_vote_outlined),
+            icon: const Icon(
+              Icons.where_to_vote_outlined,
+              size: 25,
+            ),
             color: Color(0xFFFF5C00),
             onPressed: () {
-              // Para testar por enquanto
-              singOut();
+              // Ação para sair (exemplo: singOut())
             },
           ),
         ],
       ),
+      drawer: CustomDrawer(
+        onSignOut: () {
+          singOut();
+        },
+      ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car_outlined),
-            label: 'Veículos',
-          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),
             label: 'Conta',
@@ -107,21 +125,12 @@ class Page1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: VehiclePage(),
-    );
-  }
-}
-
-class Page2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
       home: UserAccount(),
     );
   }
 }
 
-class Page3 extends StatelessWidget {
+class Page2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(

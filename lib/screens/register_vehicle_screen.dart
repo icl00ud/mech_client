@@ -13,7 +13,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
 
   ValidationUser validation = ValidationUser();
 
-  final _formkey = GlobalKey<FormState>();
+  //final _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
