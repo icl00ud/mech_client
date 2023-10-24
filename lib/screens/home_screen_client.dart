@@ -23,7 +23,7 @@ class HomeScreenClient extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreenClient> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreenClient> {
               Icons.where_to_vote_outlined,
               size: 25,
             ),
-            color: Color(0xFFFF5C00),
+            color: const Color(0xFFFF5C00),
             onPressed: () {
               // Ação para sair (exemplo: singOut())
             },
