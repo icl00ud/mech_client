@@ -1,3 +1,5 @@
+import 'package:cpf_cnpj_validator/cnpj_validator.dart';
+import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/account_user.dart';
 import 'package:mech_client/services/feedback_utils.dart';
@@ -13,36 +15,8 @@ class ValidationUser {
     return isValid;
   }
 
-  static bool isValidCPF(String value) {
-    if (value.isEmpty) return false;
-
-    // remove caracteres não numéricos
-    value = value.replaceAll(RegExp(r'\D'), '');
-
-    if (value.length != 11) return false;
-
-    // verifica se todos os digitos são iguais o que é inválido
-    if (RegExp(r'(\d)\1{10}').hasMatch(value)) return false;
-
-    // calculo do primeiro digito verificador
-    int sum = 0;
-    for (int i = 0; i < 9; i++) {
-      sum += int.parse(value[i]) * (10 - i);
-    }
-    int firstDigit = 11 - (sum % 11);
-
-    // calculo do segundo digito verificador
-    sum = 0;
-    for (int i = 0; i < 10; i++) {
-      sum += int.parse(value[i]) * (11 - i);
-    }
-    int secondDigit = 11 - (sum % 11);
-
-    if (firstDigit == 10) firstDigit = 0;
-    if (secondDigit == 10) secondDigit = 0;
-
-    return int.parse(value[9]) == firstDigit &&
-        int.parse(value[10]) == secondDigit;
+  static bool isCPFValid(String cpf) {
+    return CPFValidator.isValid(cpf);
   }
 
   static bool isValidPhone(String phone) {
@@ -60,41 +34,7 @@ class ValidationUser {
   }
 
   static bool isValidCNPJ(String cnpj) {
-    // remova caracteres nao numéricos do CNPJ
-    cnpj = cnpj.replaceAll(RegExp(r'\D'), '');
-
-    // deve ter 14 dígitos
-    if (cnpj.length != 14) {
-      return false;
-    }
-
-    if (RegExp(r'^(\d)\1+$').hasMatch(cnpj)) {
-      return false;
-    }
-
-    // calculo do primeiro dígito verificador
-    int sum = 0;
-    for (int i = 0; i < 12; i++) {
-      sum += int.parse(cnpj[i]) * (5 - i);
-    }
-    int digit1 = 11 - (sum % 11);
-    if (digit1 >= 10) {
-      digit1 = 0;
-    }
-    if (int.parse(cnpj[12]) != digit1) {
-      return false;
-    }
-
-    // calculo do segundo dígito verificador
-    sum = 0;
-    for (int i = 0; i < 13; i++) {
-      sum += int.parse(cnpj[i]) * (6 - i);
-    }
-    int digit2 = 11 - (sum % 11);
-    if (digit2 >= 10) {
-      digit2 = 0;
-    }
-    return int.parse(cnpj[13]) == digit2;
+    return CNPJValidator.isValid(cnpj);
   }
 
   static bool validationFields(
@@ -122,8 +62,13 @@ class ValidationUser {
       }
     }
 
-    if (select == "Cliente" && !empty && !isValidCPF(accountUser.cpf.text)) {
-      FeedbackUtils.showErrorSnackBar(context, 'CPF inválido');
+    if (select == "Cliente" && !empty && !isCPFValid(accountUser.cpf.text)) {
+      FeedbackUtils.showErrorSnackBar(context, 'CPF inválido.');
+      return false;
+    } else if (select == "Mecânica" &&
+        !empty &&
+        !isValidCNPJ(accountUser.cnpj.text)) {
+      FeedbackUtils.showErrorSnackBar(context, 'CNPJ inválido.');
       return false;
     }
 

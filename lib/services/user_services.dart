@@ -65,6 +65,26 @@ class UserServices {
         // exibe o spinner ao iniciar o registro
         SpinnerUtils.showSpinner(context);
 
+        // verifica a unicidade do CPF ou CNPJ antes de registrar
+        if (select == "Cliente") {
+          final isUnique = await checkUniqueCPF(accountUser.cpf.text);
+          if (!isUnique) {
+            SpinnerUtils.hideSpinner(context);
+            FeedbackUtils.showErrorSnackBar(
+                context, 'Este CPF já foi cadastrado.');
+            return;
+          }
+        } else {
+          final isUnique = await checkUniqueCNPJ(accountUser.cnpj.text);
+          if (!isUnique) {
+            SpinnerUtils.hideSpinner(context);
+            FeedbackUtils.showErrorSnackBar(
+                context, 'Este CNPJ já foi cadastrado.');
+            return;
+          }
+        }
+
+        // cria um usuario com autenticação de e-mail/senha
         final UserCredential userCredential =
             await firebaseAuth.createUserWithEmailAndPassword(
           email: accountUser.email.text,
@@ -73,6 +93,7 @@ class UserServices {
 
         final User? user = userCredential.user;
         if (user != null) {
+          // prepara os dados
           final Map<String, dynamic> addressData = {
             'address': accountUser.address.address.text,
             'number': accountUser.address.number.text,
@@ -95,11 +116,13 @@ class UserServices {
             userData['cnpj'] = accountUser.cnpj.text;
           }
 
+          // salva os dados do usuário
           await FirebaseFirestore.instance
               .collection('Users')
               .doc(user.uid)
               .set(userData);
 
+          // exibe uma mensagem de sucesso e redireciona para tela de login
           FeedbackUtils.showSuccessSnackBar(
               context, 'Cadastro efetuado com sucesso!');
 
@@ -122,6 +145,24 @@ class UserServices {
     } else {
       print("Campos inválidos.");
     }
+  }
+
+  Future<bool> checkUniqueCPF(String cpf) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('type', isEqualTo: 'Cliente')
+        .where('cpf', isEqualTo: cpf)
+        .get();
+    return querySnapshot.docs.isEmpty;
+  }
+
+  Future<bool> checkUniqueCNPJ(String cnpj) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('type', isEqualTo: 'Mecânica')
+        .where('cnpj', isEqualTo: cnpj)
+        .get();
+    return querySnapshot.docs.isEmpty;
   }
 
   Future<AccountUser?> getUser(AccountUser accountUser) async {
@@ -234,6 +275,35 @@ class UserServices {
           .removeCurrentSnackBar(); // Remove o SnackBar
       print('Erro ao atualizar informações do usuário: $e');
       return false;
+    }
+  }
+
+  Future<void> deleteUser(BuildContext context, AccountUser accountUser) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // reautenticar o usuario com a senha atual
+      final credential = EmailAuthProvider.credential(
+          email: accountUser.email.text, password: accountUser.password.text);
+
+      try {
+        SpinnerUtils.showSpinner(context);
+        await user.reauthenticateWithCredential(credential);
+        // exclusão da conta no banco
+        await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(user.uid)
+            .delete();
+        // exclusão da conta autenticada
+        await user.delete();
+        FeedbackUtils.showSuccessSnackBar(
+            context, "Conta excluída com sucesso!");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const LoginPage()));
+      } catch (e) {
+        SpinnerUtils.hideSpinner(context);
+        print("Erro de reautenticação: $e");
+      }
     }
   }
 }
