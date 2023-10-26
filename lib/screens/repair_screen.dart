@@ -41,28 +41,27 @@ class _RegisterRepairState extends State<RegisterRepair> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        alignment: Alignment.topCenter,
+        body: SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: SingleChildScrollView(
           child: Column(
-            children: <Widget>[
-              const Column(
-                children: [
-                  Icon(
-                    Icons.car_repair,
-                    size: 50,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'Conserto',
-                    style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFFF5C00)),
-                  ),
-                ],
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(
+                Icons.build,
+                size: 50,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Text(
+                "Conserto",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Color(0xFFFF5C00),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400),
               ),
               Container(
                 padding: const EdgeInsets.only(
@@ -119,7 +118,7 @@ class _RegisterRepairState extends State<RegisterRepair> {
                           null, // ou um número grande, por exemplo, maxLines: 10,
                       decoration: const InputDecoration(
                         labelText: "Problema Relatado",
-                      enabled: false,
+                        enabled: false,
                       ),
                     ),
                   ],
@@ -129,13 +128,14 @@ class _RegisterRepairState extends State<RegisterRepair> {
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => RegisterRepairPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterRepairPage()),
                   );
                   // Coloque a ação que você deseja realizar ao tocar no card aqui
                 },
                 child: Container(
                   padding: const EdgeInsets.only(
-                      left: 120, right: 120, top: 5, bottom: 20),
+                      left: 15, right: 30, top: 5, bottom: 20),
                   margin: const EdgeInsets.only(
                       left: 20, right: 20, top: 20, bottom: 10),
                   decoration: BoxDecoration(
@@ -143,11 +143,10 @@ class _RegisterRepairState extends State<RegisterRepair> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: const [
                       BoxShadow(
-                        spreadRadius: 1,
-                        color: Colors.grey,
-                        blurRadius: 10,
-                        offset: Offset(3, 1),
-                      ),
+                          spreadRadius: 1,
+                          color: Colors.grey,
+                          blurRadius: 10,
+                          offset: Offset(3, 1)),
                     ],
                   ),
                   child: const Column(
@@ -165,6 +164,6 @@ class _RegisterRepairState extends State<RegisterRepair> {
           ),
         ),
       ),
-    );
+    ));
   }
 }

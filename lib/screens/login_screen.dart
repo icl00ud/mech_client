@@ -15,6 +15,8 @@ class _LoginPageState extends State<LoginPage> {
   AccountUser accountUser = AccountUser();
   UserServices userServices = UserServices();
 
+  bool isPasswordVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,15 +86,26 @@ class _LoginPageState extends State<LoginPage> {
                   width: 300,
                   child: TextField(
                     controller: accountUser.password,
-                    obscureText: true,
+                    obscureText: !isPasswordVisible,
                     decoration: InputDecoration(
                       filled: true,
                       labelText: 'Senha',
-                      suffixIcon: const Icon(
-                        Icons.lock,
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPasswordVisible = !isPasswordVisible;
+                          });
+                        },
+                        child: Icon(
+                          isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 18),
+                        horizontal: 15,
+                        vertical: 18,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(50.0),
                         borderSide: BorderSide.none,
