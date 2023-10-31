@@ -1,4 +1,6 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:mech_client/screens/repair_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/services/validationUser.dart';
 
@@ -28,7 +30,7 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
               const Column(
                 children: [
                   Icon(
-                    Icons.car_repair,
+                    Icons.build,
                     size: 50,
                   ),
                   SizedBox(
@@ -80,7 +82,12 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
                           child: Padding(
                             padding:
                                 EdgeInsets.only(top: padding, bottom: padding),
-                            child: TextFormField(
+                            child: DateTimePicker(
+                              type: DateTimePickerType.date,
+                              dateMask: 'dd/MM/yyyy',
+                              initialValue: DateTime.now().toString(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2101),
                               decoration:
                                   const InputDecoration(labelText: "Data"),
                             ),
@@ -101,6 +108,10 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const RepairPage()),
+                            );
                             // Logic for "Cadastrar" button
                           },
                           style: ElevatedButton.styleFrom(
