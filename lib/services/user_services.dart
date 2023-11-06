@@ -250,6 +250,7 @@ class UserServices {
 
             await collection.doc(user.uid).update(userData);
 
+            // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context)
                 .removeCurrentSnackBar(); // Remove o SnackBar
             FeedbackUtils.showSuccessSnackBar(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mech_client/models/vehicle.dart';
 import 'package:mech_client/services/validationUser.dart';
+import 'package:mech_client/services/vehicle_services.dart';
 
 class RegisterVehiclePage extends StatefulWidget {
   const RegisterVehiclePage({Key? key}) : super(key: key);
@@ -12,6 +14,8 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
   static double padding = 3;
 
   ValidationUser validation = ValidationUser();
+  Vehicle vehicle = Vehicle();
+  VehicleServices vehicleServices = VehicleServices();
 
   //final _formkey = GlobalKey<FormState>();
 
@@ -69,6 +73,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Placa"),
+                                  controller: vehicle.plate,
                             ),
                           ),
                         ),
@@ -81,6 +86,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Modelo"),
+                                  controller: vehicle.model,
                             ),
                           ),
                         ),
@@ -93,6 +99,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Marca"),
+                                  controller: vehicle.brand,
                             ),
                           ),
                         ),
@@ -108,6 +115,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Ano"),
+                                  controller: vehicle.yearFabrication,
                             ),
                           ),
                         ),
@@ -120,6 +128,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Cor"),
+                                  controller: vehicle.color,
                             ),
                           ),
                         ),
@@ -132,6 +141,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Câmbio"),
+                                  controller: vehicle.gearShift,
                             ),
                           ),
                         ),
@@ -143,7 +153,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            // Logic for "Cadastrar" button
+                            vehicleServices.registerVehicle(vehicle);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF5C00),

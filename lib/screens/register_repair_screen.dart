@@ -22,28 +22,27 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        alignment: Alignment.topCenter,
+        body: SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: SingleChildScrollView(
           child: Column(
-            children: <Widget>[
-              const Column(
-                children: [
-                  Icon(
-                    Icons.build,
-                    size: 50,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'Conserto',
-                    style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFFF5C00)),
-                  ),
-                ],
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(
+                Icons.build,
+                size: 50,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Text(
+                "Conserto",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Color(0xFFFF5C00),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400),
               ),
               Container(
                 padding: const EdgeInsets.only(
@@ -83,7 +82,7 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
                             padding:
                                 EdgeInsets.only(top: padding, bottom: padding),
                             child: DateTimePicker(
-                              type: DateTimePickerType.date,
+                              readOnly: true,
                               dateMask: 'dd/MM/yyyy',
                               initialValue: DateTime.now().toString(),
                               firstDate: DateTime.now(),
@@ -150,6 +149,7 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
           ),
         ),
       ),
+    ),
     );
   }
 }
