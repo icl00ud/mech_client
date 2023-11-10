@@ -100,12 +100,16 @@ class UserServices {
             'zip': accountUser.address.zip.text,
             'complement': accountUser.address.complement.text,
           };
+          final Map<String, dynamic> vehicleData = {
+            'plate': accountUser.plate,
+          };
 
           final Map<String, dynamic> userData = {
             'name': accountUser.name.text,
             'email': accountUser.email.text,
             'phone': accountUser.phone.text,
             'address': addressData,
+            'vehicle': vehicleData,
             'password': accountUser.password.text,
             'type': select,
           };

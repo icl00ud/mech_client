@@ -11,5 +11,6 @@ class AccountUser {
   TextEditingController phone = TextEditingController();
   TextEditingController cpf = TextEditingController();
   TextEditingController cnpj = TextEditingController();
+  String? plate;
   String? type;
 }
