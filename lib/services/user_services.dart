@@ -25,14 +25,14 @@ class UserServices {
           var collection = FirebaseFirestore.instance.collection('Users');
           DocumentSnapshot snapshot = await collection.doc(user.uid).get();
           if (snapshot['type'] == "Cliente") {
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => HomeScreenClient(),
               ),
             );
           }
           if (snapshot['type'] == "Mecânica") {
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => HomeScreenMech(),
               ),
@@ -299,7 +299,7 @@ class UserServices {
         await user.delete();
         FeedbackUtils.showSuccessSnackBar(
             context, "Conta excluída com sucesso!");
-        Navigator.push(context,
+        Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const LoginPage()));
       } catch (e) {
         SpinnerUtils.hideSpinner(context);

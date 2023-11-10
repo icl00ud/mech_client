@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/account_user.dart';
-import 'package:mech_client/screens/custom_drawer.dart';
+import 'package:mech_client/widgets/custom_drawer_widget.dart';
 import 'package:mech_client/screens/login_screen.dart';
 import 'package:mech_client/screens/repair_screen.dart';
 import 'package:mech_client/screens/user_account_screen.dart';
@@ -112,9 +112,9 @@ class _HomeScreenState extends State<HomeScreenMech> {
 
   void singOut() async {
     await _firebaseAuth.signOut().then(
-          (user) => Navigator.of(context).push(
+          (user) => Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LoginPage(),
+              builder: (context) => const LoginPage(),
             ),
           ),
         );
