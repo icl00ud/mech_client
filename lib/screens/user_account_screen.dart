@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:mech_client/models/account_user.dart';
 import 'package:mech_client/services/user_services.dart';
+import 'package:mech_client/widgets/button_widget.dart';
 
 class UserAccount extends StatefulWidget {
   const UserAccount({super.key});
@@ -258,22 +259,13 @@ class _UserAccountState extends State<UserAccount> {
                             child: SizedBox(
                               width: 150,
                               height: 40,
-                              child: ElevatedButton(
-                                onPressed: () {
+                              child: Button(
+                                text: "Editar",
+                                function: () {
                                   setState(() {
                                     isEditing = !isEditing; // Inverte o estado
                                   });
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFF5C00),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Editar',
-                                  style: TextStyle(fontSize: 16),
-                                ),
                               ),
                             ),
                           ),
@@ -282,57 +274,36 @@ class _UserAccountState extends State<UserAccount> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(
-                                  width: 120,
-                                  height: 40,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      userServices
-                                          .updateUser(context, actualPassword,
-                                              accountUser)
-                                          .then((success) {
-                                        if (success) {
-                                          setState(() {
-                                            userServices.getUser(accountUser);
-                                            isEditing = false;
-                                          });
-                                        }
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFFF5C00),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      'Salvar',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ),
+                                    width: 120,
+                                    height: 40,
+                                    child: Button(
+                                      text: "Salvar",
+                                      function: () {
+                                        userServices
+                                            .updateUser(context, actualPassword,
+                                                accountUser)
+                                            .then((success) {
+                                          if (success) {
+                                            setState(() {
+                                              userServices.getUser(accountUser);
+                                              isEditing = false;
+                                            });
+                                          }
+                                        });
+                                      },
+                                    )),
                                 const SizedBox(width: 40),
                                 SizedBox(
                                   width: 120,
                                   height: 40,
-                                  child: ElevatedButton(
-                                    onPressed: () {
+                                  child: Button(
+                                    text: "Cancelar",
+                                    function: () {
                                       setState(() {
                                         userServices.getUser(accountUser);
                                         isEditing = false;
                                       });
                                     },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFFF5C00),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      'Cancelar',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
                                   ),
                                 ),
                               ],

@@ -7,56 +7,49 @@ class VehicleServices {
 
   void registerVehicle(Vehicle vehicle) async {
     try {
-       final User? user = firebaseAuth.currentUser;
-       if(user != null){   
-        vehicle.idUser = user.uid;     
-      Map<String, dynamic> vehicleData = {
-        'id' : vehicle.idUser,
-        'plate': vehicle.plate.text,
-        'model': vehicle.model.text,
-        'color': vehicle.color.text,
-        'brand': vehicle.brand.text,
-        'gearShift': vehicle.gearShift.text,
-        'yearFabrication': vehicle.yearFabrication.text,
-      };
-      await FirebaseFirestore.instance
-              .collection('Vehicles')
-              .doc(vehicle.plate.text)
-              .set(vehicleData);
-       } 
-
-    }catch (e) {
-      
+      final User? user = firebaseAuth.currentUser;
+      if (user != null) {
+        vehicle.idUser = user.uid;
+        Map<String, dynamic> vehicleData = {
+          'id': vehicle.idUser,
+          'plate': vehicle.plate.text,
+          'model': vehicle.model.text,
+          'color': vehicle.color.text,
+          'brand': vehicle.brand.text,
+          'gearShift': vehicle.gearShift.text,
+          'yearFabrication': vehicle.yearFabrication.text,
+        };
+        await FirebaseFirestore.instance
+            .collection('Vehicles')
+            .doc(vehicle.plate.text)
+            .set(vehicleData);
+      }
+    } catch (e) {
       print('Erro ao registrar as informações do veículo: $e');
     }
   }
- 
 
-  
   Future<Vehicle?> getVehicle(Vehicle vehicle) async {
     try {
       User? user = firebaseAuth.currentUser;
-      if (user != null){
+      if (user != null) {
         var collection = FirebaseFirestore.instance.collection('Vehicles');
-        DocumentSnapshot snapshot = await collection.doc(vehicle.plate.text).get();
+        DocumentSnapshot snapshot =
+            await collection.doc(vehicle.plate.text).get();
         if (snapshot.exists) {
-  
+          // Preencha os controladores do objeto Vehicle com os dados obtidos.
+          vehicle.brand.text = snapshot['brand'] ?? 'campo vazio';
+          vehicle.color.text = snapshot['color'] ?? 'campo vazio';
+          vehicle.model.text = snapshot['model'] ?? 'campo vazio';
+          vehicle.gearShift.text = snapshot['gearShift'] ?? 'campo vazio';
+          vehicle.yearFabrication.text =
+              snapshot['yearFabrication'] ?? 'campo vazio';
+          vehicle.plate.text = snapshot['plate'] ?? 'campo vazio';
 
-
-      // Preencha os controladores do objeto Vehicle com os dados obtidos.
-      vehicle.brand.text = snapshot['brand'] ?? 'campo vazio';
-      vehicle.color.text = snapshot['color'] ?? 'campo vazio';
-      vehicle.model.text = snapshot['model'] ?? 'campo vazio';
-      vehicle.gearShift.text = snapshot['gearShift'] ?? 'campo vazio';
-      vehicle.yearFabrication.text = snapshot['yearFabrication'] ?? 'campo vazio';
-      vehicle.plate.text = snapshot['plate'] ?? 'campo vazio';
-
-      return vehicle;
+          return vehicle;
+        }
       }
-      }
-
     } catch (e) {
-      
       print('Erro ao obter informações do veículo: $e');
     }
   }

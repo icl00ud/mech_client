@@ -5,6 +5,7 @@ import 'package:mech_client/models/account_user.dart';
 import 'package:mech_client/screens/login_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/services/validationUser.dart';
+import 'package:mech_client/widgets/button_widget.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -283,23 +284,14 @@ class RegisterPageState extends State<RegisterPage> {
                       SizedBox(
                         width: 150,
                         height: 50,
-                        child: ElevatedButton(
-                          onPressed: () {
+                        child: Button(
+                          text: "Cadastrar-se",
+                          function: () {
                             setState(() {
                               userServices.registerUser(
                                   context, accountUser, _selectedItem);
                             });
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5C00),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
-                          ),
-                          child: const Text(
-                            'Cadastrar-se',
-                            style: TextStyle(fontSize: 16),
-                          ),
                         ),
                       ),
                     ],
@@ -318,7 +310,7 @@ class RegisterPageState extends State<RegisterPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => const LoginPage(),
                           ),

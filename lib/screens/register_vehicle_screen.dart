@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mech_client/models/vehicle.dart';
 import 'package:mech_client/services/validationUser.dart';
 import 'package:mech_client/services/vehicle_services.dart';
+import 'package:mech_client/widgets/button_widget.dart';
 
 class RegisterVehiclePage extends StatefulWidget {
   const RegisterVehiclePage({Key? key}) : super(key: key);
@@ -73,7 +74,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Placa"),
-                                  controller: vehicle.plate,
+                              controller: vehicle.plate,
                             ),
                           ),
                         ),
@@ -86,7 +87,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Modelo"),
-                                  controller: vehicle.model,
+                              controller: vehicle.model,
                             ),
                           ),
                         ),
@@ -99,7 +100,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Marca"),
-                                  controller: vehicle.brand,
+                              controller: vehicle.brand,
                             ),
                           ),
                         ),
@@ -115,7 +116,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Ano"),
-                                  controller: vehicle.yearFabrication,
+                              controller: vehicle.yearFabrication,
                             ),
                           ),
                         ),
@@ -128,7 +129,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Cor"),
-                                  controller: vehicle.color,
+                              controller: vehicle.color,
                             ),
                           ),
                         ),
@@ -141,7 +142,7 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Câmbio"),
-                                  controller: vehicle.gearShift,
+                              controller: vehicle.gearShift,
                             ),
                           ),
                         ),
@@ -151,37 +152,18 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            vehicleServices.registerVehicle(vehicle);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5C00),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
-                          ),
-                          child: const Text(
-                            'Cadastrar',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
+                        Button(
+                            text: "Cadastrar",
+                            function: () {
+                              vehicleServices.registerVehicle(vehicle);
+                            }),
+                        Button(
+                          text: "Cancelar",
+                          function: () {
                             Navigator.of(context).pop();
                             // Logic for "Cancelar" button
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5C00),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
-                          ),
-                          child: const Text(
-                            'Cancelar',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
+                        )
                       ],
                     ),
                   ],
