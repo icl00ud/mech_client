@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 
 class Button extends StatelessWidget {
   final VoidCallback function;
@@ -10,7 +11,7 @@ class Button extends StatelessWidget {
     return ElevatedButton(
       onPressed: function,
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFFF5C00),
+        backgroundColor: primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50.0), // Arredondamento da borda
         ),

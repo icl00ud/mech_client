@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/account_user.dart';
+import 'package:mech_client/models/account_user_model.dart';
 
 import 'package:mech_client/screens/register_screen.dart';
 import 'package:mech_client/services/user_services.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/widgets/button_widget.dart';
 
 class LoginPage extends StatefulWidget {
@@ -42,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFFF5C00)),
+                          color: primaryColor),
                     ),
                     SizedBox(height: 8), // Espaço entre os textos
                     Text(
@@ -150,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFFFF5C00),
+                            color: primaryColor,
                           ),
                         ),
                       ),

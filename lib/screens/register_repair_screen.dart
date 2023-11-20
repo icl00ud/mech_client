@@ -2,7 +2,8 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mech_client/screens/repair_screen.dart';
 import 'package:mech_client/services/user_services.dart';
-import 'package:mech_client/services/validationUser.dart';
+import 'package:mech_client/services/validation_user_service.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/widgets/button_widget.dart';
 
 class RegisterRepairPage extends StatefulWidget {
@@ -41,7 +42,7 @@ class RegisterRepairPageState extends State<RegisterRepairPage> {
                   "Conserto",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      color: Color(0xFFFF5C00),
+                      color: primaryColor,
                       fontSize: 20,
                       fontWeight: FontWeight.w400),
                 ),

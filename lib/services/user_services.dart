@@ -1,11 +1,11 @@
 import 'package:mech_client/screens/home_screen_mech.dart';
-import 'package:mech_client/services/feedback_utils.dart';
-import 'package:mech_client/services/validationUser.dart';
-import 'spinner_utils.dart';
+import 'package:mech_client/utils/feedback_utils.dart';
+import 'package:mech_client/services/validation_user_service.dart';
+import '../utils/spinner_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/account_user.dart';
+import 'package:mech_client/models/account_user_model.dart';
 import 'package:mech_client/screens/home_screen_client.dart';
 import 'package:mech_client/screens/login_screen.dart';
 
@@ -60,7 +60,7 @@ class UserServices {
 
   void registerUser(
       BuildContext context, AccountUser accountUser, String select) async {
-    if (ValidationUser.validationFields(context, accountUser, select)) {
+    if (ValidationUser.validationFieldsUser(context, accountUser, select)) {
       try {
         // exibe o spinner ao iniciar o registro
         SpinnerUtils.showSpinner(context);
@@ -211,7 +211,7 @@ class UserServices {
     AccountUser accountUser,
   ) async {
     try {
-      if (ValidationUser.validationFields(
+      if (ValidationUser.validationFieldsUser(
           context, accountUser, accountUser.type,
           validateCheckbox: false)) {
         SpinnerUtils.showSpinnerMessage(context, "Atualizando o cadastro...");

@@ -7,6 +7,4 @@ class Vehicle {
   TextEditingController model = TextEditingController();
   TextEditingController gearShift = TextEditingController();
   TextEditingController yearFabrication = TextEditingController();
-  String? idUser;
-
 }

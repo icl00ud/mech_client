@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 
 class SpinnerUtils {
   // criar spinner
@@ -9,7 +10,7 @@ class SpinnerUtils {
       builder: (context) {
         return const Center(
           child: CircularProgressIndicator(
-            color: Color(0xFFFF5C00),
+            color: primaryColor,
           ),
         );
       },

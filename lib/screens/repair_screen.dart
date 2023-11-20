@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/screens/register_repair_screen.dart';
 import 'package:mech_client/services/repair_services.dart';
-import 'package:mech_client/models/repair.dart';
+import 'package:mech_client/models/repair_model.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 
 class RepairPage extends StatelessWidget {
   const RepairPage({Key? key}) : super(key: key);
@@ -59,7 +60,7 @@ class _RegisterRepairState extends State<RegisterRepair> {
                 "Conserto",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Color(0xFFFF5C00),
+                    color: primaryColor,
                     fontSize: 20,
                     fontWeight: FontWeight.w400),
               ),
@@ -153,7 +154,7 @@ class _RegisterRepairState extends State<RegisterRepair> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(Icons.add_circle_rounded,
-                          size: 48.0, color: Color(0xFFFF5C00)),
+                          size: 48.0, color: primaryColor),
                       SizedBox(height: 8.0),
                       Text('Relatar Problema', textAlign: TextAlign.center),
                     ],

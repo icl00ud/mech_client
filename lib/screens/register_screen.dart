@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:mech_client/models/account_user.dart';
+import 'package:mech_client/models/account_user_model.dart';
 import 'package:mech_client/screens/login_screen.dart';
 import 'package:mech_client/services/user_services.dart';
-import 'package:mech_client/services/validationUser.dart';
+import 'package:mech_client/services/validation_user_service.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/widgets/button_widget.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -45,7 +46,7 @@ class RegisterPageState extends State<RegisterPage> {
                       style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFFF5C00)),
+                          color: primaryColor),
                     ),
                     const SizedBox(height: 20),
                     const Text(
@@ -321,7 +322,7 @@ class RegisterPageState extends State<RegisterPage> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFFF5C00),
+                          color: primaryColor,
                         ),
                       ),
                     ),

@@ -1,8 +1,8 @@
 import 'package:cpf_cnpj_validator/cnpj_validator.dart';
 import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/account_user.dart';
-import 'package:mech_client/services/feedback_utils.dart';
+import 'package:mech_client/models/account_user_model.dart';
+import 'package:mech_client/utils/feedback_utils.dart';
 import 'package:mech_client/services/user_services.dart';
 
 class ValidationUser {
@@ -37,7 +37,7 @@ class ValidationUser {
     return CNPJValidator.isValid(cnpj);
   }
 
-  static bool validationFields(
+  static bool validationFieldsUser(
       BuildContext context, AccountUser accountUser, String? select,
       {bool validateCheckbox = true}) {
     List<TextEditingController> register = [

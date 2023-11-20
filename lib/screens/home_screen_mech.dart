@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/account_user.dart';
+import 'package:mech_client/models/account_user_model.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/widgets/custom_drawer_widget.dart';
 import 'package:mech_client/screens/login_screen.dart';
 import 'package:mech_client/screens/repair_screen.dart';
@@ -56,7 +57,7 @@ class _HomeScreenState extends State<HomeScreenMech> {
         title: const Text(
           'MechClient',
           style: TextStyle(
-            color: Color(0xFFFF5C00),
+            color: primaryColor,
           ),
         ),
         centerTitle: true,
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreenMech> {
               Icons.where_to_vote_outlined,
               size: 25,
             ),
-            color: Color(0xFFFF5C00),
+            color: primaryColor,
             onPressed: () {
               // Ação para sair (exemplo: singOut())
             },
@@ -104,7 +105,7 @@ class _HomeScreenState extends State<HomeScreenMech> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFFFF5C00),
+        selectedItemColor: primaryColor,
         onTap: _onItemTapped,
       ),
     );

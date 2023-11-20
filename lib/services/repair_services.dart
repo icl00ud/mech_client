@@ -1,4 +1,4 @@
-import 'package:mech_client/models/repair.dart';
+import 'package:mech_client/models/repair_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RepairServices {
@@ -13,7 +13,8 @@ class RepairServices {
 
       Map<String, dynamic> repairData = {
         'date': '28/10/2003',
-        'description': 'Gostaria de fazer um orçamento relacionado a troca de oleo, filtro de ar e pastilhas de freio',
+        'description':
+            'Gostaria de fazer um orçamento relacionado a troca de oleo, filtro de ar e pastilhas de freio',
         'plate': 'MJJ-2251',
       };
 
@@ -25,8 +26,4 @@ class RepairServices {
       print('Erro ao obter informações do conserto: $e');
     }
   }
-
-  
-
-
 }

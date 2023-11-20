@@ -1,22 +1,55 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
-import 'package:mech_client/models/vehicle.dart';
+import 'package:mech_client/models/vehicle_model.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mech_client/utils/feedback_utils.dart';
 
 class VehicleServices {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  void registerVehicle(Vehicle vehicle) async {
+  Future<void> registerVehicle(Vehicle vehicle, context) async {
     try {
       final User? user = firebaseAuth.currentUser;
 
       if (user != null) {
-        vehicle.idUser = user.uid;
+        // consulta a lista de veículos do usuário
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .get();
 
-        // armazenando dados
+        // verifica se os dados existem e são do tipo Map
+        if (userSnapshot.exists &&
+            userSnapshot.data() is Map<String, dynamic>) {
+          Map<String, dynamic> userData =
+              userSnapshot.data() as Map<String, dynamic>;
+
+          List<dynamic> userVehicles = userData['vehicles'] ?? [];
+
+          // verifica se o usuário já possui 3 ou mais veículos
+          if (userVehicles.length >= 3) {
+            FeedbackUtils.showErrorSnackBar(context,
+                "Limite de veículos atingido. Não é possível cadastrar mais veículos.");
+            return;
+          }
+
+          // verifica se a placa já está em uso
+          bool plateExists = await checkIfPlateExists(vehicle.plate.text);
+
+          if (plateExists) {
+            FeedbackUtils.showErrorSnackBar(
+              context,
+              "Já existe um veículo cadastrado com esta placa.",
+            );
+            return;
+          }
+        }
+
+        // armazena os dados do veículo
         Map<String, dynamic> vehicleData = {
-          'id': vehicle.idUser,
+          'id': user.uid,
           'plate': vehicle.plate.text,
           'model': vehicle.model.text,
           'color': vehicle.color.text,
@@ -25,40 +58,61 @@ class VehicleServices {
           'yearFabrication': vehicle.yearFabrication.text,
         };
 
-        //inserindo dados do Veiculo
+        // insere dados na colecao veiculo
         await FirebaseFirestore.instance
             .collection('Vehicles')
             .doc(vehicle.plate.text)
             .set(vehicleData);
-      }
 
-      // insere campo placa na coleção do usuario
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(user?.uid)
-          .update(
-        {
-          'vehicle.plate': vehicle.plate.text,
-        },
-      );
+        // adiciona a placa à lista de veículos do usuário array
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .update({
+          'vehicles': FieldValue.arrayUnion([vehicle.plate.text]),
+        });
+
+        FeedbackUtils.showSuccessSnackBar(
+            context, "Cadastro efetuado com sucesso!");
+        Navigator.of(context).pop();
+      }
     } catch (e) {
       print('Erro ao registrar as informações do veículo: $e');
     }
   }
 
-  Future<Vehicle?> getVehicle(Vehicle vehicle) async {
+  Future<bool> checkIfPlateExists(String plate) async {
+    try {
+      DocumentSnapshot plateSnapshot = await FirebaseFirestore.instance
+          .collection('Vehicles')
+          .doc(plate)
+          .get();
+
+      return plateSnapshot.exists;
+    } catch (e) {
+      print('Erro ao verificar se a placa já existe: $e');
+      return false;
+    }
+  }
+
+  Future<List<Vehicle>> getVehiclesForUser() async {
     try {
       User? user = firebaseAuth.currentUser;
 
       if (user != null) {
         var collection = FirebaseFirestore.instance.collection('Vehicles');
 
-        DocumentSnapshot snapshot =
-            await collection.doc(vehicle.plate.text).get();
+        // Consulta os veículos associados ao usuário pelo user.uid
+        QuerySnapshot querySnapshot =
+            await collection.where('id', isEqualTo: user.uid).get();
 
-        if (snapshot.exists) {
-          // Preencha os controladores do objeto Vehicle com os dados obtidos.
+        List<Vehicle> vehicles = [];
 
+        // Itera sobre os documentos encontrados na consulta
+        for (QueryDocumentSnapshot snapshot in querySnapshot.docs) {
+          Vehicle vehicle = Vehicle();
+
+          // Preenche os controladores do objeto Vehicle com os dados obtidos.
           vehicle.brand.text = snapshot['brand'] ?? 'campo vazio';
           vehicle.color.text = snapshot['color'] ?? 'campo vazio';
           vehicle.model.text = snapshot['model'] ?? 'campo vazio';
@@ -67,11 +121,16 @@ class VehicleServices {
               snapshot['yearFabrication'] ?? 'campo vazio';
           vehicle.plate.text = snapshot['plate'] ?? 'campo vazio';
 
-          return vehicle;
+          vehicles.add(vehicle);
         }
+
+        return vehicles;
       }
+
+      return [];
     } catch (e) {
-      print('Erro ao obter informações do veículo: $e');
+      print('Erro ao obter informações dos veículos: $e');
+      return [];
     }
   }
 }

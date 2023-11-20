@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/vehicle.dart';
-import 'package:mech_client/services/validationUser.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:mech_client/models/vehicle_model.dart';
+import 'package:mech_client/services/validation_user_service.dart';
 import 'package:mech_client/services/vehicle_services.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/widgets/button_widget.dart';
 
 class RegisterVehiclePage extends StatefulWidget {
@@ -17,8 +19,6 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
   ValidationUser validation = ValidationUser();
   Vehicle vehicle = Vehicle();
   VehicleServices vehicleServices = VehicleServices();
-
-  //final _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +42,13 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                     style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFFF5C00)),
+                        color: primaryColor),
                   ),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.only(
-                    left: 15, right: 30, top: 5, bottom: 20),
+                    left: 15, right: 15, top: 5, bottom: 20),
                 margin: const EdgeInsets.only(
                     left: 20, right: 20, top: 20, bottom: 10),
                 decoration: BoxDecoration(
@@ -72,9 +72,26 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             padding:
                                 EdgeInsets.only(top: padding, bottom: padding),
                             child: TextFormField(
+                              controller: vehicle.plate,
                               decoration:
                                   const InputDecoration(labelText: "Placa"),
-                              controller: vehicle.plate,
+                              onChanged: (value) {
+                                vehicle.plate.value =
+                                    vehicle.plate.value.copyWith(
+                                  text: value.toUpperCase(),
+                                  selection: TextSelection.collapsed(
+                                      offset: value.length),
+                                );
+                              },
+                              inputFormatters: [
+                                MaskTextInputFormatter(
+                                  mask: 'AAA-9999',
+                                  filter: {
+                                    '9': RegExp(r'[0-9]'),
+                                    'A': RegExp(r'[a-zA-Z]')
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -116,6 +133,12 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                             child: TextFormField(
                               decoration:
                                   const InputDecoration(labelText: "Ano"),
+                              keyboardType: TextInputType.datetime,
+                              inputFormatters: [
+                                MaskTextInputFormatter(
+                                    mask: '####',
+                                    filter: {'#': RegExp(r'[0-9]')})
+                              ],
                               controller: vehicle.yearFabrication,
                             ),
                           ),
@@ -155,13 +178,12 @@ class RegisterVehiclePageState extends State<RegisterVehiclePage> {
                         Button(
                             text: "Cadastrar",
                             function: () {
-                              vehicleServices.registerVehicle(vehicle);
+                              vehicleServices.registerVehicle(vehicle, context);
                             }),
                         Button(
                           text: "Cancelar",
                           function: () {
                             Navigator.of(context).pop();
-                            // Logic for "Cancelar" button
                           },
                         )
                       ],
