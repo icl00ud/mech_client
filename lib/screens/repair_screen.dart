@@ -1,169 +1,112 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/screens/register_repair_screen.dart';
+import 'package:mech_client/widgets/Repairs/repair_request_widget.dart';
 import 'package:mech_client/services/repair_services.dart';
-import 'package:mech_client/models/repair.dart';
 
-class RepairPage extends StatelessWidget {
+import '../widgets/Repairs/repair_create_widget.dart';
+
+class RepairPage extends StatefulWidget {
   const RepairPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: RegisterRepair(),
-        ),
-      ),
-    );
-  }
+  RepairPageState createState() => RepairPageState();
 }
 
-class RegisterRepair extends StatefulWidget {
-  const RegisterRepair({Key? key}) : super(key: key);
-
-  @override
-  _RegisterRepairState createState() => _RegisterRepairState();
-}
-
-class _RegisterRepairState extends State<RegisterRepair> {
-  //List<String> repairs = []; // Lista de veículos do usuário
-  static double padding = 3;
-  Repair repair = Repair();
-  RepairServices repairServices = RepairServices();
-
-  @override
-  void initState() {
-    repairServices.getRepair(repair);
-
-    super.initState();
-  }
+class RepairPageState extends State<RepairPage> {
+  final RepairServices repairServices = RepairServices();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: SingleChildScrollView(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.build,
-                size: 50,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "Conserto",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Color(0xFFFF5C00),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400),
-              ),
-              Container(
-                padding: const EdgeInsets.only(
-                    left: 15, right: 30, top: 5, bottom: 20),
-                margin: const EdgeInsets.only(
-                    left: 20, right: 20, top: 20, bottom: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [
-                    BoxShadow(
-                        spreadRadius: 1,
-                        color: Colors.grey,
-                        blurRadius: 10,
-                        offset: Offset(3, 1)),
-                  ],
+              const SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 5,
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(top: padding, bottom: padding),
-                            child: TextFormField(
-                              controller: repair.plate,
-                              decoration:
-                                  const InputDecoration(labelText: "Placa"),
-                              enabled: false,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 40),
-                        Expanded(
-                          flex: 4,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(top: padding, bottom: padding),
-                            child: TextFormField(
-                              controller: repair.date,
-                              decoration:
-                                  const InputDecoration(labelText: "Data"),
-                              enabled: false,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    TextFormField(
-                      controller: repair.description,
-                      maxLines:
-                          null, // ou um número grande, por exemplo, maxLines: 10,
-                      decoration: const InputDecoration(
-                        labelText: "Problema Relatado",
-                        enabled: false,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Add another card below this one
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const RegisterRepairPage()),
-                  );
-                  // Coloque a ação que você deseja realizar ao tocar no card aqui
-                },
                 child: Container(
-                  padding: const EdgeInsets.only(
-                      left: 15, right: 30, top: 5, bottom: 20),
-                  margin: const EdgeInsets.only(
-                      left: 20, right: 20, top: 20, bottom: 10),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: const [
                       BoxShadow(
-                          spreadRadius: 1,
-                          color: Colors.grey,
-                          blurRadius: 10,
-                          offset: Offset(3, 1)),
+                        spreadRadius: 1,
+                        color: Colors.grey,
+                        blurRadius: 2,
+                        offset: Offset(2, 1.5),
+                      ),
                     ],
                   ),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(Icons.add_circle_rounded,
-                          size: 48.0, color: Color(0xFFFF5C00)),
-                      SizedBox(height: 8.0),
-                      Text('Relatar Problema', textAlign: TextAlign.center),
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const ServiceRequestModal();
+                            },
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: const Color(0xFFFF5C00),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(2),
+                        ),
+                        child: const Icon(Icons.add, size: 32),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Solicitar Serviço',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ],
                   ),
                 ),
-              )
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Serviços Aceitos',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFF5C00),
+                ),
+              ),
+              const Text(
+                'Nenhuma solicitação aceita.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 15),
+              const SizedBox(height: 20),
+              const Text(
+                'Serviços Pendentes',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFF5C00),
+                ),
+              ),
+              const Text(
+                'Nenhuma solicitação pendente.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
             ],
           ),
         ),
       ),
-    ));
+    );
   }
 }

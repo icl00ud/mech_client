@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mech_client/models/account_user.dart';
 import 'package:mech_client/screens/custom_drawer.dart';
 import 'package:mech_client/screens/login_screen.dart';
-import 'package:mech_client/screens/register_repair_screen.dart';
+import 'package:mech_client/screens/repair_screen.dart';
 import 'package:mech_client/screens/user_account_screen.dart';
 import 'package:mech_client/screens/vehicle_screen.dart';
 import 'package:mech_client/services/user_services.dart';
@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreenClient> {
             label: 'Conta',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.toll_outlined),
+            icon: Icon(Icons.build_outlined),
             label: 'Conserto',
           ),
         ],
@@ -144,7 +144,7 @@ class Page3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: RegisterRepairPage(),
+      home: RepairPage(),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/account_user.dart';
 
-import 'package:mech_client/screens/register_screen.dart';
+import 'package:mech_client/screens/register_user_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 
 class LoginPage extends StatefulWidget {
