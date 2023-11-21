@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/widgets/Repairs/repair_request_widget.dart';
 import 'package:mech_client/services/repair_services.dart';
+import 'package:mech_client/models/repair.dart';
 
 import '../widgets/Repairs/repair_create_widget.dart';
 

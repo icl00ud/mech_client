@@ -16,18 +16,16 @@ class RepairServices {
     try {
       String userId = _firebaseAuth.currentUser!.uid;
 
-      await _firestore.collection('Repairs').add({
-        'userId': userId,
-        'title': title,
-        'description': description,
-        'plate': plate,
-        'model': model,
-        'year': year,
-        'motor': motor,
-        'assigned_mechanic_id': null,
-        'is_accepted': false,
-        'dt_creation': FieldValue.serverTimestamp(),
-      });
+      Map<String, dynamic> repairData = {
+        'date': '28/10/2003',
+        'description': 'Gostaria de fazer um orçamento relacionado a troca de oleo, filtro de ar e pastilhas de freio',
+        'plate': 'MJJ-2251',
+      };
+
+      // Preencha os controladores do objeto Repair com os dados obtidos.
+      repair.date.text = repairData['date'] ?? 'campo vazio';
+      repair.description.text = repairData['description'] ?? 'campo vazio';
+      repair.plate.text = repairData['plate'] ?? 'campo vazio';
     } catch (e) {
       print('Erro ao solicitar serviço: $e');
       throw e;

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/account_user.dart';
+import 'package:mech_client/models/account_user_model.dart';
 
 import 'package:mech_client/screens/register_user_screen.dart';
 import 'package:mech_client/services/user_services.dart';
+import 'package:mech_client/utils/constans_utils.dart';
+import 'package:mech_client/widgets/button_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -41,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFFF5C00)),
+                          color: primaryColor),
                     ),
                     SizedBox(height: 8), // Espaço entre os textos
                     Text(
@@ -115,26 +117,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  margin: const EdgeInsets.only(bottom: 35.0),
-                  width: 300,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      userServices.loginUser(context, accountUser);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF5C00),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            50.0), // Arredondamento da borda
-                      ),
-                    ),
-                    child: const Text(
-                      'Entrar',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ),
+                    margin: const EdgeInsets.only(bottom: 35.0),
+                    width: 300,
+                    height: 50,
+                    child: Button(
+                        text: "Entrar",
+                        function: () {
+                          userServices.loginUser(context, accountUser);
+                        })),
                 Container(
                   margin: const EdgeInsets.only(top: 35.0, bottom: 100),
                   child: Row(
@@ -161,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFFFF5C00),
+                            color: primaryColor,
                           ),
                         ),
                       ),

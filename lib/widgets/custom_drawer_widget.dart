@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/account_user.dart';
+import 'package:mech_client/models/account_user_model.dart';
 import 'package:mech_client/screens/repair_screen.dart';
 import 'package:mech_client/screens/user_account_screen.dart';
 import 'package:mech_client/screens/vehicle_screen.dart';
 import 'package:mech_client/services/user_services.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 
 class CustomDrawer extends StatefulWidget {
   final VoidCallback onSignOut;
@@ -41,7 +42,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             accountName: Text('Olá, ${accountUser.name.text}'),
             accountEmail: Text(accountUser.email.text),
             currentAccountPicture: const CircleAvatar(
-              backgroundColor: Color(0xFFFF5C00),
+              backgroundColor: primaryColor,
               backgroundImage: NetworkImage('URL da foto do usuário'),
               child: Icon(
                 Icons.account_circle_outlined,
@@ -50,7 +51,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
             ),
             decoration: const BoxDecoration(
-              color: Color(0xFFFF5C00),
+              color: primaryColor,
             ),
           ),
           if (accountUser.type == 'Cliente')
@@ -111,7 +112,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 color: Color(
                                   0xFFFF5C00,
                                 ),
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.w500),
                           ),
                         ),
                         TextButton(
@@ -121,7 +122,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           child: const Text('Confirmar',
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontWeight: FontWeight.bold)),
+                                  fontWeight: FontWeight.w500)),
                         ),
                       ],
                     );

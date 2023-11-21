@@ -1,11 +1,11 @@
 import 'package:mech_client/screens/home_screen_mech.dart';
-import 'package:mech_client/services/feedback_utils.dart';
-import 'package:mech_client/services/validationUser.dart';
-import 'spinner_utils.dart';
+import 'package:mech_client/utils/feedback_utils.dart';
+import 'package:mech_client/services/validation_user_service.dart';
+import '../utils/spinner_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/account_user.dart';
+import 'package:mech_client/models/account_user_model.dart';
 import 'package:mech_client/screens/home_screen_client.dart';
 import 'package:mech_client/screens/login_screen.dart';
 
@@ -25,14 +25,14 @@ class UserServices {
           var collection = FirebaseFirestore.instance.collection('Users');
           DocumentSnapshot snapshot = await collection.doc(user.uid).get();
           if (snapshot['type'] == "Cliente") {
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => HomeScreenClient(),
               ),
             );
           }
           if (snapshot['type'] == "Mecânica") {
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => HomeScreenMech(),
               ),
@@ -60,7 +60,7 @@ class UserServices {
 
   void registerUser(
       BuildContext context, AccountUser accountUser, String select) async {
-    if (ValidationUser.validationFields(context, accountUser, select)) {
+    if (ValidationUser.validationFieldsUser(context, accountUser, select)) {
       try {
         // exibe o spinner ao iniciar o registro
         SpinnerUtils.showSpinner(context);
@@ -100,12 +100,16 @@ class UserServices {
             'zip': accountUser.address.zip.text,
             'complement': accountUser.address.complement.text,
           };
+          final Map<String, dynamic> vehicleData = {
+            'plate': accountUser.plate,
+          };
 
           final Map<String, dynamic> userData = {
             'name': accountUser.name.text,
             'email': accountUser.email.text,
             'phone': accountUser.phone.text,
             'address': addressData,
+            'vehicle': vehicleData,
             'password': accountUser.password.text,
             'type': select,
           };
@@ -207,7 +211,7 @@ class UserServices {
     AccountUser accountUser,
   ) async {
     try {
-      if (ValidationUser.validationFields(
+      if (ValidationUser.validationFieldsUser(
           context, accountUser, accountUser.type,
           validateCheckbox: false)) {
         SpinnerUtils.showSpinnerMessage(context, "Atualizando o cadastro...");
@@ -299,7 +303,7 @@ class UserServices {
         await user.delete();
         FeedbackUtils.showSuccessSnackBar(
             context, "Conta excluída com sucesso!");
-        Navigator.push(context,
+        Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const LoginPage()));
       } catch (e) {
         SpinnerUtils.hideSpinner(context);

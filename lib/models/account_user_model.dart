@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/models/address.dart';
+import 'package:mech_client/models/address_model.dart';
 
 class AccountUser {
   Address address = Address();
@@ -11,5 +11,6 @@ class AccountUser {
   TextEditingController phone = TextEditingController();
   TextEditingController cpf = TextEditingController();
   TextEditingController cnpj = TextEditingController();
+  String? plate;
   String? type;
 }
