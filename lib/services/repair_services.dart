@@ -16,18 +16,20 @@ class RepairServices {
     try {
       String userId = _firebaseAuth.currentUser!.uid;
 
-      Map<String, dynamic> repairData = {
-        'date': '28/10/2003',
-        'description': 'Gostaria de fazer um orçamento relacionado a troca de oleo, filtro de ar e pastilhas de freio',
-        'plate': 'MJJ-2251',
-      };
-
-      // Preencha os controladores do objeto Repair com os dados obtidos.
-      repair.date.text = repairData['date'] ?? 'campo vazio';
-      repair.description.text = repairData['description'] ?? 'campo vazio';
-      repair.plate.text = repairData['plate'] ?? 'campo vazio';
+      await _firestore.collection('Repairs').add({
+        'userId': userId,
+        'title': title,
+        'description': description,
+        'plate': plate,
+        'model': model,
+        'year': year,
+        'motor': motor,
+        'assigned_mechanic_id': null,
+        'status': 'pending',
+        'dt_creation': FieldValue.serverTimestamp(),
+      });
     } catch (e) {
-      print('Erro ao solicitar serviço: $e');
+      print('Erro ao adicionar serviço: $e');
       throw e;
     }
   }
@@ -36,6 +38,19 @@ class RepairServices {
     return _firestore
         .collection('Repairs')
         .where('userId', isEqualTo: _firebaseAuth.currentUser!.uid)
+        .snapshots()
+        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      return snapshot.docs.map((DocumentSnapshot<Map<String, dynamic>> doc) {
+        return doc.data()!;
+      }).toList();
+    });
+  }
+
+  Stream<List<Map<String, dynamic>>> getPendingRequests() {
+    return _firestore
+        .collection('Repairs')
+        .where('userId', isEqualTo: _firebaseAuth.currentUser!.uid)
+        .where('status', isEqualTo: 'pending') // Adicione isso para filtrar apenas os serviços pendentes
         .snapshots()
         .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
       return snapshot.docs.map((DocumentSnapshot<Map<String, dynamic>> doc) {

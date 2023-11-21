@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mech_client/widgets/Repairs/repair_request_widget.dart';
-import 'package:mech_client/services/repair_services.dart';
-import 'package:mech_client/models/repair.dart';
-
+import '../services/repair_services.dart';
 import '../widgets/Repairs/repair_create_widget.dart';
+import '../widgets/Repairs/repair_request_widget.dart';
 
 class RepairPage extends StatefulWidget {
   const RepairPage({Key? key}) : super(key: key);
@@ -15,6 +13,29 @@ class RepairPage extends StatefulWidget {
 class RepairPageState extends State<RepairPage> {
   final RepairServices repairServices = RepairServices();
 
+  List<Map<String, dynamic>> acceptedRequests = [];
+  List<Map<String, dynamic>> pendingRequests = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadRepairRequests();
+  }
+
+  Future<void> loadRepairRequests() async {
+    repairServices.getAcceptedRequests().listen((List<Map<String, dynamic>> data) {
+      setState(() {
+        acceptedRequests = data;
+      });
+    });
+
+    repairServices.getPendingRequests().listen((List<Map<String, dynamic>> data) {
+      setState(() {
+        pendingRequests = data;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,40 +46,34 @@ class RepairPageState extends State<RepairPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 30),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 5,
+
+              // Container para centralizar os elementos
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey,
+                      blurRadius: 2,
+                      offset: Offset(2, 1.5),
+                    ),
+                  ],
                 ),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
-                      BoxShadow(
-                        spreadRadius: 1,
-                        color: Colors.grey,
-                        blurRadius: 2,
-                        offset: Offset(2, 1.5),
-                      ),
-                    ],
-                  ),
+                child: Center(
                   child: Column(
                     children: [
                       ElevatedButton(
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) {
-                              return const ServiceRequestModal();
-                            },
+                            builder: (context) => ServiceRequestModal(),
                           );
                         },
                         style: ElevatedButton.styleFrom(
                           primary: const Color(0xFFFF5C00),
                           shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(2),
+                          padding: const EdgeInsets.all(10),
                         ),
                         child: const Icon(Icons.add, size: 32),
                       ),
@@ -71,7 +86,10 @@ class RepairPageState extends State<RepairPage> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 20),
+
+              // Serviços Aceitos
               const Text(
                 'Serviços Aceitos',
                 style: TextStyle(
@@ -80,15 +98,27 @@ class RepairPageState extends State<RepairPage> {
                   color: Color(0xFFFF5C00),
                 ),
               ),
-              const Text(
-                'Nenhuma solicitação aceita.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
+              if (acceptedRequests.isNotEmpty)
+                Column(
+                  children: acceptedRequests.map((request) {
+                    return RepairRequestWidget(
+                      requestTitle: request['title'] ?? '',
+                      requestDetails: request['details'] ?? '',
+                    );
+                  }).toList(),
+                )
+              else
+                const Text(
+                  'Nenhuma solicitação aceita.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
               const SizedBox(height: 15),
               const SizedBox(height: 20),
+
+              // Serviços Pendentes
               const Text(
                 'Serviços Pendentes',
                 style: TextStyle(
@@ -97,13 +127,23 @@ class RepairPageState extends State<RepairPage> {
                   color: Color(0xFFFF5C00),
                 ),
               ),
-              const Text(
-                'Nenhuma solicitação pendente.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
+              if (pendingRequests.isNotEmpty)
+                Column(
+                  children: pendingRequests.map((request) {
+                    return RepairRequestWidget(
+                      requestTitle: request['title'] ?? '',
+                      requestDetails: request['details'] ?? '',
+                    );
+                  }).toList(),
+                )
+              else
+                const Text(
+                  'Nenhuma solicitação pendente.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
