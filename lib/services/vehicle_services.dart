@@ -133,4 +133,33 @@ class VehicleServices {
       return [];
     }
   }
+
+  Future<void> deleteVehicle(BuildContext context, Vehicle vehicle) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        // Exclusão do veículo no banco
+        await FirebaseFirestore.instance
+            .collection("Vehicles")
+            .doc(vehicle.plate.text)
+            .delete();
+
+        // Remover a placa da lista de veículos do usuário
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .update({
+          'vehicles': FieldValue.arrayRemove([vehicle.plate.text]),
+        });
+
+        FeedbackUtils.showSuccessSnackBar(
+            context, "Veículo excluído com sucesso!");
+      } catch (e) {
+        print("Erro ao excluir o veículo: $e");
+        FeedbackUtils.showErrorSnackBar(
+            context, "Erro ao excluir o veículo. Tente novamente mais tarde.");
+      }
+    }
+  }
 }

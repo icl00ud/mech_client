@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/vehicle_model.dart';
 import 'package:mech_client/screens/register_vehicle_screen.dart';
+import 'package:mech_client/screens/vehicle_screen.dart';
 import 'package:mech_client/services/vehicle_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
 
@@ -238,10 +239,16 @@ class _FormsVehicleState extends State<FormsVehicle> {
             top: 8,
             left: 20,
             child: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                // funcao para deletar veiculo
+              onPressed: () async {
+                await vehicleServices.deleteVehicle(context, vehicle);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const VehiclePage(),
+                  ),
+                );
               },
+              icon: const Icon(Icons.delete_forever_outlined),
             ),
           ),
           Positioned(
