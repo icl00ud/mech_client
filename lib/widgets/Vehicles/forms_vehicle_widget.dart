@@ -61,7 +61,6 @@ class _FormsVehicleState extends State<FormsVehicle> {
                         return const CreateVehicleModal();
                       },
                     );
-
                     _loadUserVehicles();
                   },
                   child: Container(
@@ -247,11 +246,13 @@ class _FormsVehicleState extends State<FormsVehicle> {
             right: 20,
             child: IconButton(
               icon: const Icon(Icons.edit),
-              onPressed: () {
-                showDialog(
+              onPressed: () async {
+                await showDialog(
                   context: context,
-                  builder: (BuildContext context) => UpdateVehicleModal(vehicle: vehicle),
+                  builder: (BuildContext context) =>
+                      UpdateVehicleModal(vehicle: vehicle),
                 );
+                _loadUserVehicles();
               },
             ),
           ),

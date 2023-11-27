@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mech_client/models/account_user_model.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
-import 'package:mech_client/widgets/forms_user_widget.dart';
+import 'package:mech_client/widgets/User/forms_user_widget.dart';
 
 class UserAccount extends StatefulWidget {
   const UserAccount({super.key});
