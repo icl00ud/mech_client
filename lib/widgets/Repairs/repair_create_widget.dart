@@ -22,7 +22,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Padding(
-        padding: const EdgeInsets.all(60.0),
+        padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -32,7 +32,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                 style: TextStyle(
                   color: Color(0xFFFF5C00),
                   fontSize: 20,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 16),
@@ -44,20 +44,23 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
               TextField(
                 controller: descriptionController,
                 decoration: const InputDecoration(labelText: 'Descrição do Problema'),
+                maxLines: 2,
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
+                    flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: TextField(
                         controller: plateController,
-                        decoration: const InputDecoration(labelText: 'Placa do carro'),
+                        decoration: const InputDecoration(labelText: 'Placa'),
                       ),
                     ),
                   ),
                   Expanded(
+                    flex: 4,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: TextField(
@@ -72,6 +75,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
               Row(
                 children: [
                   Expanded(
+                    flex: 1,
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: TextField(
@@ -82,6 +86,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                     ),
                   ),
                   Expanded(
+                    flex: 4,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: TextField(
@@ -119,7 +124,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                     borderRadius: BorderRadius.circular(50.0),
                   ),
                 ),
-                child: const Text('Salvar', style: TextStyle(fontSize: 16)),
+                child: const Text('Solicitar', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),

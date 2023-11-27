@@ -1,6 +1,7 @@
 import 'package:mech_client/screens/home_screen_mech.dart';
 import 'package:mech_client/utils/feedback_utils.dart';
 import 'package:mech_client/services/validation_user_service.dart';
+import '../models/address_model.dart';
 import '../utils/spinner_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -100,17 +101,14 @@ class UserServices {
             'zip': accountUser.address.zip.text,
             'complement': accountUser.address.complement.text,
           };
-          final Map<String, dynamic> vehicleData = {
-            'plate': accountUser.plate,
-          };
 
           final Map<String, dynamic> userData = {
             'name': accountUser.name.text,
             'email': accountUser.email.text,
             'phone': accountUser.phone.text,
             'address': addressData,
-            'vehicle': vehicleData,
             'password': accountUser.password.text,
+            'userId': firebaseAuth.currentUser!.uid,
             'type': select,
           };
 
@@ -198,6 +196,62 @@ class UserServices {
         } else {
           print('Documento não encontrado para o usuário com ID ${user.uid}');
         }
+      }
+    } catch (e) {
+      print('Erro ao obter informações do usuário: $e');
+    }
+    return null;
+  }
+
+  Future<AccountUser?> getUserByUid(String uid) async {
+    try {
+      var collection = FirebaseFirestore.instance.collection('Users');
+      DocumentSnapshot snapshot = await collection.doc(uid).get();
+
+      if (snapshot.exists) {
+        AccountUser accountUser = AccountUser(
+          address: Address(),
+          name: TextEditingController(),
+          email: TextEditingController(),
+          password: TextEditingController(),
+          confirmPassword: TextEditingController(),
+          phone: TextEditingController(),
+          cpf: TextEditingController(),
+          cnpj: TextEditingController(),
+          vehicles: [],
+          userId: '',
+          type: '',
+        );
+
+        accountUser.name.text = snapshot['name'] ?? '';
+        accountUser.email.text = snapshot['email'] ?? '';
+        accountUser.phone.text = snapshot['phone'] ?? '';
+        accountUser.type = snapshot['type'] ?? '';
+        accountUser.password.text = snapshot['password'];
+        accountUser.confirmPassword.text = snapshot['password'];
+        accountUser.userId = snapshot['userId'];
+
+        if (accountUser.type == "Cliente") {
+          accountUser.cpf.text = snapshot['cpf'];
+        } else if (accountUser.type == "Mecânica") {
+          accountUser.cnpj.text = snapshot['cnpj'];
+        }
+
+        accountUser.address.address.text = snapshot['address']['address'] ?? '';
+        accountUser.address.number.text = snapshot['address']['number'] ?? '';
+        accountUser.address.zip.text = snapshot['address']['zip'] ?? '';
+        accountUser.address.complement.text = snapshot['address']['complement'] ?? '';
+
+        if (snapshot['vehicles'] != null) {
+          List<dynamic> vehicleList = snapshot['vehicles'];
+          accountUser.vehicles = List<String>.from(vehicleList);
+        } else {
+          accountUser.vehicles = [];
+        }
+
+        return accountUser;
+      } else {
+        print('Documento não encontrado para o usuário com ID $uid');
       }
     } catch (e) {
       print('Erro ao obter informações do usuário: $e');

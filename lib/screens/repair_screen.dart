@@ -1,6 +1,13 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mech_client/services/user_services.dart';
+import '../models/account_user_model.dart';
+import '../models/repair/repair_details.dart';
 import '../services/repair_services.dart';
 import '../widgets/Repairs/repair_create_widget.dart';
+import '../widgets/Repairs/repair_details_widget.dart';
 import '../widgets/Repairs/repair_request_widget.dart';
 
 class RepairPage extends StatefulWidget {
@@ -12,28 +19,72 @@ class RepairPage extends StatefulWidget {
 
 class RepairPageState extends State<RepairPage> {
   final RepairServices repairServices = RepairServices();
+  final UserServices userServices = UserServices();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   List<Map<String, dynamic>> acceptedRequests = [];
   List<Map<String, dynamic>> pendingRequests = [];
+
+  bool loading = false;
+  late String userType = '';
+
+  StreamSubscription<List<Map<String, dynamic>>>? acceptedSubscription;
+  StreamSubscription<List<Map<String, dynamic>>>? pendingSubscription;
 
   @override
   void initState() {
     super.initState();
     loadRepairRequests();
+    getUserType();
   }
 
   Future<void> loadRepairRequests() async {
-    repairServices.getAcceptedRequests().listen((List<Map<String, dynamic>> data) {
+    setState(() {
+      loading = true;
+    });
+
+    acceptedSubscription?.cancel();
+    acceptedSubscription = repairServices.getAcceptedRequests().listen((List<Map<String, dynamic>> data) {
       setState(() {
         acceptedRequests = data;
       });
     });
 
-    repairServices.getPendingRequests().listen((List<Map<String, dynamic>> data) {
+    pendingSubscription?.cancel();
+    pendingSubscription = repairServices.getPendingRequests().listen((List<Map<String, dynamic>> data) {
       setState(() {
         pendingRequests = data;
       });
     });
+
+    setState(() {
+      loading = false;
+    });
+  }
+
+  Future<void> deleteRepair(String repairId) async {
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      await repairServices.deleteRepair(repairId);
+      await loadRepairRequests();
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  Future<void> getUserType() async {
+    AccountUser? user = await userServices.getUserByUid(_firebaseAuth.currentUser!.uid);
+
+    if (user != null) {
+      setState(() {
+        userType = user.type;
+      });
+    }
   }
 
   @override
@@ -41,110 +92,163 @@ class RepairPageState extends State<RepairPage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 30),
-
-              // Container para centralizar os elementos
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 2,
-                      offset: Offset(2, 1.5),
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(4),
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (userType == 'Cliente') ...[
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 24, top: 24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 3,
+                          offset: Offset(2, 2),
+                        ),
+                      ],
                     ),
-                  ],
+                    child: Center(
+                      child: Column(
+                        children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const ServiceRequestModal(),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF5C00),
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(2),
+                              ),
+                              child: const Icon(Icons.add, size: 32),
+                            ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'Solicitar Serviço',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                ],
+                const Text(
+                  'Serviços Aceitos',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFF5C00),
+                  ),
                 ),
-                child: Center(
-                  child: Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
+                const SizedBox(height: 10),
+                if (loading) ...[
+                  const CircularProgressIndicator(),
+                ] else if (acceptedRequests.isNotEmpty)
+                  Column(
+                    children: acceptedRequests.map((request) {
+                      final details = RepairDetails(
+                        title: request['title'] ?? '',
+                        description: request['description'] ?? '',
+                        creationDate: (request['dt_creation'] as Timestamp).toDate().toString(),
+                        assignedMechanic: request['assigned_mechanic_id'] ?? '',
+                        status: request['status'] == 'accepted' ? 'Aceito' : 'Pendente',
+                        carModel: request['model'] ?? '',
+                        plate: request['plate'] ?? '',
+                      );
+
+                      return RepairRequestWidget(
+                        requestTitle: details.title,
+                        plate: details.plate,
+                        onDetailsPressed: () {
                           showDialog(
                             context: context,
-                            builder: (context) => ServiceRequestModal(),
+                            builder: (BuildContext context) {
+                              return DetailsModal(details: details);
+                            },
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          primary: const Color(0xFFFF5C00),
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(10),
-                        ),
-                        child: const Icon(Icons.add, size: 32),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Solicitar Serviço',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
+                        onDeletePressed: () async {
+                          String repairId = request['id'];
+                          await deleteRepair(repairId);
+                          await loadRepairRequests();
+                        },
+                      );
+                    }).toList(),
+                  )
+                else
+                  const Text(
+                    'Nenhuma solicitação aceita',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Serviços Aceitos
-              const Text(
-                'Serviços Aceitos',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFFF5C00),
-                ),
-              ),
-              if (acceptedRequests.isNotEmpty)
-                Column(
-                  children: acceptedRequests.map((request) {
-                    return RepairRequestWidget(
-                      requestTitle: request['title'] ?? '',
-                      requestDetails: request['details'] ?? '',
-                    );
-                  }).toList(),
-                )
-              else
+                const SizedBox(height: 15),
                 const Text(
-                  'Nenhuma solicitação aceita.',
+                  'Serviços Pendentes',
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFF5C00),
                   ),
                 ),
-              const SizedBox(height: 15),
-              const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                if (loading) ...[
+                  const CircularProgressIndicator(),
+                ] else if (pendingRequests.isNotEmpty)
+                  Column(
+                    children: pendingRequests.map((request) {
+                      final details = RepairDetails(
+                        title: request['title'] ?? '',
+                        description: request['description'] ?? '',
+                        creationDate: (request['dt_creation'] as Timestamp).toDate().toString(),
+                        assignedMechanic: request['assigned_mechanic_id'] ?? 'Aguardando ser aceito por alguma mecânica',
+                        status: request['status'] == 'pending' ? 'Pendente' : 'Aceito',
+                        carModel: request['model'] ?? '',
+                        plate: request['plate'] ?? '',
+                      );
 
-              // Serviços Pendentes
-              const Text(
-                'Serviços Pendentes',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFFF5C00),
-                ),
-              ),
-              if (pendingRequests.isNotEmpty)
-                Column(
-                  children: pendingRequests.map((request) {
-                    return RepairRequestWidget(
-                      requestTitle: request['title'] ?? '',
-                      requestDetails: request['details'] ?? '',
-                    );
-                  }).toList(),
-                )
-              else
-                const Text(
-                  'Nenhuma solicitação pendente.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                      return RepairRequestWidget(
+                        requestTitle: details.title,
+                        plate: details.plate,
+                        onDetailsPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DetailsModal(details: details);
+                            },
+                          );
+                        },
+                        onDeletePressed: () async {
+                          String repairId = request['id'];
+                          await deleteRepair(repairId);
+                          await loadRepairRequests();
+                        },
+                      );
+                    }).toList(),
+                  )
+                else
+                  const Text(
+                    'Nenhuma solicitação pendente',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
