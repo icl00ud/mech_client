@@ -23,6 +23,7 @@ class RepairServices {
       };
 
       // Preencha os controladores do objeto Repair com os dados obtidos.
+      var repair;
       repair.date.text = repairData['date'] ?? 'campo vazio';
       repair.description.text = repairData['description'] ?? 'campo vazio';
       repair.plate.text = repairData['plate'] ?? 'campo vazio';

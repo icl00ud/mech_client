@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/vehicle_model.dart';
-import 'package:mech_client/screens/register_vehicle_screen.dart';
-import 'package:mech_client/screens/vehicle_screen.dart';
 import 'package:mech_client/services/vehicle_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
+import 'package:mech_client/widgets/Vehicles/vehicle_create_widget.dart';
+import 'package:mech_client/widgets/Vehicles/vehicle_update_widget.dart';
 
 class FormsVehicle extends StatefulWidget {
   final Vehicle vehicle;
@@ -55,18 +55,14 @@ class _FormsVehicleState extends State<FormsVehicle> {
               if (userVehicles.length < 3)
                 GestureDetector(
                   onTap: () async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterVehiclePage(),
-                      ),
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const CreateVehicleModal();
+                      },
                     );
 
-                    List<Vehicle> updatedVehicles =
-                        await vehicleServices.getVehiclesForUser();
-                    setState(() {
-                      // atualize a lista com os veículos obtidos
-                      userVehicles = updatedVehicles;
-                    });
+                    _loadUserVehicles();
                   },
                   child: Container(
                     padding: const EdgeInsets.only(
@@ -241,12 +237,7 @@ class _FormsVehicleState extends State<FormsVehicle> {
             child: IconButton(
               onPressed: () async {
                 await vehicleServices.deleteVehicle(context, vehicle);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const VehiclePage(),
-                  ),
-                );
+                _loadUserVehicles();
               },
               icon: const Icon(Icons.delete_forever_outlined),
             ),
@@ -257,7 +248,10 @@ class _FormsVehicleState extends State<FormsVehicle> {
             child: IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
-                // funcao para editar informacoes
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => UpdateVehicleModal(vehicle: vehicle),
+                );
               },
             ),
           ),

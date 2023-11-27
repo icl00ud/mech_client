@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mech_client/models/vehicle_model.dart';
 import 'package:mech_client/services/vehicle_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
-import 'package:mech_client/widgets/forms_vehicle_widget.dart';
+import 'package:mech_client/widgets/Vehicles/forms_vehicle_widget.dart';
 
 class VehiclePage extends StatelessWidget {
   const VehiclePage({Key? key}) : super(key: key);
@@ -66,9 +66,9 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
                   Text(
                     'Veículo',
                     style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: primaryColor),
+                      color: primaryColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400),
                   ),
                 ],
               ),
