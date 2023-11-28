@@ -1,6 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class RepairRequestWidget extends StatelessWidget {
+import '../../models/account_user_model.dart';
+import '../../services/user_services.dart';
+
+class RepairRequestWidget extends StatefulWidget {
+  final String documentId;
   final String requestTitle;
   final String plate;
   final VoidCallback onDetailsPressed;
@@ -8,11 +13,28 @@ class RepairRequestWidget extends StatelessWidget {
 
   const RepairRequestWidget({
     Key? key,
+    required this.documentId,
     required this.requestTitle,
     required this.plate,
     required this.onDetailsPressed,
     required this.onDeletePressed,
   }) : super(key: key);
+
+  @override
+  _RepairRequestWidgetState createState() => _RepairRequestWidgetState();
+}
+
+class _RepairRequestWidgetState extends State<RepairRequestWidget> {
+  final UserServices userServices = UserServices();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  late String userType = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUserType();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +63,7 @@ class RepairRequestWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  requestTitle,
+                  widget.requestTitle,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -49,7 +71,7 @@ class RepairRequestWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  plate,
+                  widget.plate,
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.black54,
@@ -60,50 +82,54 @@ class RepairRequestWidget extends StatelessWidget {
           ),
           Row(
             children: [
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Confirmar Exclusão',
-                        style: TextStyle(
-                          color: Color(0xFFFF5C00))
-                        ),
-                        content: const Text('Deseja realmente excluir este serviço?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text(
-                              'Cancelar',
-                              style: TextStyle(color: Colors.black),
-                            ),
+              if (userType == 'Cliente') ...[
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text(
+                            'Confirmar Exclusão',
+                            style: TextStyle(color: Color(0xFFFF5C00)),
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              onDeletePressed();
-                            },
-                            child: const Text(
-                              'Confirmar',
-                              style: TextStyle(color: Colors.red),
+                          content: const Text('Deseja realmente excluir este serviço?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Cancelar',
+                                style: TextStyle(color: Colors.black),
+                              ),
                             ),
-                          ),
-                        ],
-                        backgroundColor: Colors.white,
-                      );
-                    },
-                  );
-                },
-                color: Colors.red,
-                iconSize: 24,
-              ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                widget.onDeletePressed();
+                              },
+                              child: const Text(
+                                'Confirmar',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                          backgroundColor: Colors.white,
+                        );
+                      },
+                    );
+                  },
+                  color: Colors.red,
+                  iconSize: 24,
+                ),
+              ],
               const SizedBox(width: 2),
               ElevatedButton(
-                onPressed: onDetailsPressed,
+                onPressed: () {
+                  widget.onDetailsPressed(); // Chame o método e forneça o documentId
+                },
                 style: ElevatedButton.styleFrom(
                   primary: const Color(0xFFFF5C00),
                   padding: const EdgeInsets.symmetric(
@@ -121,5 +147,15 @@ class RepairRequestWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> getUserType() async {
+    AccountUser? user = await userServices.getUserByUid(_firebaseAuth.currentUser!.uid);
+
+    if (user != null) {
+      setState(() {
+        userType = user.type;
+      });
+    }
   }
 }

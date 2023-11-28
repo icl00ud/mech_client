@@ -47,7 +47,7 @@ class RepairServices {
     }
   }
 
-  Stream<List<Map<String, dynamic>>> getAcceptedRequests() {
+  Stream<List<Map<String, dynamic>>> getAcceptedRequestsForCustomer() {
     return _firestore
         .collection('Repairs')
         .where('customer.userId', isEqualTo: _firebaseAuth.currentUser!.uid)
@@ -60,11 +60,36 @@ class RepairServices {
     });
   }
 
-  Stream<List<Map<String, dynamic>>> getPendingRequests() {
+  Stream<List<Map<String, dynamic>>> getPendingRequestsForCustomer() {
     return _firestore
         .collection('Repairs')
         .where('customer.userId', isEqualTo: _firebaseAuth.currentUser!.uid)
         .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      return snapshot.docs.map((DocumentSnapshot<Map<String, dynamic>> doc) {
+        return doc.data()!;
+      }).toList();
+    });
+  }
+
+  Stream<List<Map<String, dynamic>>> getPendingRequestsForMechanic() {
+    return _firestore
+        .collection('Repairs')
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      return snapshot.docs.map((DocumentSnapshot<Map<String, dynamic>> doc) {
+        return doc.data()!;
+      }).toList();
+    });
+  }
+
+  Stream<List<Map<String, dynamic>>> getAcceptedRequestsForMechanic() {
+    return _firestore
+        .collection('Repairs')
+        .where('assigned_mechanic_id', isEqualTo: _firebaseAuth.currentUser!.uid)
+        .where('status', isEqualTo: 'accepted')
         .snapshots()
         .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
       return snapshot.docs.map((DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -78,6 +103,19 @@ class RepairServices {
       await _firestore.collection('Repairs').doc(repairId).delete();
     } catch (e) {
       print('Erro ao excluir reparo: $e');
+      throw e;
+    }
+  }
+
+  Future<void> confirmRepairAssignment(String repairId) async {
+    try {
+      String currentUserId = _firebaseAuth.currentUser!.uid;
+      await _firestore.collection('Repairs').doc(repairId).update({
+        'assigned_mechanic_id': currentUserId,
+        'status': 'accepted',
+      });
+    } catch (e) {
+      print('Erro ao confirmar atribuição de reparo: $e');
       throw e;
     }
   }

@@ -8,6 +8,7 @@ class RepairDetails {
   final String status;
   final String carModel;
   final String plate;
+  final String documentId;
 
   RepairDetails({
     required this.title,
@@ -17,5 +18,6 @@ class RepairDetails {
     required this.status,
     required this.carModel,
     required this.plate,
+    required this.documentId
   });
 }

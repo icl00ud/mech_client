@@ -38,55 +38,6 @@ class RepairPageState extends State<RepairPage> {
     getUserType();
   }
 
-  Future<void> loadRepairRequests() async {
-    setState(() {
-      loading = true;
-    });
-
-    acceptedSubscription?.cancel();
-    acceptedSubscription = repairServices.getAcceptedRequests().listen((List<Map<String, dynamic>> data) {
-      setState(() {
-        acceptedRequests = data;
-      });
-    });
-
-    pendingSubscription?.cancel();
-    pendingSubscription = repairServices.getPendingRequests().listen((List<Map<String, dynamic>> data) {
-      setState(() {
-        pendingRequests = data;
-      });
-    });
-
-    setState(() {
-      loading = false;
-    });
-  }
-
-  Future<void> deleteRepair(String repairId) async {
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      await repairServices.deleteRepair(repairId);
-      await loadRepairRequests();
-    } finally {
-      setState(() {
-        loading = false;
-      });
-    }
-  }
-
-  Future<void> getUserType() async {
-    AccountUser? user = await userServices.getUserByUid(_firebaseAuth.currentUser!.uid);
-
-    if (user != null) {
-      setState(() {
-        userType = user.type;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,16 +117,18 @@ class RepairPageState extends State<RepairPage> {
                         status: request['status'] == 'accepted' ? 'Aceito' : 'Pendente',
                         carModel: request['model'] ?? '',
                         plate: request['plate'] ?? '',
+                        documentId: request['id']
                       );
 
                       return RepairRequestWidget(
+                        documentId: details.documentId,
                         requestTitle: details.title,
                         plate: details.plate,
                         onDetailsPressed: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return DetailsModal(details: details);
+                              return DetailsModal(details: details, userType: userType);
                             },
                           );
                         },
@@ -196,9 +149,9 @@ class RepairPageState extends State<RepairPage> {
                     ),
                   ),
                 const SizedBox(height: 15),
-                const Text(
-                  'Serviços Pendentes',
-                  style: TextStyle(
+                Text(
+                  userType == 'Cliente' ? 'Serviços Pendentes' : 'Serviços Disponíveis',
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFFFF5C00),
@@ -218,16 +171,18 @@ class RepairPageState extends State<RepairPage> {
                         status: request['status'] == 'pending' ? 'Pendente' : 'Aceito',
                         carModel: request['model'] ?? '',
                         plate: request['plate'] ?? '',
+                        documentId: request['id']
                       );
 
                       return RepairRequestWidget(
+                        documentId: details.documentId,
                         requestTitle: details.title,
                         plate: details.plate,
                         onDetailsPressed: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return DetailsModal(details: details);
+                              return DetailsModal(details: details, userType: userType);
                             },
                           );
                         },
@@ -253,5 +208,69 @@ class RepairPageState extends State<RepairPage> {
         ),
       ),
     );
+  }
+
+  Future<void> loadRepairRequests() async {
+    setState(() {
+      loading = true;
+    });
+
+    acceptedSubscription?.cancel();
+    if(userType == 'Cliente'){
+      acceptedSubscription = repairServices.getAcceptedRequestsForCustomer().listen((List<Map<String, dynamic>> data) {
+        setState(() {
+          acceptedRequests = data;
+        });
+      });
+
+      pendingSubscription?.cancel();
+      pendingSubscription = repairServices.getPendingRequestsForCustomer().listen((List<Map<String, dynamic>> data) {
+        setState(() {
+          pendingRequests = data;
+        });
+      });
+    } else {
+      acceptedSubscription = repairServices.getAcceptedRequestsForMechanic().listen((List<Map<String, dynamic>> data) {
+        setState(() {
+          acceptedRequests = data;
+        });
+      });
+
+      pendingSubscription?.cancel();
+      pendingSubscription = repairServices.getPendingRequestsForMechanic().listen((List<Map<String, dynamic>> data) {
+        setState(() {
+          pendingRequests = data;
+        });
+      });
+    }
+
+    setState(() {
+      loading = false;
+    });
+  }
+
+  Future<void> deleteRepair(String repairId) async {
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      await repairServices.deleteRepair(repairId);
+      await loadRepairRequests();
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  Future<void> getUserType() async {
+    AccountUser? user = await userServices.getUserByUid(_firebaseAuth.currentUser!.uid);
+
+    if (user != null) {
+      setState(() {
+        userType = user.type;
+      });
+    }
   }
 }
