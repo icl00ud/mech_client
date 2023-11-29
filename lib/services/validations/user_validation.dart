@@ -5,7 +5,7 @@ import 'package:mech_client/models/account_user_model.dart';
 import 'package:mech_client/utils/feedback_utils.dart';
 import 'package:mech_client/services/user_services.dart';
 
-class ValidationUser {
+class UserValidation {
   static bool checkBoxValue = false;
   UserServices userServices = UserServices();
   static bool isValidEmail(String email) {
@@ -23,11 +23,10 @@ class ValidationUser {
     // remove caracteres nao numéricos
     final cleanPhone = phone.replaceAll(RegExp(r'\D'), '');
 
-    return cleanPhone.length == 11;
+    return cleanPhone.length == 13;
   }
 
   static bool isValidCEP(String cep) {
-    // Remove caracteres não numéricos
     final cleanCEP = cep.replaceAll(RegExp(r'\D'), '');
 
     return cleanCEP.length == 8;
@@ -113,7 +112,7 @@ class ValidationUser {
           context, 'Preencha todos os campos obrigatórios.');
       return false;
     }
-    if (!ValidationUser.isValidEmail(accountUser.email.text)) {
+    if (!UserValidation.isValidEmail(accountUser.email.text)) {
       FeedbackUtils.showErrorSnackBar(context, 'Email inválido.');
       return false;
     }

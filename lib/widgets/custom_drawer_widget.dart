@@ -43,7 +43,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
             accountEmail: Text(accountUser.email.text),
             currentAccountPicture: const CircleAvatar(
               backgroundColor: primaryColor,
-              backgroundImage: NetworkImage('URL da foto do usuário'),
               child: Icon(
                 Icons.account_circle_outlined,
                 size: 50,
@@ -97,7 +96,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text('Excluir Conta'),
+                      icon: const Icon(
+                        Icons.no_accounts_outlined,
+                        size: 30,
+                      ),
+                      title: const Text(
+                        'Excluir Conta',
+                      ),
                       content: const Text(
                           'Você tem certeza de que deseja excluir sua conta?'),
                       actions: <Widget>[

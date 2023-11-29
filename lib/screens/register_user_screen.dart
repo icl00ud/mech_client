@@ -1,12 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:mech_client/models/account_user_model.dart';
 import 'package:mech_client/screens/login_screen.dart';
 import 'package:mech_client/services/user_services.dart';
-import 'package:mech_client/services/validation_user_service.dart';
+import 'package:mech_client/services/validations/user_validation.dart';
 import 'package:mech_client/utils/constans_utils.dart';
+import 'package:mech_client/utils/feedback_utils.dart';
 import 'package:mech_client/widgets/button_widget.dart';
+import 'package:mech_client/services/validations/sms_validation.dart';
+import 'package:pinput/pinput.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -20,7 +25,7 @@ class RegisterPageState extends State<RegisterPage> {
   static double padding = 3;
 
   AccountUser accountUser = AccountUser();
-  ValidationUser validation = ValidationUser();
+  UserValidation validation = UserValidation();
   UserServices userServices = UserServices();
 
   final _formkey = GlobalKey<FormState>();
@@ -117,6 +122,7 @@ class RegisterPageState extends State<RegisterPage> {
                         child: Padding(
                           padding: EdgeInsets.all(padding),
                           child: TextFormField(
+                            keyboardType: TextInputType.name,
                             controller: accountUser.name,
                             decoration:
                                 const InputDecoration(labelText: "Nome"),
@@ -129,6 +135,7 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
+                                keyboardType: TextInputType.number,
                                 controller: _selectedItem == "Cliente"
                                     ? accountUser.cpf
                                     : accountUser.cnpj,
@@ -152,12 +159,13 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Padding(
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
+                                keyboardType: TextInputType.phone,
                                 controller: accountUser.phone,
                                 decoration: const InputDecoration(
                                     labelText: "Telefone"),
                                 inputFormatters: [
                                   MaskTextInputFormatter(
-                                      mask: '(##) #####-####',
+                                      mask: '+55 (##) #####-####',
                                       filter: {'#': RegExp(r'[0-9]')})
                                 ],
                               ),
@@ -169,6 +177,7 @@ class RegisterPageState extends State<RegisterPage> {
                         padding: EdgeInsets.all(padding),
                         child: TextFormField(
                           controller: accountUser.email,
+                          keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             labelText: "Email",
                           ),
@@ -182,6 +191,7 @@ class RegisterPageState extends State<RegisterPage> {
                               padding: EdgeInsets.only(
                                   top: padding, bottom: padding),
                               child: TextFormField(
+                                keyboardType: TextInputType.streetAddress,
                                 controller: accountUser.address.address,
                                 decoration:
                                     const InputDecoration(labelText: "Rua"),
@@ -194,6 +204,7 @@ class RegisterPageState extends State<RegisterPage> {
                               padding: const EdgeInsets.only(left: 30),
                               child: TextFormField(
                                 controller: accountUser.address.number,
+                                keyboardType: TextInputType.number,
                                 decoration:
                                     const InputDecoration(labelText: "Nº"),
                                 inputFormatters: <TextInputFormatter>[
@@ -213,6 +224,7 @@ class RegisterPageState extends State<RegisterPage> {
                                   top: padding, bottom: padding),
                               child: TextFormField(
                                 controller: accountUser.address.zip,
+                                keyboardType: TextInputType.number,
                                 decoration:
                                     const InputDecoration(labelText: "CEP"),
                                 inputFormatters: [
@@ -229,6 +241,7 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: TextFormField(
+                                keyboardType: TextInputType.name,
                                 controller: accountUser.address.complement,
                                 decoration: const InputDecoration(
                                     labelText: "Complemento"),
@@ -269,10 +282,11 @@ class RegisterPageState extends State<RegisterPage> {
                           Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: Checkbox(
-                                value: ValidationUser.checkBoxValue,
+                                activeColor: primaryColor,
+                                value: UserValidation.checkBoxValue,
                                 onChanged: (bool? newValue) {
                                   setState(() {
-                                    ValidationUser.checkBoxValue = newValue!;
+                                    UserValidation.checkBoxValue = newValue!;
                                   });
                                 },
                               )),
@@ -287,11 +301,94 @@ class RegisterPageState extends State<RegisterPage> {
                         height: 50,
                         child: Button(
                           text: "Cadastrar-se",
-                          function: () {
-                            setState(() {
-                              userServices.registerUser(
-                                  context, accountUser, _selectedItem);
-                            });
+                          function: () async {
+                            if (UserValidation.validationFieldsUser(
+                                context, accountUser, _selectedItem)) {
+                              TextEditingController phoneController =
+                                  TextEditingController(
+                                      text: accountUser.phone.text);
+                              SmsVerification smsVerification = SmsVerification(
+                                  number: accountUser.phone.text);
+
+                              bool codigoVerificado = false;
+
+                              await smsVerification.enviarSMS();
+
+                              codigoVerificado = await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title:
+                                        const Text('Verificação de Telefone'),
+                                    icon: const Icon(
+                                      Icons.phone_android,
+                                      size: 30,
+                                    ),
+                                    content: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          TextFormField(
+                                            textAlign: TextAlign.center,
+                                            controller: phoneController,
+                                            enabled: false, // Disable editing
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                            ),
+                                          ),
+                                          Pinput(
+                                            controller: smsVerification
+                                                .codigoController,
+                                            length: 5,
+                                            pinputAutovalidateMode:
+                                                PinputAutovalidateMode.onSubmit,
+                                            showCursor: true,
+                                            defaultPinTheme: PinTheme(
+                                              width: 56,
+                                              height: 56,
+                                              textStyle: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: primaryColor,
+                                                  fontWeight: FontWeight.w600),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: const Color.fromRGBO(
+                                                        152, 157, 161, 1)),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 30),
+                                          Button(
+                                            function: () async {
+                                              bool verificado =
+                                                  await smsVerification
+                                                      .verificarCodigo();
+                                              Navigator.of(context)
+                                                  .pop(verificado);
+                                            },
+                                            text: 'Verificar Código',
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+
+                              // Code correct
+                              if (codigoVerificado) {
+                                setState(() {
+                                  userServices.registerUser(
+                                      context, accountUser, _selectedItem);
+                                });
+                              } else {
+                                // Code incorrect
+                                FeedbackUtils.showErrorSnackBar(
+                                    context, "Falha na verificação do código");
+                                print('Falha na verificação do código');
+                              }
+                            }
                           },
                         ),
                       ),

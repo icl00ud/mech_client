@@ -23,7 +23,9 @@ class _UserAccountState extends State<UserAccount> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: primaryColor,
+              ),
             ),
           );
         } else if (snapshot.hasError) {
@@ -61,11 +63,11 @@ class _UserAccountState extends State<UserAccount> {
                       style: TextStyle(
                           color: primaryColor,
                           fontSize: 20,
-                          fontWeight: FontWeight.w400),
+                          fontWeight: FontWeight.w500),
                     ),
                     Container(
                       padding: const EdgeInsets.only(
-                          left: 15, right: 15, top: 5, bottom: 30),
+                          left: 15, right: 15, top: 5, bottom: 10),
                       margin: const EdgeInsets.only(
                           left: 10, right: 10, top: 20, bottom: 10),
                       decoration: BoxDecoration(

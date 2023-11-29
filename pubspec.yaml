@@ -36,6 +36,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_spinkit: ^5.0.0
+    
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -43,6 +44,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   date_time_picker: ^2.1.0
   http: ^1.1.0
+  pinput: ^3.0.1
+
+
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +74,10 @@ flutter:
   assets:
     - assets/images/login-page_background.png
     - assets/images/logo.png
+    - assets/images/icon_mech_client.png
+
+    
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

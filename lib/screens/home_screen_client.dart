@@ -72,15 +72,13 @@ class _HomeScreenState extends State<HomeScreenClient> {
           },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.where_to_vote_outlined,
-              size: 25,
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Image.asset(
+              'assets/images/icon_mech_client.png',
+              width: 25,
+              height: 25,
             ),
-            color: primaryColor,
-            onPressed: () {
-              // Ação para sair
-            },
           ),
         ],
       ),

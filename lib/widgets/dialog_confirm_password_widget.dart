@@ -22,7 +22,10 @@ class _DialogConfirmPasswordState extends State<DialogConfirmPassword> {
   Widget build(BuildContext context) {
     return Center(
       child: AlertDialog(
-        icon: const Icon(Icons.lock_outline),
+        icon: const Icon(
+          Icons.lock_outline,
+          size: 30,
+        ),
         title: const Text('Digite sua senha:'),
         content: TextField(
           obscureText: !isPasswordVisible,

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -18,7 +20,8 @@ class RepairServices {
 
       Map<String, dynamic> repairData = {
         'date': '28/10/2003',
-        'description': 'Gostaria de fazer um orçamento relacionado a troca de oleo, filtro de ar e pastilhas de freio',
+        'description':
+            'Gostaria de fazer um orçamento relacionado a troca de oleo, filtro de ar e pastilhas de freio',
         'plate': 'MJJ-2251',
       };
 

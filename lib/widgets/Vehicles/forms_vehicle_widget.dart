@@ -39,7 +39,9 @@ class _FormsVehicleState extends State<FormsVehicle> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: primaryColor,
+            ),
           );
         } else if (snapshot.hasError) {
           return Text('Erro: ${snapshot.error}');
@@ -235,8 +237,51 @@ class _FormsVehicleState extends State<FormsVehicle> {
             left: 20,
             child: IconButton(
               onPressed: () async {
-                await vehicleServices.deleteVehicle(context, vehicle);
-                _loadUserVehicles();
+                showDialog(
+                  barrierColor:
+                      const Color.fromARGB(255, 39, 39, 39).withOpacity(0.7),
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      icon: const Icon(
+                        Icons.car_crash_outlined,
+                        size: 30,
+                      ),
+                      title: const Text('Excluir Veículo'),
+                      content: Text(
+                        "Tem certeza de que deseja excluir o veículo com a placa ${vehicle.plate.text}?",
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Cancelar',
+                            style: TextStyle(
+                                color: Color(
+                                  0xFFFF5C00,
+                                ),
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await vehicleServices.deleteVehicle(
+                                context, vehicle);
+                            _loadUserVehicles();
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Confirmar',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500)),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               icon: const Icon(Icons.delete_forever_outlined),
             ),

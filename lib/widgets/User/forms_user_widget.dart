@@ -1,10 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:mech_client/models/account_user_model.dart';
 import 'package:mech_client/services/user_services.dart';
+import 'package:mech_client/services/validations/sms_validation.dart';
+import 'package:mech_client/utils/constans_utils.dart';
+import 'package:mech_client/utils/feedback_utils.dart';
 import 'package:mech_client/widgets/button_widget.dart';
 import 'package:mech_client/widgets/dialog_confirm_password_widget.dart';
+import 'package:pinput/pinput.dart';
 
 class FormsUser extends StatefulWidget {
   final AccountUser accountUser;
@@ -24,6 +30,7 @@ class _FormsUserState extends State<FormsUser> {
   UserServices userServices = UserServices();
   String actualPassword = '';
   bool isEditing = false;
+  bool isEditingPhone = false;
 
   @override
   void initState() {
@@ -63,17 +70,17 @@ class _FormsUserState extends State<FormsUser> {
                 ),
               ),
             ),
-            const SizedBox(width: 40),
+            const SizedBox(width: 8),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.all(padding),
                 child: TextFormField(
                   controller: widget.accountUser.phone,
                   decoration: const InputDecoration(labelText: "Telefone"),
-                  enabled: isEditing,
+                  enabled: isEditingPhone,
                   inputFormatters: [
                     MaskTextInputFormatter(
-                        mask: '(##) #####-####',
+                        mask: '+55 (##) #####-####',
                         filter: {'#': RegExp(r'[0-9]')})
                   ],
                 ),
@@ -185,31 +192,152 @@ class _FormsUserState extends State<FormsUser> {
         ),
         Visibility(
           visible: !isEditing,
-          child: SizedBox(
-            width: 150,
-            height: 40,
-            child: Button(
-              text: "Editar",
-              function: () {
-                // ao clicar em editar atualiza a variavel actualPassword
-                _loadUserData();
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return DialogConfirmPassword(
-                        passwordCorrect: actualPassword);
-                  },
-                ).then(
-                  (value) {
-                    if (value != null && value) {
-                      setState(() {
-                        isEditing = true;
-                      });
-                    }
-                  },
-                );
-              },
-            ),
+          child: Column(
+            children: [
+              SizedBox(
+                width: 150,
+                height: 40,
+                child: !isEditingPhone
+                    ? Button(
+                        text: "Editar",
+                        function: () {
+                          // ao clicar em editar atualiza a variavel actualPassword
+                          _loadUserData();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DialogConfirmPassword(
+                                passwordCorrect: actualPassword,
+                              );
+                            },
+                          ).then(
+                            (value) {
+                              if (value != null && value) {
+                                setState(() {
+                                  isEditing = true;
+                                });
+                              }
+                            },
+                          );
+                        },
+                      )
+                    : Button(
+                        text: "Salvar",
+                        function: () async {
+                          {
+                            TextEditingController phoneController =
+                                TextEditingController(
+                                    text: widget.accountUser.phone.text);
+                            SmsVerification smsVerification = SmsVerification(
+                                number: widget.accountUser.phone.text);
+
+                            bool codigoVerificado = false;
+
+                            await smsVerification.enviarSMS();
+
+                            codigoVerificado = await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Verificação de Telefone'),
+                                  icon: const Icon(
+                                    Icons.phone_android,
+                                    size: 30,
+                                  ),
+                                  content: SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        TextFormField(
+                                          textAlign: TextAlign.center,
+                                          controller: phoneController,
+                                          enabled: false, // Disable editing
+                                          decoration: const InputDecoration(
+                                            border: InputBorder.none,
+                                          ),
+                                        ),
+                                        Pinput(
+                                          controller:
+                                              smsVerification.codigoController,
+                                          length: 5,
+                                          pinputAutovalidateMode:
+                                              PinputAutovalidateMode.onSubmit,
+                                          showCursor: true,
+                                          defaultPinTheme: PinTheme(
+                                            width: 56,
+                                            height: 56,
+                                            textStyle: const TextStyle(
+                                                fontSize: 20,
+                                                color: primaryColor,
+                                                fontWeight: FontWeight.w600),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: const Color.fromRGBO(
+                                                      152, 157, 161, 1)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 30),
+                                        Button(
+                                          function: () async {
+                                            bool verificado =
+                                                await smsVerification
+                                                    .verificarCodigo();
+                                            Navigator.of(context)
+                                                .pop(verificado);
+                                          },
+                                          text: 'Verificar Código',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+
+                            // Code correct
+                            if (codigoVerificado) {
+                              widget.userServices
+                                  .updateUser(context, actualPassword,
+                                      widget.accountUser)
+                                  .then((success) {
+                                if (success) {
+                                  setState(() {
+                                    widget.userServices
+                                        .getUser(widget.accountUser);
+                                    isEditingPhone = false;
+                                    actualPassword =
+                                        widget.accountUser.password.text;
+                                  });
+                                }
+                              });
+                            } else {
+                              // Code incorrect
+                              FeedbackUtils.showErrorSnackBar(
+                                  context, "Falha na verificação do código");
+                              print('Falha na verificação do código');
+                            }
+                          }
+                        },
+                      ),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    isEditingPhone = !isEditingPhone;
+                    widget.userServices.getUser(widget.accountUser);
+                  });
+                },
+                child: Text(
+                  isEditingPhone ? "Cancelar" : "Editar número de telefone",
+                  style: const TextStyle(
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         if (isEditing)

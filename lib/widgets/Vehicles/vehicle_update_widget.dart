@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mech_client/services/validations/vehicle_validation.dart';
 import 'package:mech_client/services/vehicle_services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:mech_client/models/vehicle_model.dart';
-import 'package:mech_client/services/validation_user_service.dart';
 import 'package:mech_client/widgets/button_widget.dart';
 
 class UpdateVehicleModal extends StatefulWidget {
@@ -17,7 +17,6 @@ class UpdateVehicleModal extends StatefulWidget {
 class _UpdateVehicleModalState extends State<UpdateVehicleModal> {
   static double padding = 3;
 
-  ValidationUser validation = ValidationUser();
   Vehicle vehicle = Vehicle();
   VehicleServices vehicleServices = VehicleServices();
 
@@ -42,11 +41,11 @@ class _UpdateVehicleModalState extends State<UpdateVehicleModal> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                'Cadastrar Veículo',
+                'Atualizar Veículo',
                 style: TextStyle(
                   color: Color(0xFFFF5C00),
                   fontSize: 20,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               Column(
@@ -168,7 +167,10 @@ class _UpdateVehicleModalState extends State<UpdateVehicleModal> {
                       Button(
                           text: "Atualizar",
                           function: () {
-                            vehicleServices.updateVehicle(context, vehicle);
+                            if (VehicleValidation.validationFieldsVehicle(
+                                context, vehicle)) {
+                              vehicleServices.updateVehicle(context, vehicle);
+                            }
                           }),
                       Button(
                         text: "Cancelar",

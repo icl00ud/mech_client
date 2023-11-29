@@ -49,31 +49,36 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              const Column(
-                children: [
-                  Icon(
-                    Icons.directions_car_filled_outlined,
-                    size: 50,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'Veículo',
-                    style: TextStyle(
-                      color: primaryColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400),
-                  ),
-                ],
-              ),
-              FormsVehicle(vehicle: vehicle),
-            ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const Column(
+                  children: [
+                    Icon(
+                      Icons.directions_car_filled_outlined,
+                      size: 50,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Text(
+                        'Veículo',
+                        style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                ),
+                FormsVehicle(vehicle: vehicle),
+              ],
+            ),
           ),
         ),
       ),
