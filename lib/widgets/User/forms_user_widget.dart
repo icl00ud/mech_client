@@ -359,7 +359,7 @@ class _FormsUserState extends State<FormsUser> {
                                 }
                               });
                             } else {
-                              if (!phoneController.text.isEmpty) {
+                              if (phoneController.text.isNotEmpty) {
                                 FeedbackUtils.showErrorSnackBar(
                                     context, "Falha na verificação do código");
                               }
