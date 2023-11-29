@@ -318,11 +318,43 @@ class RegisterPageState extends State<RegisterPage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title:
-                                        const Text('Verificação de Telefone'),
-                                    icon: const Icon(
-                                      Icons.phone_android,
-                                      size: 30,
+                                    iconPadding: const EdgeInsets.all(5.0),
+                                    title: const Padding(
+                                      padding: EdgeInsets.all(12.0),
+                                      child: Text('Verificação de Telefone'),
+                                    ),
+                                    icon: Container(
+                                      margin: EdgeInsets.zero,
+                                      padding: EdgeInsets.zero,
+                                      alignment: Alignment.topRight,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.close,
+                                                size: 25),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.mobile_friendly_outlined,
+                                                size: 30,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    contentPadding: const EdgeInsets.only(
+                                      left: 25,
+                                      right: 25,
+                                      bottom: 15,
                                     ),
                                     content: SingleChildScrollView(
                                       child: Column(
@@ -368,6 +400,16 @@ class RegisterPageState extends State<RegisterPage> {
                                                   .pop(verificado);
                                             },
                                             text: 'Verificar Código',
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              smsVerification.enviarSMS();
+                                            },
+                                            child: const Text(
+                                              "Reenviar SMS",
+                                              style: TextStyle(
+                                                  color: primaryColor),
+                                            ),
                                           ),
                                         ],
                                       ),

@@ -232,70 +232,116 @@ class _FormsUserState extends State<FormsUser> {
                                 number: widget.accountUser.phone.text);
 
                             bool codigoVerificado = false;
+                            if (phoneController.text.isEmpty) {
+                              FeedbackUtils.showErrorSnackBar(context,
+                                  "Por favor, preencha o campo telefone");
+                            } else {
+                              await smsVerification.enviarSMS();
 
-                            await smsVerification.enviarSMS();
-
-                            codigoVerificado = await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Verificação de Telefone'),
-                                  icon: const Icon(
-                                    Icons.phone_android,
-                                    size: 30,
-                                  ),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        TextFormField(
-                                          textAlign: TextAlign.center,
-                                          controller: phoneController,
-                                          enabled: false, // Disable editing
-                                          decoration: const InputDecoration(
-                                            border: InputBorder.none,
+                              codigoVerificado = await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    iconPadding: const EdgeInsets.all(5.0),
+                                    title: const Padding(
+                                      padding: EdgeInsets.all(12.0),
+                                      child: Text('Verificação de Telefone'),
+                                    ),
+                                    icon: Container(
+                                      margin: EdgeInsets.zero,
+                                      padding: EdgeInsets.zero,
+                                      alignment: Alignment.topRight,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.close,
+                                                size: 25),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
                                           ),
-                                        ),
-                                        Pinput(
-                                          controller:
-                                              smsVerification.codigoController,
-                                          length: 5,
-                                          pinputAutovalidateMode:
-                                              PinputAutovalidateMode.onSubmit,
-                                          showCursor: true,
-                                          defaultPinTheme: PinTheme(
-                                            width: 56,
-                                            height: 56,
-                                            textStyle: const TextStyle(
-                                                fontSize: 20,
-                                                color: primaryColor,
-                                                fontWeight: FontWeight.w600),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      152, 157, 161, 1)),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                          const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.mobile_friendly_outlined,
+                                                size: 30,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    contentPadding: const EdgeInsets.only(
+                                      left: 25,
+                                      right: 25,
+                                      bottom: 15,
+                                    ),
+                                    content: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          TextFormField(
+                                            textAlign: TextAlign.center,
+                                            controller: phoneController,
+                                            enabled: false, // Disable editing
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
                                             ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 30),
-                                        Button(
-                                          function: () async {
-                                            bool verificado =
-                                                await smsVerification
-                                                    .verificarCodigo();
-                                            Navigator.of(context)
-                                                .pop(verificado);
-                                          },
-                                          text: 'Verificar Código',
-                                        ),
-                                      ],
+                                          Pinput(
+                                            controller: smsVerification
+                                                .codigoController,
+                                            length: 5,
+                                            pinputAutovalidateMode:
+                                                PinputAutovalidateMode.onSubmit,
+                                            showCursor: true,
+                                            defaultPinTheme: PinTheme(
+                                              width: 56,
+                                              height: 56,
+                                              textStyle: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: primaryColor,
+                                                  fontWeight: FontWeight.w600),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: const Color.fromRGBO(
+                                                        152, 157, 161, 1)),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 30),
+                                          Button(
+                                            function: () async {
+                                              bool verificado =
+                                                  await smsVerification
+                                                      .verificarCodigo();
+                                              Navigator.of(context)
+                                                  .pop(verificado);
+                                            },
+                                            text: 'Verificar Código',
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              smsVerification.enviarSMS();
+                                            },
+                                            child: const Text(
+                                              "Reenviar SMS",
+                                              style: TextStyle(
+                                                  color: primaryColor),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-
+                                  );
+                                },
+                              );
+                            }
                             // Code correct
                             if (codigoVerificado) {
                               widget.userServices
@@ -313,10 +359,10 @@ class _FormsUserState extends State<FormsUser> {
                                 }
                               });
                             } else {
-                              // Code incorrect
-                              FeedbackUtils.showErrorSnackBar(
-                                  context, "Falha na verificação do código");
-                              print('Falha na verificação do código');
+                              if (!phoneController.text.isEmpty) {
+                                FeedbackUtils.showErrorSnackBar(
+                                    context, "Falha na verificação do código");
+                              }
                             }
                           }
                         },
