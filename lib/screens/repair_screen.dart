@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mech_client/screens/register_user_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/utils/feedback_utils.dart';
-import '../models/account_user_model.dart';
 import '../models/repair/repair_details.dart';
 import '../services/repair_services.dart';
 import '../widgets/Repairs/repair_create_widget.dart';
@@ -22,13 +21,12 @@ class RepairPage extends StatefulWidget {
 class RepairPageState extends State<RepairPage> {
   final RepairServices repairServices = RepairServices();
   final UserServices userServices = UserServices();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   List<Map<String, dynamic>> acceptedRequests = [];
   List<Map<String, dynamic>> pendingRequests = [];
 
   bool loading = false;
-  late String userType = '';
+  late String userType = RegisterPageState.selectedItem;
 
   StreamSubscription<List<Map<String, dynamic>>>? acceptedSubscription;
   StreamSubscription<List<Map<String, dynamic>>>? pendingSubscription;
@@ -44,7 +42,6 @@ class RepairPageState extends State<RepairPage> {
   }
 
   Future<void> initializeData() async {
-    await getUserType();
     await loadRepairRequests();
     fetchPlates();
   }
@@ -133,8 +130,10 @@ class RepairPageState extends State<RepairPage> {
                 ),
                 const SizedBox(height: 10),
                 if (loading) ...[
-                  const CircularProgressIndicator(
-                    color: primaryColor,
+                  const Center(
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                    ),
                   ),
                 ] else if (acceptedRequests.isNotEmpty)
                   Column(
@@ -322,17 +321,6 @@ class RepairPageState extends State<RepairPage> {
     } finally {
       setState(() {
         loading = false;
-      });
-    }
-  }
-
-  Future<void> getUserType() async {
-    AccountUser? user =
-        await userServices.getUserByUid(_firebaseAuth.currentUser!.uid);
-
-    if (user != null) {
-      setState(() {
-        userType = user.type;
       });
     }
   }

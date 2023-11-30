@@ -3,7 +3,6 @@ import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/services/vehicle_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/utils/feedback_utils.dart';
-import 'package:mech_client/widgets/button_widget.dart';
 import '../../services/repair_services.dart';
 
 class ServiceRequestModal extends StatefulWidget {
@@ -23,6 +22,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
   final RepairServices repairServices = RepairServices();
 
   var userId = UserServices().getUserId().toString();
+  String selectedPlate = '';
 
   List<String> plates = [];
 
@@ -97,9 +97,11 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
               Row(
                 children: [
                   Expanded(
-                    flex: 4,
+                    flex: 2, // Ajuste o valor flex conforme necessário
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.only(
+                          right:
+                              12), // Ajuste a quantidade de espaçamento conforme necessário
                       child: DropdownButton<String>(
                         items: plates.map((String plate) {
                           return DropdownMenuItem<String>(
@@ -109,23 +111,30 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                         }).toList(),
                         onChanged: (String? value) {
                           if (value != null) {
-                            // Atualiza os campos ao selecionar uma placa
-                            updateFields(value);
+                            setState(() {
+                              updateFields(value);
+                              selectedPlate = value;
+                            });
                           }
                         },
-                        hint: const Text('Selecione a placa '),
+                        hint:
+                            Text(selectedPlate == '' ? 'Placa' : selectedPlate),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1, // Adjust the flex value as needed
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: TextField(
+                        controller: modelController,
+                        decoration: const InputDecoration(labelText: 'Modelo'),
+                        enabled: false,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: modelController,
-                decoration: const InputDecoration(labelText: 'Modelo'),
-                enabled: false,
-              ),
-              const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
