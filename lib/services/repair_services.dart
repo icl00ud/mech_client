@@ -22,7 +22,8 @@ class RepairServices {
       AccountUser? user = await userServices.getUserByUid(userId);
 
       if (user != null) {
-        DocumentReference documentReference = await _firestore.collection('Repairs').add({
+        DocumentReference documentReference =
+            await _firestore.collection('Repairs').add({
           'customer': user.toMap(),
           'title': title,
           'description': description,
@@ -88,7 +89,8 @@ class RepairServices {
   Stream<List<Map<String, dynamic>>> getAcceptedRequestsForMechanic() {
     return _firestore
         .collection('Repairs')
-        .where('assigned_mechanic_id', isEqualTo: _firebaseAuth.currentUser!.uid)
+        .where('assigned_mechanic_id',
+            isEqualTo: _firebaseAuth.currentUser!.uid)
         .where('status', isEqualTo: 'accepted')
         .snapshots()
         .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
@@ -123,7 +125,7 @@ class RepairServices {
   Future<String> getMechanicName(String mechanicId) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> mechanicSnapshot =
-      await _firestore.collection('Users').doc(mechanicId).get();
+          await _firestore.collection('Users').doc(mechanicId).get();
 
       if (mechanicSnapshot.exists) {
         String mechanicName = mechanicSnapshot.data()?['name'] ?? '';
@@ -139,10 +141,12 @@ class RepairServices {
 
   Future<List<String>> getPlates(String userId) async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> userSnapshot = await _firestore.collection('Users').doc(userId).get();
+      DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+          await _firestore.collection('Users').doc(userId).get();
 
       if (userSnapshot.exists) {
-        List<String> plates = (userSnapshot.data()?['vehicles'] ?? <String>[]).cast<String>();
+        List<String> plates =
+            (userSnapshot.data()?['vehicles'] ?? <String>[]).cast<String>();
         return plates;
       } else {
         return [];

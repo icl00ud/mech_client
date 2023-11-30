@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mech_client/utils/constans_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/repair/repair_details.dart';
@@ -56,11 +57,14 @@ class DetailsModal extends StatelessWidget {
               ),
               const SizedBox(height: 12.0),
               buildInputField('Descrição', details.description),
-              buildInputField('Data de Criação', formatDate(details.creationDate)),
+              buildInputField(
+                  'Data de Criação', formatDate(details.creationDate)),
               buildInputField('Mecânica Responsável', details.assignedMechanic),
               buildInputField('Status', details.status),
               buildInputField('Modelo do Carro', details.carModel),
-              userType == 'Cliente' ? buildInputField('Placa', details.plate) : buildInputField('Telefone', details.customerPhone),
+              userType == 'Cliente'
+                  ? buildInputField('Placa', details.plate)
+                  : buildInputField('Telefone', details.customerPhone),
               const SizedBox(height: 18.0),
               if (userType != 'Cliente')
                 details.status == 'Aceito'
@@ -80,43 +84,46 @@ class DetailsModal extends StatelessWidget {
     return userType != 'Cliente' && label == 'Placa'
         ? const SizedBox()
         : Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF333333),
-            ),
-          ),
-          const SizedBox(height: 4.0),
-          FutureBuilder<String>(
-            future: _buildInputFieldValue(label, value, repairServices),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Erro: ${snapshot.error}');
-              } else {
-                return Text(
-                  snapshot.data ?? '',
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
                   style: const TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.black87,
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
                   ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-    );
+                ),
+                const SizedBox(height: 4.0),
+                FutureBuilder<String>(
+                  future: _buildInputFieldValue(label, value, repairServices),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(
+                        color: primaryColor,
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Erro: ${snapshot.error}');
+                    } else {
+                      return Text(
+                        snapshot.data ?? '',
+                        style: const TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.black87,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          );
   }
 
-  Future<String> _buildInputFieldValue(String label, String value, RepairServices repairServices) async {
+  Future<String> _buildInputFieldValue(
+      String label, String value, RepairServices repairServices) async {
     print('userType: $userType');
     print('label: $label');
     if (label == 'Mecânica Responsável') {
@@ -176,8 +183,8 @@ class DetailsModal extends StatelessWidget {
     );
   }
 
-  Future<void> showAcceptConfirmationDialog(
-      BuildContext context, RepairServices repairServices, String repairId) async {
+  Future<void> showAcceptConfirmationDialog(BuildContext context,
+      RepairServices repairServices, String repairId) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -202,7 +209,8 @@ class DetailsModal extends StatelessWidget {
                 Navigator.of(context).pop();
                 await repairServices.confirmRepairAssignment(repairId);
               },
-              child: const Text('Confirmar',
+              child: const Text(
+                'Confirmar',
                 style: TextStyle(
                   color: Color(0xFFFF5C00),
                 ),
@@ -216,18 +224,22 @@ class DetailsModal extends StatelessWidget {
 
   String formatDate(String dateString) {
     final dateTime = DateTime.parse(dateString);
-    final formattedDate = DateFormat('yyyy/MM/dd \'às\' HH:mm').format(dateTime);
+    final formattedDate =
+        DateFormat('yyyy/MM/dd \'às\' HH:mm').format(dateTime);
     return formattedDate;
   }
 
   launchWhatsApp() async {
     final repairServices = RepairServices();
 
-    var mechanicName = await repairServices.getMechanicName(details.assignedMechanic);
+    var mechanicName =
+        await repairServices.getMechanicName(details.assignedMechanic);
     final phoneNumber = details.customerPhone.replaceAll(RegExp(r'[^\d]'), '');
-    final message = 'Olá! Somos da empresa *$mechanicName**. Estamos entrando em contato referente ao seu chamado *${details.title}**.';
+    final message =
+        'Olá! Somos da empresa *$mechanicName**. Estamos entrando em contato referente ao seu chamado *${details.title}**.';
 
-    final Uri url = Uri.parse('whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}');
+    final Uri url = Uri.parse(
+        'whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}');
 
     try {
       await launch(url.toString());

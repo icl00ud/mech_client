@@ -240,7 +240,8 @@ class UserServices {
         accountUser.address.address.text = snapshot['address']['address'] ?? '';
         accountUser.address.number.text = snapshot['address']['number'] ?? '';
         accountUser.address.zip.text = snapshot['address']['zip'] ?? '';
-        accountUser.address.complement.text = snapshot['address']['complement'] ?? '';
+        accountUser.address.complement.text =
+            snapshot['address']['complement'] ?? '';
 
         if (snapshot['vehicles'] != null) {
           List<dynamic> vehicleList = snapshot['vehicles'];
@@ -364,5 +365,10 @@ class UserServices {
         print("Erro de reautenticação: $e");
       }
     }
+  }
+
+  String? getUserId() {
+    final User? user = firebaseAuth.currentUser;
+    return user?.uid;
   }
 }
