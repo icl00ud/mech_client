@@ -209,9 +209,10 @@ class RepairPageState extends State<RepairPage> {
                       final details = RepairDetails(
                           title: request['title'] ?? '',
                           description: request['description'] ?? '',
-                          creationDate: (request['dt_creation'] as Timestamp)
-                              .toDate()
-                              .toString(),
+                          creationDate: (request['dt_creation'] as Timestamp?)
+                                  ?.toDate()
+                                  .toString() ??
+                              '',
                           assignedMechanic: request['assigned_mechanic_id'] ??
                               'Aguardando ser aceito por alguma mecânica',
                           status: request['status'] == 'pending'

@@ -207,7 +207,6 @@ class UserServices {
     try {
       var collection = FirebaseFirestore.instance.collection('Users');
       DocumentSnapshot snapshot = await collection.doc(uid).get();
-
       if (snapshot.exists) {
         AccountUser accountUser = AccountUser(
           address: Address(),

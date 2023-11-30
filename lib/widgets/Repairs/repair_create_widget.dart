@@ -97,11 +97,9 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
               Row(
                 children: [
                   Expanded(
-                    flex: 2, // Ajuste o valor flex conforme necessário
+                    flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          right:
-                              12), // Ajuste a quantidade de espaçamento conforme necessário
+                      padding: const EdgeInsets.only(right: 12),
                       child: DropdownButton<String>(
                         items: plates.map((String plate) {
                           return DropdownMenuItem<String>(
@@ -123,7 +121,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                     ),
                   ),
                   Expanded(
-                    flex: 1, // Adjust the flex value as needed
+                    flex: 1,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: TextField(

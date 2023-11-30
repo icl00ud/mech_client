@@ -19,6 +19,7 @@ class RepairServices {
   }) async {
     try {
       String userId = _firebaseAuth.currentUser!.uid;
+
       AccountUser? user = await userServices.getUserByUid(userId);
 
       if (user != null) {
