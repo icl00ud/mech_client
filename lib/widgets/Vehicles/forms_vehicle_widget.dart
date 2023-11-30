@@ -290,7 +290,7 @@ class _FormsVehicleState extends State<FormsVehicle> {
             top: 8,
             right: 20,
             child: IconButton(
-              icon: const Icon(Icons.edit),
+              icon: const Icon(Icons.edit_outlined),
               onPressed: () async {
                 await showDialog(
                   context: context,
