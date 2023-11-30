@@ -8,6 +8,10 @@ import 'package:mech_client/screens/repair_screen.dart';
 import 'package:mech_client/screens/user_account_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 
+void main() {
+  runApp(MaterialApp(home: HomeMech()));
+}
+
 class HomeMech extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -51,14 +55,13 @@ class _HomeScreenState extends State<HomeScreenMech> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey, // Adicione a chave global ao Scaffold
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
-          'MechClient',
-          style: TextStyle(
-            color: primaryColor,
-          ),
+        title: Text(
+          _selectedIndex == 0 ? 'Conta' : 'Serviços',
+          style: const TextStyle(
+              color: primaryColor, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(
@@ -70,7 +73,6 @@ class _HomeScreenState extends State<HomeScreenMech> {
             size: 25,
           ),
           onPressed: () {
-            // Abra o menu lateral ao pressionar o ícone
             _scaffoldKey.currentState?.openDrawer();
           },
         ),
@@ -82,6 +84,10 @@ class _HomeScreenState extends State<HomeScreenMech> {
               width: 25,
               height: 25,
             ),
+            color: primaryColor,
+            onPressed: () {
+              singOut();
+            },
           ),
         ],
       ),
@@ -98,8 +104,8 @@ class _HomeScreenState extends State<HomeScreenMech> {
             label: 'Conta',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.toll_outlined),
-            label: 'Conserto',
+            icon: Icon(Icons.build_outlined),
+            label: 'Serviços',
           ),
         ],
         currentIndex: _selectedIndex,

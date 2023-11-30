@@ -29,8 +29,7 @@ class RegisterVehicle extends StatefulWidget {
 class _RegisterVehicleState extends State<RegisterVehicle> {
   Vehicle vehicle = Vehicle();
   VehicleServices vehicleServices = VehicleServices();
-  List<Vehicle> userVehicles =
-      []; // Lista para armazenar os veículos associados ao usuário
+  List<Vehicle> userVehicles = [];
 
   @override
   void initState() {

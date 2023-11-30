@@ -85,8 +85,8 @@ class _FormsVehicleState extends State<FormsVehicle> {
                         BoxShadow(
                           spreadRadius: 1,
                           color: Colors.grey,
-                          blurRadius: 10,
-                          offset: Offset(3, 1),
+                          blurRadius: 4,
+                          offset: Offset(1, 1),
                         ),
                       ],
                     ),
@@ -124,8 +124,8 @@ class _FormsVehicleState extends State<FormsVehicle> {
                 BoxShadow(
                   spreadRadius: 1,
                   color: Colors.grey,
-                  blurRadius: 10,
-                  offset: Offset(3, 1),
+                  blurRadius: 4,
+                  offset: Offset(1, 1),
                 ),
               ],
             ),

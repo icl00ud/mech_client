@@ -78,7 +78,7 @@ class _UserAccountState extends State<UserAccount> {
                               spreadRadius: 0,
                               color: Color.fromARGB(150, 0, 0, 0),
                               blurRadius: 4,
-                              offset: Offset(0, 3)),
+                              offset: Offset(0, 1)),
                         ],
                       ),
                       child: FormsUser(

@@ -21,7 +21,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
-  static String _selectedItem = "Cliente";
+  static String selectedItem = "Cliente";
   static double padding = 3;
 
   AccountUser accountUser = AccountUser();
@@ -78,7 +78,7 @@ class RegisterPageState extends State<RegisterPage> {
                           ],
                         ),
                         child: DropdownButton(
-                          value: _selectedItem,
+                          value: selectedItem,
                           items: ["Cliente", "Mecânica"].map((String item) {
                             return DropdownMenuItem<String>(
                               value: item,
@@ -91,7 +91,7 @@ class RegisterPageState extends State<RegisterPage> {
                           iconSize: 36,
                           onChanged: (String? value) {
                             setState(() {
-                              _selectedItem = value ?? "Cliente";
+                              selectedItem = value ?? "Cliente";
                             });
                           },
                         ),
@@ -140,12 +140,12 @@ class RegisterPageState extends State<RegisterPage> {
                                     ? accountUser.cpf
                                     : accountUser.cnpj,
                                 decoration: InputDecoration(
-                                    labelText: _selectedItem == "Cliente"
+                                    labelText: selectedItem == "Cliente"
                                         ? "CPF"
                                         : "CNPJ"),
                                 inputFormatters: [
                                   MaskTextInputFormatter(
-                                    mask: _selectedItem == "Cliente"
+                                    mask: selectedItem == "Cliente"
                                         ? '###.###.###-##'
                                         : '##.###.###/####-##',
                                     filter: {'#': RegExp(r'[0-9]')},

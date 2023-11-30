@@ -9,7 +9,13 @@ import 'package:mech_client/screens/user_account_screen.dart';
 import 'package:mech_client/screens/vehicle_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 
+void main() {
+  runApp(const MaterialApp(home: Home()));
+}
+
 class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,6 +31,7 @@ class HomeScreenClient extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreenClient> {
   int _selectedIndex = 1;
+  String _pageTitle = 'Conta';
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -39,6 +46,20 @@ class _HomeScreenState extends State<HomeScreenClient> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
+      switch (index) {
+        case 0:
+          _pageTitle = 'Veículos';
+          break;
+        case 1:
+          _pageTitle = 'Conta';
+          break;
+        case 2:
+          _pageTitle = 'Serviços';
+          break;
+        default:
+          _pageTitle = 'Conta';
+      }
     });
   }
 
@@ -51,9 +72,11 @@ class _HomeScreenState extends State<HomeScreenClient> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
-          'MechClient',
-          style: TextStyle(
+        title: Text(
+          '$_pageTitle',
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
             color: primaryColor,
           ),
         ),
@@ -67,7 +90,6 @@ class _HomeScreenState extends State<HomeScreenClient> {
             size: 25,
           ),
           onPressed: () {
-            // Abra o menu lateral ao pressionar o ícone
             _scaffoldKey.currentState?.openDrawer();
           },
         ),
@@ -79,6 +101,10 @@ class _HomeScreenState extends State<HomeScreenClient> {
               width: 25,
               height: 25,
             ),
+            color: primaryColor,
+            onPressed: () {
+              singOut();
+            },
           ),
         ],
       ),
@@ -100,7 +126,7 @@ class _HomeScreenState extends State<HomeScreenClient> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.build_outlined),
-            label: 'Conserto',
+            label: 'Serviços',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -122,6 +148,8 @@ class _HomeScreenState extends State<HomeScreenClient> {
 }
 
 class Page1 extends StatelessWidget {
+  const Page1({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -131,6 +159,8 @@ class Page1 extends StatelessWidget {
 }
 
 class Page2 extends StatelessWidget {
+  const Page2({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -140,6 +170,8 @@ class Page2 extends StatelessWidget {
 }
 
 class Page3 extends StatelessWidget {
+  const Page3({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(

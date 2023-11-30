@@ -197,6 +197,34 @@ class VehicleServices {
     }
   }
 
+  Future<Map<String, dynamic>?> getVehicleByPlate(String plate) async {
+    try {
+      User? user = firebaseAuth.currentUser;
+
+      if (user != null) {
+        var collection = FirebaseFirestore.instance.collection('Vehicles');
+
+        QuerySnapshot<Map<String, dynamic>> querySnapshot = await collection
+            .where('id', isEqualTo: user.uid)
+            .where('plate', isEqualTo: plate)
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          // Se houver documentos correspondentes, retorna os dados do primeiro (assumindo que a placa é única)
+          return querySnapshot.docs.first.data();
+        } else {
+          print("Nenhum carro");
+          return null;
+        }
+      }
+
+      return null;
+    } catch (e) {
+      print('Erro ao verificar a existência do veículo: $e');
+      throw e;
+    }
+  }
+
   Future<void> deleteVehicle(BuildContext context, Vehicle vehicle) async {
     User? user = FirebaseAuth.instance.currentUser;
 
