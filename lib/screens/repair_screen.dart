@@ -34,8 +34,12 @@ class RepairPageState extends State<RepairPage> {
   @override
   void initState() {
     super.initState();
-    loadRepairRequests();
-    getUserType();
+    initializeData();
+  }
+
+  Future<void> initializeData() async {
+    await getUserType();
+    await loadRepairRequests();
   }
 
   @override
@@ -117,8 +121,11 @@ class RepairPageState extends State<RepairPage> {
                         status: request['status'] == 'accepted' ? 'Aceito' : 'Pendente',
                         carModel: request['model'] ?? '',
                         plate: request['plate'] ?? '',
-                        documentId: request['id']
+                        documentId: request['id'],
+                        customerPhone: request['customer']['phone']
                       );
+
+                      final String documentId = request['id'];
 
                       return RepairRequestWidget(
                         documentId: details.documentId,
@@ -128,7 +135,7 @@ class RepairPageState extends State<RepairPage> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return DetailsModal(details: details, userType: userType);
+                              return DetailsModal(details: details, userType: userType, repairId: documentId);
                             },
                           );
                         },
@@ -171,8 +178,11 @@ class RepairPageState extends State<RepairPage> {
                         status: request['status'] == 'pending' ? 'Pendente' : 'Aceito',
                         carModel: request['model'] ?? '',
                         plate: request['plate'] ?? '',
-                        documentId: request['id']
+                        documentId: request['id'],
+                        customerPhone: request['customer']['phone']
                       );
+
+                      final String documentId = request['id'];
 
                       return RepairRequestWidget(
                         documentId: details.documentId,
@@ -182,7 +192,7 @@ class RepairPageState extends State<RepairPage> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return DetailsModal(details: details, userType: userType);
+                              return DetailsModal(details: details, userType: userType, repairId: documentId);
                             },
                           );
                         },

@@ -48,21 +48,6 @@ class _UserAccountState extends State<UserAccount> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(
-                      Icons.account_circle_outlined,
-                      size: 50,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Sua Conta",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400),
-                    ),
                     Container(
                       padding: const EdgeInsets.only(
                           left: 15, right: 15, top: 5, bottom: 30),
@@ -76,7 +61,7 @@ class _UserAccountState extends State<UserAccount> {
                               spreadRadius: 0,
                               color: Color.fromARGB(150, 0, 0, 0),
                               blurRadius: 4,
-                              offset: Offset(0, 3)),
+                              offset: Offset(0, 1)),
                         ],
                       ),
                       child: FormsUser(

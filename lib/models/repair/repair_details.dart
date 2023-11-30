@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class RepairDetails {
   final String title;
   final String description;
@@ -9,6 +7,7 @@ class RepairDetails {
   final String carModel;
   final String plate;
   final String documentId;
+  final String customerPhone;
 
   RepairDetails({
     required this.title,
@@ -18,6 +17,7 @@ class RepairDetails {
     required this.status,
     required this.carModel,
     required this.plate,
-    required this.documentId
+    required this.documentId,
+    required this.customerPhone
   });
 }

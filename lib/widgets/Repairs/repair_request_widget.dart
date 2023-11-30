@@ -84,7 +84,10 @@ class _RepairRequestWidgetState extends State<RepairRequestWidget> {
             children: [
               if (userType == 'Cliente') ...[
                 IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: const Icon(
+                      Icons.delete_forever_outlined,
+                      color: Colors.red,
+                  ),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -128,10 +131,10 @@ class _RepairRequestWidgetState extends State<RepairRequestWidget> {
               const SizedBox(width: 2),
               ElevatedButton(
                 onPressed: () {
-                  widget.onDetailsPressed(); // Chame o método e forneça o documentId
+                  widget.onDetailsPressed();
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: const Color(0xFFFF5C00),
+                  backgroundColor: const Color(0xFFFF5C00),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 12,

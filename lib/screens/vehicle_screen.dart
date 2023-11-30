@@ -53,24 +53,7 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              const Column(
-                children: [
-                  Icon(
-                    Icons.directions_car_filled_outlined,
-                    size: 50,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'Veículo',
-                    style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: primaryColor),
-                  ),
-                ],
-              ),
+              const SizedBox(height: 10),
               FormsVehicle(vehicle: vehicle),
             ],
           ),

@@ -119,4 +119,37 @@ class RepairServices {
       throw e;
     }
   }
+
+  Future<String> getMechanicName(String mechanicId) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> mechanicSnapshot =
+      await _firestore.collection('Users').doc(mechanicId).get();
+
+      if (mechanicSnapshot.exists) {
+        String mechanicName = mechanicSnapshot.data()?['name'] ?? '';
+        return mechanicName;
+      } else {
+        return 'Mecânico não encontrado';
+      }
+    } catch (e) {
+      print('Erro ao obter nome do mecânico: $e');
+      throw e;
+    }
+  }
+
+  Future<List<String>> getPlates(String userId) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> userSnapshot = await _firestore.collection('Users').doc(userId).get();
+
+      if (userSnapshot.exists) {
+        List<String> plates = (userSnapshot.data()?['vehicles'] ?? <String>[]).cast<String>();
+        return plates;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Erro ao obter placas: $e');
+      throw e;
+    }
+  }
 }
