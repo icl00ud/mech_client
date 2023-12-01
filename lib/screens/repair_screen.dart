@@ -42,8 +42,8 @@ class RepairPageState extends State<RepairPage> {
   }
 
   Future<void> initializeData() async {
-    await loadRepairRequests();
     await getUserType();
+    await loadRepairRequests();
     fetchPlates();
   }
 
@@ -271,35 +271,27 @@ class RepairPageState extends State<RepairPage> {
 
     acceptedSubscription?.cancel();
     if (userType == 'Cliente') {
-      acceptedSubscription = repairServices
-          .getAcceptedRequestsForCustomer()
-          .listen((List<Map<String, dynamic>> data) {
+      acceptedSubscription = repairServices.getAcceptedRequestsForCustomer().listen((List<Map<String, dynamic>> data) {
         setState(() {
           acceptedRequests = data;
         });
       });
 
       pendingSubscription?.cancel();
-      pendingSubscription = repairServices
-          .getPendingRequestsForCustomer()
-          .listen((List<Map<String, dynamic>> data) {
+      pendingSubscription = repairServices.getPendingRequestsForCustomer().listen((List<Map<String, dynamic>> data) {
         setState(() {
           pendingRequests = data;
         });
       });
     } else {
-      acceptedSubscription = repairServices
-          .getAcceptedRequestsForMechanic()
-          .listen((List<Map<String, dynamic>> data) {
+      acceptedSubscription = repairServices.getAcceptedRequestsForMechanic().listen((List<Map<String, dynamic>> data) {
         setState(() {
           acceptedRequests = data;
         });
       });
 
       pendingSubscription?.cancel();
-      pendingSubscription = repairServices
-          .getPendingRequestsForMechanic()
-          .listen((List<Map<String, dynamic>> data) {
+      pendingSubscription = repairServices.getPendingRequestsForMechanic().listen((List<Map<String, dynamic>> data) {
         setState(() {
           pendingRequests = data;
         });

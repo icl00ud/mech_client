@@ -227,17 +227,14 @@ class DetailsModal extends StatelessWidget {
   launchWhatsApp() async {
     final repairServices = RepairServices();
 
-    var mechanicName =
-        await repairServices.getMechanicName(details.assignedMechanic);
+    var mechanicName = await repairServices.getMechanicName(details.assignedMechanic);
     final phoneNumber = details.customerPhone.replaceAll(RegExp(r'[^\d]'), '');
-    final message =
-        'Olá! Somos da empresa *$mechanicName**. Estamos entrando em contato referente ao seu chamado *${details.title}**.';
+    final message = 'Olá! Somos da empresa *$mechanicName**. Estamos entrando em contato referente ao seu chamado *${details.title}**.';
 
-    final Uri url = Uri.parse(
-        'whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}');
+    final Uri url = Uri.parse('whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}');
 
     try {
-      await launch(url.toString());
+      await launchUrl(url);
     } catch (error) {
       print(error);
     }
