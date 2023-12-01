@@ -224,8 +224,11 @@ class _FormsUserState extends State<FormsUser> {
                         text: "Salvar",
                         function: () async {
                           {
-                            TextEditingController phoneController = TextEditingController(text: widget.accountUser.phone.text);
-                            SmsVerification smsVerification = SmsVerification(number: widget.accountUser.phone.text);
+                            TextEditingController phoneController =
+                                TextEditingController(
+                                    text: widget.accountUser.phone.text);
+                            SmsVerification smsVerification = SmsVerification(
+                                number: widget.accountUser.phone.text);
 
                             bool codigoVerificado = false;
                             if (phoneController.text.isEmpty) {
@@ -288,9 +291,11 @@ class _FormsUserState extends State<FormsUser> {
                                             ),
                                           ),
                                           Pinput(
-                                            controller: smsVerification.codigoController,
+                                            controller: smsVerification
+                                                .codigoController,
                                             length: 5,
-                                            pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+                                            pinputAutovalidateMode:
+                                                PinputAutovalidateMode.onSubmit,
                                             showCursor: true,
                                             defaultPinTheme: PinTheme(
                                               width: 56,
@@ -311,8 +316,11 @@ class _FormsUserState extends State<FormsUser> {
                                           const SizedBox(height: 30),
                                           Button(
                                             function: () async {
-                                              bool verificado = await smsVerification.verificarCodigo();
-                                              Navigator.of(context).pop(verificado);
+                                              bool verificado =
+                                                  await smsVerification
+                                                      .verificarCodigo();
+                                              Navigator.of(context)
+                                                  .pop(verificado);
                                             },
                                             text: 'Verificar Código',
                                           ),
@@ -335,12 +343,17 @@ class _FormsUserState extends State<FormsUser> {
                             }
                             // Code correct
                             if (codigoVerificado) {
-                              widget.userServices.updateUser(context, actualPassword, widget.accountUser).then((success) {
+                              widget.userServices
+                                  .updateUser(context, actualPassword,
+                                      widget.accountUser)
+                                  .then((success) {
                                 if (success) {
                                   setState(() {
-                                    widget.userServices.getUser(widget.accountUser);
+                                    widget.userServices
+                                        .getUser(widget.accountUser);
                                     isEditingPhone = false;
-                                    actualPassword = widget.accountUser.password.text;
+                                    actualPassword =
+                                        widget.accountUser.password.text;
                                   });
                                 }
                               });
