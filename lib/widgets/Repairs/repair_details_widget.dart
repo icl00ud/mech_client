@@ -219,8 +219,7 @@ class DetailsModal extends StatelessWidget {
 
   String formatDate(String dateString) {
     final dateTime = DateTime.parse(dateString);
-    final formattedDate =
-        DateFormat('yyyy/MM/dd \'às\' HH:mm').format(dateTime);
+    final formattedDate = DateFormat('yyyy/MM/dd \'às\' HH:mm').format(dateTime);
     return formattedDate;
   }
 
@@ -229,7 +228,7 @@ class DetailsModal extends StatelessWidget {
 
     var mechanicName = await repairServices.getMechanicName(details.assignedMechanic);
     final phoneNumber = details.customerPhone.replaceAll(RegExp(r'[^\d]'), '');
-    final message = 'Olá! Somos da empresa *$mechanicName**. Estamos entrando em contato referente ao seu chamado *${details.title}**.';
+    final message = 'Olá! Somos da empresa *$mechanicName*. Estamos entrando em contato referente ao seu chamado *${details.title}*.';
 
     final Uri url = Uri.parse('whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}');
 
