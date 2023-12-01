@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:mech_client/services/user_services.dart';
 
 import '../models/account_user_model.dart';
@@ -127,7 +128,8 @@ class RepairServices {
 
   Future<String> getMechanicName(String mechanicId) async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> mechanicSnapshot = await _firestore.collection('Users').doc(mechanicId).get();
+      DocumentSnapshot<Map<String, dynamic>> mechanicSnapshot =
+          await _firestore.collection('Users').doc(mechanicId).get();
 
       if (mechanicSnapshot.exists) {
         String mechanicName = mechanicSnapshot.data()?['name'] ?? '';
@@ -147,7 +149,8 @@ class RepairServices {
           await _firestore.collection('Users').doc(userId).get();
 
       if (userSnapshot.exists) {
-        List<String> plates = (userSnapshot.data()?['vehicles'] ?? <String>[]).cast<String>();
+        List<String> plates =
+            (userSnapshot.data()?['vehicles'] ?? <String>[]).cast<String>();
         return plates;
       } else {
         return [];

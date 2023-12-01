@@ -51,7 +51,8 @@ class _UserAccountState extends State<UserAccount> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Container(
-                      padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 10),
+                      padding: const EdgeInsets.only(
+                          left: 15, right: 15, top: 5, bottom: 25),
                       margin: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),

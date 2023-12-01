@@ -57,10 +57,12 @@ class DetailsModal extends StatelessWidget {
               ),
               const SizedBox(height: 12.0),
               buildInputField('Descrição', details.description),
-              buildInputField('Data de Criação', formatDate(details.creationDate)),
+              buildInputField(
+                  'Data de Criação', formatDate(details.creationDate)),
               buildInputField('Mecânica Responsável', details.assignedMechanic),
               buildInputField('Status', details.status),
-              buildInputField('Modelo do Carro', details.carModel), userType == 'Cliente'
+              buildInputField('Modelo do Carro', details.carModel),
+              userType == 'Cliente'
                   ? buildInputField('Placa', details.plate)
                   : buildInputField('Telefone', details.customerPhone),
               const SizedBox(height: 18.0),
@@ -120,7 +122,8 @@ class DetailsModal extends StatelessWidget {
           );
   }
 
-  Future<String> _buildInputFieldValue(String label, String value, RepairServices repairServices) async {
+  Future<String> _buildInputFieldValue(
+      String label, String value, RepairServices repairServices) async {
     if (label == 'Mecânica Responsável') {
       return await repairServices.getMechanicName(details.assignedMechanic);
     } else {
@@ -184,10 +187,11 @@ class DetailsModal extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirmar',
-              style: TextStyle(
-                color: Color(0xFFFF5C00),
-              )),
+          icon: const Icon(
+            Icons.check_circle_outline,
+            size: 30,
+          ),
+          title: const Text('Confirmar', style: TextStyle()),
           content: const Text('Deseja realmente aceitar este serviço?'),
           actions: [
             TextButton(
@@ -201,13 +205,12 @@ class DetailsModal extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop();
                 await repairServices.confirmRepairAssignment(repairId);
               },
               child: const Text(
                 'Confirmar',
                 style: TextStyle(
-                  color: Color(0xFFFF5C00),
+                  color: primaryColor,
                 ),
               ),
             ),
@@ -220,18 +223,21 @@ class DetailsModal extends StatelessWidget {
   String formatDate(String dateString) {
     final dateTime = DateTime.parse(dateString);
     final formattedDate =
-        DateFormat('yyyy/MM/dd \'às\' HH:mm').format(dateTime);
+        DateFormat('dd/MM/yyyy \'às\' HH:mm').format(dateTime);
     return formattedDate;
   }
 
   launchWhatsApp() async {
     final repairServices = RepairServices();
 
-    var mechanicName = await repairServices.getMechanicName(details.assignedMechanic);
+    var mechanicName =
+        await repairServices.getMechanicName(details.assignedMechanic);
     final phoneNumber = details.customerPhone.replaceAll(RegExp(r'[^\d]'), '');
-    final message = 'Olá! Somos da empresa *$mechanicName**. Estamos entrando em contato referente ao seu chamado *${details.title}**.';
+    final message =
+        'Olá! Somos da empresa *$mechanicName*. Estamos entrando em contato referente ao seu chamado *${details.title}*.';
 
-    final Uri url = Uri.parse('whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}');
+    final Uri url = Uri.parse(
+        'whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}');
 
     try {
       await launchUrl(url);

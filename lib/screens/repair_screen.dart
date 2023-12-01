@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mech_client/screens/register_user_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/utils/feedback_utils.dart';
@@ -152,9 +151,14 @@ class RepairPageState extends State<RepairPage> {
                       final details = RepairDetails(
                           title: request['title'] ?? '',
                           description: request['description'] ?? '',
-                          creationDate: (request['dt_creation'] as Timestamp).toDate().toString(),
-                          assignedMechanic: request['assigned_mechanic_id'] ?? '',
-                          status: request['status'] == 'accepted' ? 'Aceito' : 'Pendente',
+                          creationDate: (request['dt_creation'] as Timestamp)
+                              .toDate()
+                              .toString(),
+                          assignedMechanic:
+                              request['assigned_mechanic_id'] ?? '',
+                          status: request['status'] == 'accepted'
+                              ? 'Aceito'
+                              : 'Pendente',
                           carModel: request['model'] ?? '',
                           plate: request['plate'] ?? '',
                           documentId: request['id'],
@@ -215,9 +219,15 @@ class RepairPageState extends State<RepairPage> {
                       final details = RepairDetails(
                           title: request['title'] ?? '',
                           description: request['description'] ?? '',
-                          creationDate: (request['dt_creation'] as Timestamp?)?.toDate().toString() ?? '',
-                          assignedMechanic: request['assigned_mechanic_id'] ?? 'Aguardando ser aceito por alguma mecânica',
-                          status: request['status'] == 'pending' ? 'Pendente' : 'Aceito',
+                          creationDate: (request['dt_creation'] as Timestamp?)
+                                  ?.toDate()
+                                  .toString() ??
+                              '',
+                          assignedMechanic: request['assigned_mechanic_id'] ??
+                              'Aguardando ser aceito por alguma mecânica',
+                          status: request['status'] == 'pending'
+                              ? 'Pendente'
+                              : 'Aceito',
                           carModel: request['model'] ?? '',
                           plate: request['plate'] ?? '',
                           documentId: request['id'],
@@ -271,27 +281,35 @@ class RepairPageState extends State<RepairPage> {
 
     acceptedSubscription?.cancel();
     if (userType == 'Cliente') {
-      acceptedSubscription = repairServices.getAcceptedRequestsForCustomer().listen((List<Map<String, dynamic>> data) {
+      acceptedSubscription = repairServices
+          .getAcceptedRequestsForCustomer()
+          .listen((List<Map<String, dynamic>> data) {
         setState(() {
           acceptedRequests = data;
         });
       });
 
       pendingSubscription?.cancel();
-      pendingSubscription = repairServices.getPendingRequestsForCustomer().listen((List<Map<String, dynamic>> data) {
+      pendingSubscription = repairServices
+          .getPendingRequestsForCustomer()
+          .listen((List<Map<String, dynamic>> data) {
         setState(() {
           pendingRequests = data;
         });
       });
     } else {
-      acceptedSubscription = repairServices.getAcceptedRequestsForMechanic().listen((List<Map<String, dynamic>> data) {
+      acceptedSubscription = repairServices
+          .getAcceptedRequestsForMechanic()
+          .listen((List<Map<String, dynamic>> data) {
         setState(() {
           acceptedRequests = data;
         });
       });
 
       pendingSubscription?.cancel();
-      pendingSubscription = repairServices.getPendingRequestsForMechanic().listen((List<Map<String, dynamic>> data) {
+      pendingSubscription = repairServices
+          .getPendingRequestsForMechanic()
+          .listen((List<Map<String, dynamic>> data) {
         setState(() {
           pendingRequests = data;
         });
