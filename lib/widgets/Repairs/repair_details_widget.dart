@@ -137,8 +137,9 @@ class DetailsModal extends StatelessWidget {
     return Align(
       alignment: Alignment.center,
       child: ElevatedButton(
-        onPressed: () {
-          showAcceptConfirmationDialog(context, repairServices, repairId);
+        onPressed: () async {
+          await showAcceptConfirmationDialog(context, repairServices, repairId);
+          Navigator.of(context).pop();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFFF5C00),
@@ -206,6 +207,7 @@ class DetailsModal extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 await repairServices.confirmRepairAssignment(repairId);
+                Navigator.of(context).pop();
               },
               child: const Text(
                 'Confirmar',
