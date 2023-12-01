@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mech_client/utils/constans_utils.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/repair/repair_details.dart';
 import '../../services/repair_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailsModal extends StatelessWidget {
   final RepairDetails details;

@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'package:mech_client/screens/home_screen_mech.dart';
+import 'package:mech_client/services/validations/user_validation.dart';
 import 'package:mech_client/utils/feedback_utils.dart';
-import 'package:mech_client/services/validation_user_service.dart';
 import '../models/address_model.dart';
 import '../utils/spinner_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -101,10 +101,6 @@ class _HomeScreenState extends State<HomeScreenClient> {
               width: 25,
               height: 25,
             ),
-            color: primaryColor,
-            onPressed: () {
-              singOut();
-            },
           ),
         ],
       ),

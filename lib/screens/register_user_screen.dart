@@ -136,7 +136,7 @@ class RegisterPageState extends State<RegisterPage> {
                               padding: EdgeInsets.all(padding),
                               child: TextFormField(
                                 keyboardType: TextInputType.number,
-                                controller: _selectedItem == "Cliente"
+                                controller: selectedItem == "Cliente"
                                     ? accountUser.cpf
                                     : accountUser.cnpj,
                                 decoration: InputDecoration(
@@ -303,7 +303,7 @@ class RegisterPageState extends State<RegisterPage> {
                           text: "Cadastrar-se",
                           function: () async {
                             if (UserValidation.validationFieldsUser(
-                                context, accountUser, _selectedItem)) {
+                                context, accountUser, selectedItem)) {
                               TextEditingController phoneController =
                                   TextEditingController(
                                       text: accountUser.phone.text);
@@ -422,7 +422,7 @@ class RegisterPageState extends State<RegisterPage> {
                               if (codigoVerificado) {
                                 setState(() {
                                   userServices.registerUser(
-                                      context, accountUser, _selectedItem);
+                                      context, accountUser, selectedItem);
                                 });
                               } else {
                                 // Code incorrect
