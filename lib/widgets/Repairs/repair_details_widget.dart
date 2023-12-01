@@ -57,12 +57,10 @@ class DetailsModal extends StatelessWidget {
               ),
               const SizedBox(height: 12.0),
               buildInputField('Descrição', details.description),
-              buildInputField(
-                  'Data de Criação', formatDate(details.creationDate)),
+              buildInputField('Data de Criação', formatDate(details.creationDate)),
               buildInputField('Mecânica Responsável', details.assignedMechanic),
               buildInputField('Status', details.status),
-              buildInputField('Modelo do Carro', details.carModel),
-              userType == 'Cliente'
+              buildInputField('Modelo do Carro', details.carModel), userType == 'Cliente'
                   ? buildInputField('Placa', details.plate)
                   : buildInputField('Telefone', details.customerPhone),
               const SizedBox(height: 18.0),
@@ -122,10 +120,7 @@ class DetailsModal extends StatelessWidget {
           );
   }
 
-  Future<String> _buildInputFieldValue(
-      String label, String value, RepairServices repairServices) async {
-    print('userType: $userType');
-    print('label: $label');
+  Future<String> _buildInputFieldValue(String label, String value, RepairServices repairServices) async {
     if (label == 'Mecânica Responsável') {
       return await repairServices.getMechanicName(details.assignedMechanic);
     } else {

@@ -54,12 +54,10 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
         setState(() {
           modelController.text = vehicleData['model'] ?? '';
           yearController.text = vehicleData['yearFabrication'] ?? '';
-          brandController.text = vehicleData['brand'] ??
-              ''; // Adicione o campo correto aqui, dependendo do nome do campo em seu mapa
+          brandController.text = vehicleData['brand'] ?? '';
         });
       }
     } catch (e) {
-      // Lidar com erros
       print('Erro ao atualizar campos: $e');
     }
   }
@@ -121,7 +119,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                     ),
                   ),
                   Expanded(
-                    flex: 1,
+                    flex: 3,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: TextField(
@@ -136,7 +134,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
               Row(
                 children: [
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: TextField(
@@ -148,7 +146,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                     ),
                   ),
                   Expanded(
-                    flex: 4,
+                    flex: 3,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: TextField(

@@ -5,6 +5,7 @@ import 'package:mech_client/screens/register_user_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/utils/feedback_utils.dart';
+import '../models/account_user_model.dart';
 import '../models/repair/repair_details.dart';
 import '../services/repair_services.dart';
 import '../widgets/Repairs/repair_create_widget.dart';
@@ -26,14 +27,13 @@ class RepairPageState extends State<RepairPage> {
   List<Map<String, dynamic>> pendingRequests = [];
 
   bool loading = false;
-  late String userType = RegisterPageState.selectedItem;
+
+  var userId = UserServices().getUserId().toString();
+  late String userType = '';
+  List<String> plates = [];
 
   StreamSubscription<List<Map<String, dynamic>>>? acceptedSubscription;
   StreamSubscription<List<Map<String, dynamic>>>? pendingSubscription;
-
-  var userId = UserServices().getUserId().toString();
-
-  List<String> plates = [];
 
   @override
   void initState() {
@@ -43,7 +43,18 @@ class RepairPageState extends State<RepairPage> {
 
   Future<void> initializeData() async {
     await loadRepairRequests();
+    await getUserType();
     fetchPlates();
+  }
+
+  Future<void> getUserType() async {
+    AccountUser? user = await userServices.getUserByUid(userId);
+
+    if (user != null) {
+      setState(() {
+        userType = user.type;
+      });
+    }
   }
 
   Future<void> fetchPlates() async {
@@ -141,14 +152,9 @@ class RepairPageState extends State<RepairPage> {
                       final details = RepairDetails(
                           title: request['title'] ?? '',
                           description: request['description'] ?? '',
-                          creationDate: (request['dt_creation'] as Timestamp)
-                              .toDate()
-                              .toString(),
-                          assignedMechanic:
-                              request['assigned_mechanic_id'] ?? '',
-                          status: request['status'] == 'accepted'
-                              ? 'Aceito'
-                              : 'Pendente',
+                          creationDate: (request['dt_creation'] as Timestamp).toDate().toString(),
+                          assignedMechanic: request['assigned_mechanic_id'] ?? '',
+                          status: request['status'] == 'accepted' ? 'Aceito' : 'Pendente',
                           carModel: request['model'] ?? '',
                           plate: request['plate'] ?? '',
                           documentId: request['id'],
@@ -209,15 +215,9 @@ class RepairPageState extends State<RepairPage> {
                       final details = RepairDetails(
                           title: request['title'] ?? '',
                           description: request['description'] ?? '',
-                          creationDate: (request['dt_creation'] as Timestamp?)
-                                  ?.toDate()
-                                  .toString() ??
-                              '',
-                          assignedMechanic: request['assigned_mechanic_id'] ??
-                              'Aguardando ser aceito por alguma mecânica',
-                          status: request['status'] == 'pending'
-                              ? 'Pendente'
-                              : 'Aceito',
+                          creationDate: (request['dt_creation'] as Timestamp?)?.toDate().toString() ?? '',
+                          assignedMechanic: request['assigned_mechanic_id'] ?? 'Aguardando ser aceito por alguma mecânica',
+                          status: request['status'] == 'pending' ? 'Pendente' : 'Aceito',
                           carModel: request['model'] ?? '',
                           plate: request['plate'] ?? '',
                           documentId: request['id'],

@@ -49,6 +49,7 @@ class _FormsVehicleState extends State<FormsVehicle> {
           List<Vehicle> userVehicles = snapshot.data as List<Vehicle>;
 
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               for (int i = 0; i < userVehicles.length; i++)
                 _buildVehicleForm(userVehicles[i], i, context),

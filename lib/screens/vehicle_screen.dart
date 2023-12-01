@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/vehicle_model.dart';
 import 'package:mech_client/services/vehicle_services.dart';
-import 'package:mech_client/utils/constans_utils.dart';
 import 'package:mech_client/widgets/Vehicles/forms_vehicle_widget.dart';
 
 class VehiclePage extends StatelessWidget {
@@ -54,27 +53,6 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                const Column(
-                  children: [
-                    Icon(
-                      Icons.directions_car_filled_outlined,
-                      size: 50,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 10.0),
-                      child: Text(
-                        'Veículo',
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ],
-                ),
                 FormsVehicle(vehicle: vehicle),
               ],
             ),

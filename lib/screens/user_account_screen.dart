@@ -50,26 +50,9 @@ class _UserAccountState extends State<UserAccount> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(
-                      Icons.account_circle_outlined,
-                      size: 50,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Sua Conta",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500),
-                    ),
                     Container(
-                      padding: const EdgeInsets.only(
-                          left: 15, right: 15, top: 5, bottom: 10),
-                      margin: const EdgeInsets.only(
-                          left: 10, right: 10, top: 20, bottom: 10),
+                      padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 10),
+                      margin: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
