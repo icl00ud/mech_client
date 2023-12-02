@@ -240,7 +240,7 @@ class UserServices {
         accountUser.address.complement.text =
             snapshot['address']['complement'] ?? '';
 
-        if (snapshot['vehicles'] != null) {
+        if (snapshot['vehicles'] == null) {
           List<dynamic> vehicleList = snapshot['vehicles'];
           accountUser.vehicles = List<String>.from(vehicleList);
         } else {

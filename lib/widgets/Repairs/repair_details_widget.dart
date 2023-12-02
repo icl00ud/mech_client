@@ -70,7 +70,7 @@ class DetailsModal extends StatelessWidget {
                 details.status == 'Aceito'
                     ? buildWhatsAppButton()
                     : buildAcceptButton(context, repairId),
-              SizedBox(height: 10)
+              const SizedBox(height: 10)
             ],
           ),
         ),

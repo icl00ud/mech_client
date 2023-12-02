@@ -38,12 +38,14 @@ class RepairPageState extends State<RepairPage> {
   void initState() {
     super.initState();
     initializeData();
+    print("User id: $userId");
+    print("UserType: $userType");
   }
 
   Future<void> initializeData() async {
     await getUserType();
     await loadRepairRequests();
-    fetchPlates();
+    await fetchPlates();
   }
 
   Future<void> getUserType() async {
