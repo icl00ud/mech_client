@@ -59,12 +59,9 @@ class _HomeScreenState extends State<HomeScreenMech> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          _selectedIndex == 0 ? 'Conta' : 'Conserto',
+          _selectedIndex == 0 ? 'Conta' : 'Serviços',
           style: const TextStyle(
-            color: primaryColor,
-            fontSize: 22,
-            fontWeight: FontWeight.bold
-          ),
+              color: primaryColor, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(
@@ -80,15 +77,13 @@ class _HomeScreenState extends State<HomeScreenMech> {
           },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.where_to_vote_outlined,
-              size: 25,
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Image.asset(
+              'assets/images/icon_mech_client.png',
+              width: 25,
+              height: 25,
             ),
-            color: primaryColor,
-            onPressed: () {
-              singOut();
-            },
           ),
         ],
       ),
@@ -106,7 +101,7 @@ class _HomeScreenState extends State<HomeScreenMech> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.build_outlined),
-            label: 'Conserto',
+            label: 'Serviços',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -119,11 +114,11 @@ class _HomeScreenState extends State<HomeScreenMech> {
   void singOut() async {
     await _firebaseAuth.signOut().then(
           (user) => Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const LoginPage(),
-        ),
-      ),
-    );
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          ),
+        );
   }
 }
 

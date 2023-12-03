@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mech_client/services/user_services.dart';
+import 'package:mech_client/utils/constans_utils.dart';
+import 'package:mech_client/utils/feedback_utils.dart';
 import '../models/account_user_model.dart';
 import '../models/repair/repair_details.dart';
 import '../services/repair_services.dart';
@@ -20,13 +21,15 @@ class RepairPage extends StatefulWidget {
 class RepairPageState extends State<RepairPage> {
   final RepairServices repairServices = RepairServices();
   final UserServices userServices = UserServices();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   List<Map<String, dynamic>> acceptedRequests = [];
   List<Map<String, dynamic>> pendingRequests = [];
 
   bool loading = false;
+
+  var userId = UserServices().getUserId().toString();
   late String userType = '';
+  List<String> plates = [];
 
   StreamSubscription<List<Map<String, dynamic>>>? acceptedSubscription;
   StreamSubscription<List<Map<String, dynamic>>>? pendingSubscription;
@@ -35,11 +38,35 @@ class RepairPageState extends State<RepairPage> {
   void initState() {
     super.initState();
     initializeData();
+    print("User id: $userId");
+    print("UserType: $userType");
   }
 
   Future<void> initializeData() async {
     await getUserType();
     await loadRepairRequests();
+    await fetchPlates();
+  }
+
+  Future<void> getUserType() async {
+    AccountUser? user = await userServices.getUserByUid(userId);
+
+    if (user != null) {
+      setState(() {
+        userType = user.type;
+      });
+    }
+  }
+
+  Future<void> fetchPlates() async {
+    try {
+      List<String> userPlates = await repairServices.getPlates(userId);
+      setState(() {
+        plates = userPlates;
+      });
+    } catch (e) {
+      print('Erro ao obter placas: $e');
+    }
   }
 
   @override
@@ -71,20 +98,26 @@ class RepairPageState extends State<RepairPage> {
                     child: Center(
                       child: Column(
                         children: [
-                            ElevatedButton(
-                              onPressed: () {
+                          ElevatedButton(
+                            onPressed: () {
+                              if (plates.isEmpty) {
+                                FeedbackUtils.showErrorSnackBar(context,
+                                    "Antes de solicitar um serviço cadastre seu veículo.");
+                              } else {
                                 showDialog(
                                   context: context,
-                                  builder: (context) => const ServiceRequestModal(),
+                                  builder: (context) =>
+                                      const ServiceRequestModal(),
                                 );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF5C00),
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(2),
-                              ),
-                              child: const Icon(Icons.add, size: 32),
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF5C00),
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(2),
                             ),
+                            child: const Icon(Icons.add, size: 32),
+                          ),
                           const SizedBox(height: 10),
                           const Text(
                             'Solicitar Serviço',
@@ -109,21 +142,29 @@ class RepairPageState extends State<RepairPage> {
                 ),
                 const SizedBox(height: 10),
                 if (loading) ...[
-                  const CircularProgressIndicator(),
+                  const Center(
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                    ),
+                  ),
                 ] else if (acceptedRequests.isNotEmpty)
                   Column(
                     children: acceptedRequests.map((request) {
                       final details = RepairDetails(
-                        title: request['title'] ?? '',
-                        description: request['description'] ?? '',
-                        creationDate: (request['dt_creation'] as Timestamp).toDate().toString(),
-                        assignedMechanic: request['assigned_mechanic_id'] ?? '',
-                        status: request['status'] == 'accepted' ? 'Aceito' : 'Pendente',
-                        carModel: request['model'] ?? '',
-                        plate: request['plate'] ?? '',
-                        documentId: request['id'],
-                        customerPhone: request['customer']['phone']
-                      );
+                          title: request['title'] ?? '',
+                          description: request['description'] ?? '',
+                          creationDate: (request['dt_creation'] as Timestamp)
+                              .toDate()
+                              .toString(),
+                          assignedMechanic:
+                              request['assigned_mechanic_id'] ?? '',
+                          status: request['status'] == 'accepted'
+                              ? 'Aceito'
+                              : 'Pendente',
+                          carModel: request['model'] ?? '',
+                          plate: request['plate'] ?? '',
+                          documentId: request['id'],
+                          customerPhone: request['customer']['phone']);
 
                       final String documentId = request['id'];
 
@@ -135,7 +176,10 @@ class RepairPageState extends State<RepairPage> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return DetailsModal(details: details, userType: userType, repairId: documentId);
+                              return DetailsModal(
+                                  details: details,
+                                  userType: userType,
+                                  repairId: documentId);
                             },
                           );
                         },
@@ -157,7 +201,9 @@ class RepairPageState extends State<RepairPage> {
                   ),
                 const SizedBox(height: 15),
                 Text(
-                  userType == 'Cliente' ? 'Serviços Pendentes' : 'Serviços Disponíveis',
+                  userType == 'Cliente'
+                      ? 'Serviços Pendentes'
+                      : 'Serviços Disponíveis',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -166,21 +212,28 @@ class RepairPageState extends State<RepairPage> {
                 ),
                 const SizedBox(height: 10),
                 if (loading) ...[
-                  const CircularProgressIndicator(),
+                  const CircularProgressIndicator(
+                    color: primaryColor,
+                  ),
                 ] else if (pendingRequests.isNotEmpty)
                   Column(
                     children: pendingRequests.map((request) {
                       final details = RepairDetails(
-                        title: request['title'] ?? '',
-                        description: request['description'] ?? '',
-                        creationDate: (request['dt_creation'] as Timestamp).toDate().toString(),
-                        assignedMechanic: request['assigned_mechanic_id'] ?? 'Aguardando ser aceito por alguma mecânica',
-                        status: request['status'] == 'pending' ? 'Pendente' : 'Aceito',
-                        carModel: request['model'] ?? '',
-                        plate: request['plate'] ?? '',
-                        documentId: request['id'],
-                        customerPhone: request['customer']['phone']
-                      );
+                          title: request['title'] ?? '',
+                          description: request['description'] ?? '',
+                          creationDate: (request['dt_creation'] as Timestamp?)
+                                  ?.toDate()
+                                  .toString() ??
+                              '',
+                          assignedMechanic: request['assigned_mechanic_id'] ??
+                              'Aguardando ser aceito por alguma mecânica',
+                          status: request['status'] == 'pending'
+                              ? 'Pendente'
+                              : 'Aceito',
+                          carModel: request['model'] ?? '',
+                          plate: request['plate'] ?? '',
+                          documentId: request['id'],
+                          customerPhone: request['customer']['phone']);
 
                       final String documentId = request['id'];
 
@@ -192,7 +245,10 @@ class RepairPageState extends State<RepairPage> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return DetailsModal(details: details, userType: userType, repairId: documentId);
+                              return DetailsModal(
+                                  details: details,
+                                  userType: userType,
+                                  repairId: documentId);
                             },
                           );
                         },
@@ -226,28 +282,36 @@ class RepairPageState extends State<RepairPage> {
     });
 
     acceptedSubscription?.cancel();
-    if(userType == 'Cliente'){
-      acceptedSubscription = repairServices.getAcceptedRequestsForCustomer().listen((List<Map<String, dynamic>> data) {
+    if (userType == 'Cliente') {
+      acceptedSubscription = repairServices
+          .getAcceptedRequestsForCustomer()
+          .listen((List<Map<String, dynamic>> data) {
         setState(() {
           acceptedRequests = data;
         });
       });
 
       pendingSubscription?.cancel();
-      pendingSubscription = repairServices.getPendingRequestsForCustomer().listen((List<Map<String, dynamic>> data) {
+      pendingSubscription = repairServices
+          .getPendingRequestsForCustomer()
+          .listen((List<Map<String, dynamic>> data) {
         setState(() {
           pendingRequests = data;
         });
       });
     } else {
-      acceptedSubscription = repairServices.getAcceptedRequestsForMechanic().listen((List<Map<String, dynamic>> data) {
+      acceptedSubscription = repairServices
+          .getAcceptedRequestsForMechanic()
+          .listen((List<Map<String, dynamic>> data) {
         setState(() {
           acceptedRequests = data;
         });
       });
 
       pendingSubscription?.cancel();
-      pendingSubscription = repairServices.getPendingRequestsForMechanic().listen((List<Map<String, dynamic>> data) {
+      pendingSubscription = repairServices
+          .getPendingRequestsForMechanic()
+          .listen((List<Map<String, dynamic>> data) {
         setState(() {
           pendingRequests = data;
         });
@@ -270,16 +334,6 @@ class RepairPageState extends State<RepairPage> {
     } finally {
       setState(() {
         loading = false;
-      });
-    }
-  }
-
-  Future<void> getUserType() async {
-    AccountUser? user = await userServices.getUserByUid(_firebaseAuth.currentUser!.uid);
-
-    if (user != null) {
-      setState(() {
-        userType = user.type;
       });
     }
   }

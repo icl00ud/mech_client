@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/vehicle_model.dart';
-import 'package:mech_client/screens/register_vehicle_screen.dart';
 import 'package:mech_client/services/vehicle_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
+import 'package:mech_client/widgets/Vehicles/vehicle_create_widget.dart';
+import 'package:mech_client/widgets/Vehicles/vehicle_update_widget.dart';
 
 class FormsVehicle extends StatefulWidget {
   final Vehicle vehicle;
@@ -38,7 +39,9 @@ class _FormsVehicleState extends State<FormsVehicle> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: primaryColor,
+            ),
           );
         } else if (snapshot.hasError) {
           return Text('Erro: ${snapshot.error}');
@@ -46,6 +49,7 @@ class _FormsVehicleState extends State<FormsVehicle> {
           List<Vehicle> userVehicles = snapshot.data as List<Vehicle>;
 
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               for (int i = 0; i < userVehicles.length; i++)
                 _buildVehicleForm(userVehicles[i], i, context),
@@ -54,18 +58,13 @@ class _FormsVehicleState extends State<FormsVehicle> {
               if (userVehicles.length < 3)
                 GestureDetector(
                   onTap: () async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterVehiclePage(),
-                      ),
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const CreateVehicleModal();
+                      },
                     );
-
-                    List<Vehicle> updatedVehicles =
-                        await vehicleServices.getVehiclesForUser();
-                    setState(() {
-                      // atualize a lista com os veículos obtidos
-                      userVehicles = updatedVehicles;
-                    });
+                    _loadUserVehicles();
                   },
                   child: Container(
                     padding: const EdgeInsets.only(
@@ -238,19 +237,68 @@ class _FormsVehicleState extends State<FormsVehicle> {
             top: 8,
             left: 20,
             child: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                // funcao para deletar veiculo
+              onPressed: () async {
+                showDialog(
+                  barrierColor:
+                      const Color.fromARGB(255, 39, 39, 39).withOpacity(0.7),
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      icon: const Icon(
+                        Icons.car_crash_outlined,
+                        size: 30,
+                      ),
+                      title: const Text('Excluir Veículo'),
+                      content: Text(
+                        "Tem certeza de que deseja excluir o veículo com a placa ${vehicle.plate.text}?",
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Cancelar',
+                            style: TextStyle(
+                                color: Color(
+                                  0xFFFF5C00,
+                                ),
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await vehicleServices.deleteVehicle(
+                                context, vehicle);
+                            _loadUserVehicles();
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Confirmar',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500)),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
+              icon: const Icon(Icons.delete_forever_outlined),
             ),
           ),
           Positioned(
             top: 8,
             right: 20,
             child: IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                // funcao para editar informacoes
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: () async {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      UpdateVehicleModal(vehicle: vehicle),
+                );
+                _loadUserVehicles();
               },
             ),
           ),

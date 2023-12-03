@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mech_client/services/user_services.dart';
+import 'package:mech_client/services/vehicle_services.dart';
+import 'package:mech_client/utils/constans_utils.dart';
+import 'package:mech_client/utils/feedback_utils.dart';
 import '../../services/repair_services.dart';
 
 class ServiceRequestModal extends StatefulWidget {
@@ -11,12 +15,52 @@ class ServiceRequestModal extends StatefulWidget {
 class _ServiceRequestModalState extends State<ServiceRequestModal> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController plateController = TextEditingController();
   final TextEditingController modelController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
-  final TextEditingController motorController = TextEditingController();
+  final TextEditingController brandController = TextEditingController();
 
   final RepairServices repairServices = RepairServices();
+
+  var userId = UserServices().getUserId().toString();
+  String selectedPlate = '';
+
+  List<String> plates = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPlates();
+    print("ID: $userId");
+  }
+
+  Future<void> fetchPlates() async {
+    try {
+      List<String> userPlates = await repairServices.getPlates(userId);
+      setState(() {
+        plates = userPlates;
+      });
+    } catch (e) {
+      // Lidar com erros
+      print('Erro ao obter placas: $e');
+    }
+  }
+
+  Future<void> updateFields(String selectedPlate) async {
+    try {
+      Map<String, dynamic>? vehicleData =
+          await VehicleServices().getVehicleByPlate(selectedPlate);
+
+      if (vehicleData != null) {
+        setState(() {
+          modelController.text = vehicleData['model'] ?? '';
+          yearController.text = vehicleData['yearFabrication'] ?? '';
+          brandController.text = vehicleData['brand'] ?? '';
+        });
+      }
+    } catch (e) {
+      print('Erro ao atualizar campos: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +84,11 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                 controller: titleController,
                 decoration: const InputDecoration(labelText: 'Título'),
               ),
-              const SizedBox(height: 0),
+              const SizedBox(height: 16),
               TextField(
                 controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Descrição do Problema'),
+                decoration:
+                    const InputDecoration(labelText: 'Descrição do Problema'),
                 maxLines: 2,
               ),
               const SizedBox(height: 16),
@@ -52,46 +97,62 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                   Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: TextField(
-                        controller: plateController,
-                        decoration: const InputDecoration(labelText: 'Placa'),
+                      padding: const EdgeInsets.only(right: 12),
+                      child: DropdownButton<String>(
+                        items: plates.map((String plate) {
+                          return DropdownMenuItem<String>(
+                            value: plate,
+                            child: Text(plate),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              updateFields(value);
+                              selectedPlate = value;
+                            });
+                          }
+                        },
+                        hint:
+                            Text(selectedPlate == '' ? 'Placa' : selectedPlate),
                       ),
                     ),
                   ),
                   Expanded(
-                    flex: 4,
+                    flex: 3,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: TextField(
                         controller: modelController,
                         decoration: const InputDecoration(labelText: 'Modelo'),
+                        enabled: false,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: TextField(
                         controller: yearController,
                         decoration: const InputDecoration(labelText: 'Ano'),
+                        enabled: false,
                         keyboardType: TextInputType.number,
                       ),
                     ),
                   ),
                   Expanded(
-                    flex: 4,
+                    flex: 3,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: TextField(
-                        controller: motorController,
-                        decoration: const InputDecoration(labelText: 'Motor'),
+                        controller: brandController,
+                        decoration: const InputDecoration(labelText: 'Marca'),
+                        enabled: false,
                       ),
                     ),
                   ),
@@ -102,30 +163,43 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                 onPressed: () {
                   String title = titleController.text;
                   String description = descriptionController.text;
-                  String plate = plateController.text;
+                  String plate = selectedPlate;
                   String model = modelController.text;
                   String year = yearController.text;
-                  String motor = motorController.text;
+                  String brand = brandController.text;
 
-                  repairServices.createRepair(
-                    title: title,
-                    description: description,
-                    plate: plate,
-                    model: model,
-                    year: year,
-                    motor: motor,
-                  );
+                  if (title.isEmpty || description.isEmpty) {
+                    FeedbackUtils.showErrorSnackBar(
+                        context, "Por favor, preencha todos os campos.");
+                  } else {
+                    repairServices.createRepair(
+                      title: title,
+                      description: description,
+                      plate: plate,
+                      model: model,
+                      year: year,
+                      motor: brand,
+                    );
 
-                  Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  }
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: const Color(0xFFFF5C00),
+                  backgroundColor: const Color(0xFFFF5C00),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50.0),
                   ),
                 ),
                 child: const Text('Solicitar', style: TextStyle(fontSize: 16)),
               ),
+              TextButton(
+                  child: const Text(
+                    "Cancelar",
+                    style: TextStyle(color: primaryColor),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
             ],
           ),
         ),

@@ -2,7 +2,7 @@
     <application
         android:label="MechClient"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/icon_mech_client">
         <activity
             android:name=".MainActivity"
             android:exported="true"

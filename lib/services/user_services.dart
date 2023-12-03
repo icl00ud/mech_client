@@ -1,6 +1,8 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:mech_client/screens/home_screen_mech.dart';
+import 'package:mech_client/services/validations/user_validation.dart';
 import 'package:mech_client/utils/feedback_utils.dart';
-import 'package:mech_client/services/validation_user_service.dart';
 import '../models/address_model.dart';
 import '../utils/spinner_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,7 +16,7 @@ class UserServices {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   void loginUser(BuildContext context, AccountUser accountUser) async {
-    if (ValidationUser.validationLogin(context, accountUser)) {
+    if (UserValidation.validationLogin(context, accountUser)) {
       try {
         SpinnerUtils.showSpinner(context);
         await firebaseAuth.signInWithEmailAndPassword(
@@ -61,91 +63,88 @@ class UserServices {
 
   void registerUser(
       BuildContext context, AccountUser accountUser, String select) async {
-    if (ValidationUser.validationFieldsUser(context, accountUser, select)) {
-      try {
-        // exibe o spinner ao iniciar o registro
-        SpinnerUtils.showSpinner(context);
+    try {
+      // exibe o spinner ao iniciar o registro
+      SpinnerUtils.showSpinner(context);
 
-        // verifica a unicidade do CPF ou CNPJ antes de registrar
-        if (select == "Cliente") {
-          final isUnique = await checkUniqueCPF(accountUser.cpf.text);
-          if (!isUnique) {
-            SpinnerUtils.hideSpinner(context);
-            FeedbackUtils.showErrorSnackBar(
-                context, 'Este CPF já foi cadastrado.');
-            return;
-          }
-        } else {
-          final isUnique = await checkUniqueCNPJ(accountUser.cnpj.text);
-          if (!isUnique) {
-            SpinnerUtils.hideSpinner(context);
-            FeedbackUtils.showErrorSnackBar(
-                context, 'Este CNPJ já foi cadastrado.');
-            return;
-          }
-        }
-
-        // cria um usuario com autenticação de e-mail/senha
-        final UserCredential userCredential =
-            await firebaseAuth.createUserWithEmailAndPassword(
-          email: accountUser.email.text,
-          password: accountUser.password.text,
-        );
-
-        final User? user = userCredential.user;
-        if (user != null) {
-          // prepara os dados
-          final Map<String, dynamic> addressData = {
-            'address': accountUser.address.address.text,
-            'number': accountUser.address.number.text,
-            'zip': accountUser.address.zip.text,
-            'complement': accountUser.address.complement.text,
-          };
-
-          final Map<String, dynamic> userData = {
-            'name': accountUser.name.text,
-            'email': accountUser.email.text,
-            'phone': accountUser.phone.text,
-            'address': addressData,
-            'password': accountUser.password.text,
-            'userId': firebaseAuth.currentUser!.uid,
-            'type': select,
-          };
-
-          if (select == "Cliente") {
-            userData['cpf'] = accountUser.cpf.text;
-          } else {
-            userData['cnpj'] = accountUser.cnpj.text;
-          }
-
-          // salva os dados do usuário
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(user.uid)
-              .set(userData);
-
-          // exibe uma mensagem de sucesso e redireciona para tela de login
-          FeedbackUtils.showSuccessSnackBar(
-              context, 'Cadastro efetuado com sucesso!');
-
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const LoginPage(),
-          ));
-        }
-      } on FirebaseAuthException catch (e) {
-        SpinnerUtils.hideSpinner(context);
-
-        if (e.code == 'weak-password') {
+      // verifica a unicidade do CPF ou CNPJ antes de registrar
+      if (select == "Cliente") {
+        final isUnique = await checkUniqueCPF(accountUser.cpf.text);
+        if (!isUnique) {
+          SpinnerUtils.hideSpinner(context);
           FeedbackUtils.showErrorSnackBar(
-              context, 'A senha é muito fraca. Tente uma senha mais forte.');
-        } else if (e.code == 'email-already-in-use') {
-          FeedbackUtils.showErrorSnackBar(context,
-              'Este e-mail já foi cadastrado. Por favor, faça login ou use outro e-mail.');
+              context, 'Este CPF já foi cadastrado.');
+          return;
         }
-        print('Erro no registro: $e');
+      } else {
+        final isUnique = await checkUniqueCNPJ(accountUser.cnpj.text);
+        if (!isUnique) {
+          SpinnerUtils.hideSpinner(context);
+          FeedbackUtils.showErrorSnackBar(
+              context, 'Este CNPJ já foi cadastrado.');
+          return;
+        }
       }
-    } else {
-      print("Campos inválidos.");
+
+      // cria um usuario com autenticação de e-mail/senha
+      final UserCredential userCredential =
+          await firebaseAuth.createUserWithEmailAndPassword(
+        email: accountUser.email.text,
+        password: accountUser.password.text,
+      );
+
+      final User? user = userCredential.user;
+      if (user != null) {
+        // prepara os dados
+        final Map<String, dynamic> addressData = {
+          'address': accountUser.address.address.text,
+          'number': accountUser.address.number.text,
+          'zip': accountUser.address.zip.text,
+          'complement': accountUser.address.complement.text,
+        };
+
+        final Map<String, dynamic> userData = {
+          'name': accountUser.name.text,
+          'email': accountUser.email.text,
+          'phone': accountUser.phone.text,
+          'address': addressData,
+          'password': accountUser.password.text,
+          'userId': firebaseAuth.currentUser!.uid,
+          'vehicles': [],
+          'type': select,
+        };
+
+        if (select == "Cliente") {
+          userData['cpf'] = accountUser.cpf.text;
+        } else {
+          userData['cnpj'] = accountUser.cnpj.text;
+        }
+
+        // salva os dados do usuário
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .set(userData);
+
+        // exibe uma mensagem de sucesso e redireciona para tela de login
+        FeedbackUtils.showSuccessSnackBar(
+            context, 'Cadastro efetuado com sucesso!');
+
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ));
+      }
+    } on FirebaseAuthException catch (e) {
+      SpinnerUtils.hideSpinner(context);
+
+      if (e.code == 'weak-password') {
+        FeedbackUtils.showErrorSnackBar(
+            context, 'A senha é muito fraca. Tente uma senha mais forte.');
+      } else if (e.code == 'email-already-in-use') {
+        FeedbackUtils.showErrorSnackBar(context,
+            'Este e-mail já foi cadastrado. Por favor, faça login ou use outro e-mail.');
+      }
+      print('Erro no registro: $e');
     }
   }
 
@@ -207,7 +206,6 @@ class UserServices {
     try {
       var collection = FirebaseFirestore.instance.collection('Users');
       DocumentSnapshot snapshot = await collection.doc(uid).get();
-
       if (snapshot.exists) {
         AccountUser accountUser = AccountUser(
           address: Address(),
@@ -240,7 +238,8 @@ class UserServices {
         accountUser.address.address.text = snapshot['address']['address'] ?? '';
         accountUser.address.number.text = snapshot['address']['number'] ?? '';
         accountUser.address.zip.text = snapshot['address']['zip'] ?? '';
-        accountUser.address.complement.text = snapshot['address']['complement'] ?? '';
+        accountUser.address.complement.text =
+            snapshot['address']['complement'] ?? '';
 
         if (snapshot['vehicles'] != null) {
           List<dynamic> vehicleList = snapshot['vehicles'];
@@ -265,7 +264,7 @@ class UserServices {
     AccountUser accountUser,
   ) async {
     try {
-      if (ValidationUser.validationFieldsUser(
+      if (UserValidation.validationFieldsUser(
           context, accountUser, accountUser.type,
           validateCheckbox: false)) {
         SpinnerUtils.showSpinnerMessage(context, "Atualizando o cadastro...");
@@ -308,7 +307,6 @@ class UserServices {
 
             await collection.doc(user.uid).update(userData);
 
-            // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context)
                 .removeCurrentSnackBar(); // Remove o SnackBar
             FeedbackUtils.showSuccessSnackBar(
@@ -341,28 +339,86 @@ class UserServices {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // reautenticar o usuario com a senha atual
+      // reautenticar o usuário com a senha atual
       final credential = EmailAuthProvider.credential(
-          email: accountUser.email.text, password: accountUser.password.text);
+        email: accountUser.email.text,
+        password: accountUser.password.text,
+      );
 
       try {
         SpinnerUtils.showSpinner(context);
         await user.reauthenticateWithCredential(credential);
-        // exclusão da conta no banco
+
+        if (accountUser.type == "Cliente") {
+          // Recuperar veículos do usuário
+          QuerySnapshot vehicleSnapshot = await FirebaseFirestore.instance
+              .collection("Vehicles")
+              .where("id", isEqualTo: user.uid)
+              .get();
+
+          // Excluir veículos associados ao usuário
+          for (QueryDocumentSnapshot vehicleDoc in vehicleSnapshot.docs) {
+            await FirebaseFirestore.instance
+                .collection("Vehicles")
+                .doc(vehicleDoc.id)
+                .delete();
+          }
+
+          // Recuperar reparos do usuário
+          QuerySnapshot repairSnapshot = await FirebaseFirestore.instance
+              .collection("Repairs")
+              .where("customer.userId", isEqualTo: user.uid)
+              .get();
+
+          // Excluir reparos associados ao usuário
+          for (QueryDocumentSnapshot repairDoc in repairSnapshot.docs) {
+            await FirebaseFirestore.instance
+                .collection("Repairs")
+                .doc(repairDoc.id)
+                .delete();
+          }
+        } else if (accountUser.type == 'Mecânica') {
+          // Recuperar reparos do usuário
+          QuerySnapshot repairSnapshot = await FirebaseFirestore.instance
+              .collection("Repairs")
+              .where("assigned_mechanic_id", isEqualTo: user.uid)
+              .get();
+
+          // Excluir reparos associados ao usuário
+          for (QueryDocumentSnapshot repairDoc in repairSnapshot.docs) {
+            await FirebaseFirestore.instance
+                .collection("Repairs")
+                .doc(repairDoc.id)
+                .update({'assigned_mechanic_id': null, 'status': 'pending'});
+          }
+        }
+
+        // Excluir a conta no banco
         await FirebaseFirestore.instance
             .collection("Users")
             .doc(user.uid)
             .delete();
-        // exclusão da conta autenticada
+
+        // Excluir a conta autenticada
         await user.delete();
+
+        SpinnerUtils.hideSpinner(context);
         FeedbackUtils.showSuccessSnackBar(
             context, "Conta excluída com sucesso!");
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const LoginPage()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
       } catch (e) {
         SpinnerUtils.hideSpinner(context);
         print("Erro de reautenticação: $e");
+        // Tratar o erro de reautenticação
       }
     }
+  }
+
+  String? getUserId() {
+    final User? user = firebaseAuth.currentUser;
+    return user?.uid;
   }
 }

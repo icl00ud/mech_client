@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/vehicle_model.dart';
 import 'package:mech_client/services/vehicle_services.dart';
-import 'package:mech_client/utils/constans_utils.dart';
-import 'package:mech_client/widgets/forms_vehicle_widget.dart';
+import 'package:mech_client/widgets/Vehicles/forms_vehicle_widget.dart';
 
 class VehiclePage extends StatelessWidget {
   const VehiclePage({Key? key}) : super(key: key);
@@ -48,14 +47,15 @@ class _RegisterVehicleState extends State<RegisterVehicle> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 10),
-              FormsVehicle(vehicle: vehicle),
-            ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                FormsVehicle(vehicle: vehicle),
+              ],
+            ),
           ),
         ),
       ),

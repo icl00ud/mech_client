@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreenClient> {
           _pageTitle = 'Conta';
           break;
         case 2:
-          _pageTitle = 'Conserto';
+          _pageTitle = 'Serviços';
           break;
         default:
           _pageTitle = 'Conta';
@@ -94,15 +94,13 @@ class _HomeScreenState extends State<HomeScreenClient> {
           },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.where_to_vote_outlined,
-              size: 25,
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Image.asset(
+              'assets/images/icon_mech_client.png',
+              width: 25,
+              height: 25,
             ),
-            color: primaryColor,
-            onPressed: () {
-              singOut();
-            },
           ),
         ],
       ),
@@ -124,7 +122,7 @@ class _HomeScreenState extends State<HomeScreenClient> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.build_outlined),
-            label: 'Conserto',
+            label: 'Serviços',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -137,11 +135,11 @@ class _HomeScreenState extends State<HomeScreenClient> {
   void singOut() async {
     await _firebaseAuth.signOut().then(
           (user) => Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const LoginPage(),
-        ),
-      ),
-    );
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          ),
+        );
   }
 }
 

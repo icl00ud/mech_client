@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mech_client/models/account_user_model.dart';
-import 'package:mech_client/screens/repair_screen.dart';
-import 'package:mech_client/screens/user_account_screen.dart';
-import 'package:mech_client/screens/vehicle_screen.dart';
 import 'package:mech_client/services/user_services.dart';
 import 'package:mech_client/utils/constans_utils.dart';
 
 class CustomDrawer extends StatefulWidget {
   final VoidCallback onSignOut;
 
-  CustomDrawer({required this.onSignOut});
+  const CustomDrawer({super.key, required this.onSignOut});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -43,7 +40,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
             accountEmail: Text(accountUser.email.text),
             currentAccountPicture: const CircleAvatar(
               backgroundColor: primaryColor,
-              backgroundImage: NetworkImage('URL da foto do usuário'),
               child: Icon(
                 Icons.account_circle_outlined,
                 size: 50,
@@ -54,37 +50,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
               color: primaryColor,
             ),
           ),
-          if (accountUser.type == 'Cliente')
-            ListTile(
-              title: const Text('Veículos'),
-              leading: const Icon(Icons.directions_car_outlined),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const VehiclePage()));
-              },
-            ),
-          ListTile(
-            title: const Text('Conserto'),
-            leading: const Icon(Icons.toll_outlined),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const RepairPage()));
-            },
-          ),
-          ListTile(
-              title: const Text('Conta'),
-              leading: const Icon(Icons.account_circle_outlined),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const UserAccount()));
-              }),
           const Expanded(
-            child:
-                SizedBox(), // Espaço em branco para preencher o espaço restante
+            child: SizedBox(),
           ),
           const Divider(),
           ListTile(
@@ -97,7 +64,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text('Excluir Conta'),
+                      icon: const Icon(
+                        Icons.no_accounts_outlined,
+                        size: 30,
+                      ),
+                      title: const Text(
+                        'Excluir Conta',
+                      ),
                       content: const Text(
                           'Você tem certeza de que deseja excluir sua conta?'),
                       actions: <Widget>[
