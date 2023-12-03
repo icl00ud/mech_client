@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class SmsVerification {
   final String number;
   final String accountSid = 'AC9fe9a7c2306deacb66fa86f9249598dc';
-  final String authToken = 'f1c034b15a28042da9a23ce7bed7117a';
+  final String authToken = '5e9cb5577e7b9d5c6a2a396b2cc19fbd';
   final String twilioNumber = '+14843098091';
 
   SmsVerification({required this.number});

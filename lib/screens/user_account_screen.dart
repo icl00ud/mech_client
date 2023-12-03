@@ -44,12 +44,12 @@ class _UserAccountState extends State<UserAccount> {
 
         return Scaffold(
           body: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SingleChildScrollView(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
                     child: Container(
                       padding: const EdgeInsets.only(
                           left: 15, right: 15, top: 5, bottom: 25),
@@ -71,8 +71,8 @@ class _UserAccountState extends State<UserAccount> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

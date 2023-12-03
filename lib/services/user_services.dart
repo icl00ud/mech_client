@@ -378,7 +378,6 @@ class UserServices {
                 .delete();
           }
         } else if (accountUser.type == 'Mecânica') {
-          // Recuperar reparos do usuário
           QuerySnapshot repairSnapshot = await FirebaseFirestore.instance
               .collection("Repairs")
               .where("assigned_mechanic_id", isEqualTo: user.uid)
@@ -393,18 +392,15 @@ class UserServices {
           }
         }
 
-        // Excluir a conta no banco
         await FirebaseFirestore.instance
             .collection("Users")
             .doc(user.uid)
             .delete();
 
-        // Excluir a conta autenticada
         await user.delete();
 
         SpinnerUtils.hideSpinner(context);
-        FeedbackUtils.showSuccessSnackBar(
-            context, "Conta excluída com sucesso!");
+        FeedbackUtils.showSuccessSnackBar(context, "Conta excluída com sucesso!");
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -412,7 +408,6 @@ class UserServices {
       } catch (e) {
         SpinnerUtils.hideSpinner(context);
         print("Erro de reautenticação: $e");
-        // Tratar o erro de reautenticação
       }
     }
   }
