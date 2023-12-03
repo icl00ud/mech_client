@@ -168,9 +168,7 @@ Caso você encontre dificuldades durante o processo de instalação do Flutter o
 
 
 <br>
-<br>
-<br>
-<br>
+
 
 <h2 align="center">Contribuidores</h2>
 <table align="center">
