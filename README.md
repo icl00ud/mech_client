@@ -85,7 +85,7 @@ No nosso projeto, utilizamos o Firebase para serviços como autenticação de us
 **3. Configure o Flutter para o Firebase:**
    - Assim que você registrar um aplicativo ao seu projeto baixe o arquivo gerado pelo Firebase `google-services.json` e adicione na pasta `.app` conforme a imagem abaixo.
 <center>
-<img src="imagem_google-services.png" alt="Imagem exemplo" width="300" height="300">
+<img src="Document\imagem_google-services.png" alt="Imagem exemplo" width="300" height="300">
 </center>
 <br>
 
