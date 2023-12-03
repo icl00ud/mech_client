@@ -163,7 +163,7 @@ class _ServiceRequestModalState extends State<ServiceRequestModal> {
                 onPressed: () {
                   String title = titleController.text;
                   String description = descriptionController.text;
-                  String plate = plates.isNotEmpty ? plates.first : "";
+                  String plate = selectedPlate;
                   String model = modelController.text;
                   String year = yearController.text;
                   String brand = brandController.text;

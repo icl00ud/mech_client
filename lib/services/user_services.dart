@@ -339,9 +339,11 @@ class UserServices {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // reautenticar o usuario com a senha atual
+      // reautenticar o usuário com a senha atual
       final credential = EmailAuthProvider.credential(
-          email: accountUser.email.text, password: accountUser.password.text);
+        email: accountUser.email.text,
+        password: accountUser.password.text,
+      );
 
       try {
         SpinnerUtils.showSpinner(context);
@@ -361,6 +363,20 @@ class UserServices {
               .delete();
         }
 
+        // Recuperar reparos do usuário
+        QuerySnapshot repairSnapshot = await FirebaseFirestore.instance
+            .collection("Repairs")
+            .where("customer.userId", isEqualTo: user.uid)
+            .get();
+
+        // Excluir reparos associados ao usuário
+        for (QueryDocumentSnapshot repairDoc in repairSnapshot.docs) {
+          await FirebaseFirestore.instance
+              .collection("Repairs")
+              .doc(repairDoc.id)
+              .delete();
+        }
+
         // Excluir a conta no banco
         await FirebaseFirestore.instance
             .collection("Users")
@@ -373,8 +389,10 @@ class UserServices {
         SpinnerUtils.hideSpinner(context);
         FeedbackUtils.showSuccessSnackBar(
             context, "Conta excluída com sucesso!");
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const LoginPage()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
       } catch (e) {
         SpinnerUtils.hideSpinner(context);
         print("Erro de reautenticação: $e");
