@@ -349,32 +349,48 @@ class UserServices {
         SpinnerUtils.showSpinner(context);
         await user.reauthenticateWithCredential(credential);
 
-        // Recuperar veículos do usuário
-        QuerySnapshot vehicleSnapshot = await FirebaseFirestore.instance
-            .collection("Vehicles")
-            .where("id", isEqualTo: user.uid)
-            .get();
-
-        // Excluir veículos associados ao usuário
-        for (QueryDocumentSnapshot vehicleDoc in vehicleSnapshot.docs) {
-          await FirebaseFirestore.instance
+        if (accountUser.type == "Cliente") {
+          // Recuperar veículos do usuário
+          QuerySnapshot vehicleSnapshot = await FirebaseFirestore.instance
               .collection("Vehicles")
-              .doc(vehicleDoc.id)
-              .delete();
-        }
+              .where("id", isEqualTo: user.uid)
+              .get();
 
-        // Recuperar reparos do usuário
-        QuerySnapshot repairSnapshot = await FirebaseFirestore.instance
-            .collection("Repairs")
-            .where("customer.userId", isEqualTo: user.uid)
-            .get();
+          // Excluir veículos associados ao usuário
+          for (QueryDocumentSnapshot vehicleDoc in vehicleSnapshot.docs) {
+            await FirebaseFirestore.instance
+                .collection("Vehicles")
+                .doc(vehicleDoc.id)
+                .delete();
+          }
 
-        // Excluir reparos associados ao usuário
-        for (QueryDocumentSnapshot repairDoc in repairSnapshot.docs) {
-          await FirebaseFirestore.instance
+          // Recuperar reparos do usuário
+          QuerySnapshot repairSnapshot = await FirebaseFirestore.instance
               .collection("Repairs")
-              .doc(repairDoc.id)
-              .delete();
+              .where("customer.userId", isEqualTo: user.uid)
+              .get();
+
+          // Excluir reparos associados ao usuário
+          for (QueryDocumentSnapshot repairDoc in repairSnapshot.docs) {
+            await FirebaseFirestore.instance
+                .collection("Repairs")
+                .doc(repairDoc.id)
+                .delete();
+          }
+        } else if (accountUser.type == 'Mecânica') {
+          // Recuperar reparos do usuário
+          QuerySnapshot repairSnapshot = await FirebaseFirestore.instance
+              .collection("Repairs")
+              .where("assigned_mechanic_id", isEqualTo: user.uid)
+              .get();
+
+          // Excluir reparos associados ao usuário
+          for (QueryDocumentSnapshot repairDoc in repairSnapshot.docs) {
+            await FirebaseFirestore.instance
+                .collection("Repairs")
+                .doc(repairDoc.id)
+                .update({'assigned_mechanic_id': null, 'status': 'pending'});
+          }
         }
 
         // Excluir a conta no banco
