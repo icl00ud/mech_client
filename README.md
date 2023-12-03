@@ -1,149 +1,175 @@
 # 📑 Bem-vindo à Documentação do aplicativo do MechClient!
-<p>O MechClient é um aplicativo Flutter que surgiu para suprir a crescente demanda por serviços de manutenção e reparo de veículos na indústria automotiva. Nesta documentação, você encontrará detalhes abrangentes sobre as APIs que alimentam o aplicativo.</p>
+<p>O MechClient é um aplicativo em Flutter que surgiu para suprir a crescente demanda por serviços de manutenção e reparo de veículos na indústria automotiva. Nesta documentação, você encontrará detalhes abrangentes sobre as APIs que alimentam o aplicativo.</p>
 
 ## 🚀💻Tecnologias utilizadas
 
-![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
-![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)
-![SharePoint](https://img.shields.io/badge/Microsoft_SharePoint-0078D4?style=for-the-badge&logo=microsoft-sharepoint&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white) ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white) ![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black) ![SharePoint](https://img.shields.io/badge/Microsoft_SharePoint-0078D4?style=for-the-badge&logo=microsoft-sharepoint&logoColor=white) ![Twilio](https://img.shields.io/badge/Twilio-F22F46?style=for-the-badge&logo=Twilio&logoColor=white)
 
-## Classe UserAccount
-A classe UserAccount é responsável por gerenciar a interface da tela de perfil do usuário em um aplicativo Flutter. Ela permite que o usuário visualize e edite suas informações de perfil, como nome, CPF, telefone, email, endereço e senha.
+## 🌐 API Twilio
 
-### `Construtor`
-#### UserAccount()
+Neste aplicativo, utilizamos a API Twilio para verificar o número de telefone do usuário.
 
-Cria uma instância da classe UserAccount para gerenciar a tela de perfil do usuário.
+### 📌 Como Implementar:
 
-### `Métodos e Propriedades`
-#### initState
-O método initState é chamado quando o widget é inicializado e é usado para carregar as informações do usuário a partir do Firebase Authentication e Firebase Firestore.
+**1. Registre-se na Twilio:**
+   - Crie uma conta gratuita na [Twilio](https://www.twilio.com/) para obter as credenciais necessárias.
 
-#### build
-O método build constrói a interface da tela de perfil do usuário. Ele inclui elementos visuais para exibir e editar as informações do usuário, como nome, CPF, telefone, email, endereço e senha. Além disso, ele permite alternar entre os modos de visualização e edição.
+**2. Cadastre Números na Plataforma:**
+   - Como sua conta é gratuita, para utilizar o serviço de SMS, cadastre números de telefone na aba [Cadastrar Números](https://console.twilio.com/us1/develop/phone-numbers/manage/verified).
 
-### `Propriedades de Controller`
-_nameController: Controla o campo de texto para o nome do usuário.<br>
-_emailController: Controla o campo de texto para o email do usuário.<br>
-_passwordController: Controla o campo de texto para a senha do usuário.<br>
-_phoneController: Controla o campo de texto para o telefone do usuário.<br>
-_cpfController: Controla o campo de texto para o CPF do usuário.<br>
-_addressController: Controla o campo de texto para o endereço do usuário.<br>
-_numberController: Controla o campo de texto para o número de endereço do usuário.<br>
-_zipController: Controla o campo de texto para o CEP do usuário.<br>
-_complementController: Controla o campo de texto para o complemento do endereço do usuário.<br>
-_formkey<br>
-Uma chave global (GlobalKey) para o formulário que é usado para validar os campos de entrada de dados.
+**3. Obtenha Credenciais:**
+   - Obtenha o `Account SID`, o `Auth Token` e o `My Twilio phone number` na aba [Console](https://console.twilio.com/?frameUrl=%2Fconsole%3Fx-target-region%3Dus1).
 
-#### `_firebaseAuth`
-Uma instância do Firebase Authentication para gerenciar a autenticação do usuário.
+### 💻 Exemplo de Implementação:
 
-#### `isEditing`
-Uma variável booleana que controla se o usuário está no modo de edição ou visualização.
+```dart
+import 'dart:convert';
+import 'dart:math';
+import 'package:http/http.dart' as http;
 
-### `Métodos Privados`
-**getUser:** Obtém as informações do usuário do Firebase Authentication e Firebase Firestore e preenche os campos de texto correspondentes.
+class TwilioService {
+  final String accountSid = 'SEU_ACCOUNT_SID';
+  final String authToken = 'SEU_AUTH_TOKEN';
+  final String twilioNumber = 'SEU_NUMERO_TWILIO';
+  final String number = 'NUMERO_TELEFONE';
 
-**updateUser:** Atualiza as informações do usuário no Firebase Authentication e no Firebase Firestore, incluindo nome, email, telefone, endereço e senha. Ele também lida com a reautenticação do usuário para atualizar as credenciais.
+  int codigo = 10000 + Random().nextInt(90000);
 
-**isValidEmail:** Verifica se uma string é um endereço de email válido usando uma expressão regular.
+  Future<void> enviarSMS() async {
+    final Uri uri = Uri.parse(
+        'https://api.twilio.com/2010-04-01/Accounts/$accountSid/Messages.json');
+    final http.Client client = http.Client();
 
-Esta classe fornece uma interface de usuário para que os usuários possam visualizar e editar suas informações de perfil de forma segura e eficiente.
+    try {
+      final http.Response response = await client.post(
+        uri,
+        headers: <String, String>{
+          'Authorization':
+              'Basic ${base64Encode(utf8.encode('$accountSid:$authToken'))}',
+        },
+        body: <String, String>{
+          'From': twilioNumber,
+          'To': number,
+          'Body': 'Seu código de verificação: $codigo',
+        },
+      );
 
-## Classe RegisterPage
-A classe RegisterPage é responsável por gerenciar a interface da tela de registro de usuários em um aplicativo Flutter. Ela permite que os usuários se cadastrem como clientes ou mecânicos e preencham informações como nome, CPF, telefone, email, endereço e senha.
+      print('Status Code: ${response.statusCode}');
+    } catch (e) {
+      print('Erro ao enviar SMS: $e');
+    } finally {
+      client.close();
+    }
+  }
 
-### `Construtor`
-#### RegisterPage()
+  Future<bool> verificarCodigo() async {
+    String codigoInserido = codigoController.text;
+    return codigoInserido == codigo.toString();
+  }
+}
+```
+Lembre-se de substituir as informações de autenticação e números pelos dados específicos da sua conta Twilio.
 
-Cria uma instância da classe RegisterPage para gerenciar a tela de registro de usuários.
+## 🔥 Firebase
+No nosso projeto, utilizamos o Firebase para serviços como autenticação de usuários `Firebase Authentication` e armazenamento de dados em tempo real `Cloud Firestore`. Siga os passos abaixo para saber como configurar o Firebase no seu projeto:
 
-### `Métodos e Propriedades`
-#### build
-O método build constrói a interface da tela de registro de usuários. Ele inclui elementos visuais para a seleção do tipo de cadastro (cliente ou mecânico) e campos para preenchimento de informações pessoais, como nome, CPF, telefone, email, endereço e senha.
+### ⚙️ Configuração
 
-### `Propriedades de Controller`
-_nameController: Controla o campo de texto para o nome do usuário.<br>
-_emailController: Controla o campo de texto para o email do usuário.<br>
-_passwordController: Controla o campo de texto para a senha do usuário.<br>
-_confirmPasswordController: Controla o campo de texto para confirmar a senha do usuário.<br>
-_phoneController: Controla o campo de texto para o telefone do usuário.<br>
-_cpfController: Controla o campo de texto para o CPF do usuário.<br>
-_addressController: Controla o campo de texto para o endereço do usuário.<br>
-_numberController: Controla o campo de texto para o número de endereço do usuário.<br>
-_zipController: Controla o campo de texto para o CEP do usuário.<br>
-_complementController: Controla o campo de texto para o complemento do endereço do usuário.<br>
-_formkey<br>
-Uma chave global (GlobalKey) para o formulário que é usado para validar os campos de entrada de dados.
 
-#### `_firebaseAuth`
-Uma instância do Firebase Authentication para gerenciar o processo de registro do usuário.
+**1. Crie um Projeto no Firebase:**
+   - Acesse o [Console do Firebase](https://console.firebase.google.com/) e crie um novo projeto.
 
-#### `_selectedItem`
-Uma variável que armazena o tipo de cadastro selecionado pelo usuário (cliente ou mecânico).
+**2. Adicione um Aplicativo ao Projeto:**
+   - Após criar o projeto, clique em "Adicionar aplicativo" e siga as instruções para configurar o aplicativo para iOS, Android ou Web, conforme necessário.
 
-#### `_checkBoxValue`
-Uma variável booleana que controla se o usuário concorda com os termos e políticas.
+**3. Configure o Flutter para o Firebase:**
+   - Assim que você registrar um aplicativo ao seu projeto baixe o arquivo gerado pelo Firebase `google-services.json` e adicione na pasta `.app` conforme a imagem abaixo.
 
-**Métodos Privados**
-**registerUser:** Cria uma nova conta de usuário usando o Firebase Authentication com o email e senha fornecidos. Também armazena informações adicionais, como nome, CPF, telefone e endereço, no Firebase Firestore na coleção 'client'.
+<center>
+<img src="image.png" alt="Imagem exemplo" width="300" height="300">
+</center>
+<br>
 
-**isValidEmail:** Verifica se uma string é um endereço de email válido usando uma expressão regular.
 
-**validationRegister:** Realiza validações no formulário de registro, como campos vazios, coincidência de senhas e aceitação dos termos e políticas. Em caso de erro, exibe mensagens apropriadas ao usuário.
+**4. Adicione as Dependências necessárias para seu projeto**
+   - No arquivo `pubspec.yaml` do seu projeto Flutter, inclua as dependências necessárias que utilizará no seu projeto. No nosso caso, como estamos utilizando serviços do Firebase, incluímos `firebase_core`, `firebase_auth` e `cloud_firestore`.
 
-Esta classe fornece uma interface de usuário para que os usuários possam se cadastrar em seu aplicativo de forma segura e eficiente, permitindo que escolham o tipo de cadastro desejado e preencham informações pessoais.
+   Exemplo:
+   ```yaml
+   dependencies:
+     firebase_core: ^3.0.0
+     firebase_auth: ^4.6.2
+     cloud_firestore: ^3.0.0
+  ```
 
-## Classe UserAccount
-A classe UserAccount é responsável por gerenciar a interface da tela de perfil de usuário em um aplicativo Flutter. Ela permite que os usuários visualizem e, se permitido, editem as informações de seu perfil, como nome, CPF, telefone, email, endereço e senha.
+**5. Inicialize o Firebase no Código Flutter:**
+No arquivo main.dart, inicialize o Firebase.
 
-### `Construtor`
-#### UserAccount()
+```dart
+import 'package:firebase_core/firebase_core.dart';
 
-Cria uma instância da classe UserAccount para gerenciar a tela de perfil de usuário.
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
+```
 
-### `Métodos e Propriedades`
-#### initState
-O método initState é chamado quando o widget é inserido na árvore de widgets pela primeira vez. Neste caso, ele é usado para carregar as informações do usuário chamando o método getUser quando o widget é inicializado.
+##  📲 Instalação
 
-#### build
-O método build constrói a interface da tela de perfil de usuário. Ele inclui elementos visuais para exibir informações do usuário e permite a edição dessas informações quando o usuário opta por editar seu perfil.
+Para executar nosso aplicativo, é necessário ter o Flutter instalado e configurado em sua máquina. Para isso, siga os passos abaixo:
 
-Propriedades de Controller
-_nameController: Controla o campo de texto para o nome do usuário.<br>
-_emailController: Controla o campo de texto para o email do usuário.<br>
-_passwordController: Controla o campo de texto para a senha do usuário.<br>
-_phoneController: Controla o campo de texto para o telefone do usuário.<br>
-_cpfController: Controla o campo de texto para o CPF do usuário.<br>
-_addressController: Controla o campo de texto para o endereço do usuário.<br>
-_numberController: Controla o campo de texto para o número de endereço do usuário.<br>
-_zipController: Controla o campo de texto para o CEP do usuário.<br>
-_complementController: Controla o campo de texto para o complemento do endereço do usuário.<br>
-_formkey<br>
-Uma chave global (GlobalKey) para o formulário que é usado para validar os campos de entrada de dados.
+**1. Download do Flutter SDK:**
 
-#### `_firebaseAuth`
-Uma instância do Firebase Authentication para gerenciar o processo de atualização do perfil do usuário.
+- Baixe a versão mais recente do [Flutter SDK](https://docs.flutter.dev/get-started/install) no site oficial.
 
-#### `isEditing`
-Uma variável booleana que controla se o usuário está atualmente editando seu perfil ou apenas visualizando as informações.
+**2. Extração do Arquivo ZIP:**
 
-### `Métodos Privados`
-**getUser:** Obtém informações do usuário atualmente logado no Firebase Authentication e preenche os campos de texto do perfil com essas informações.
+- Extraia o arquivo ZIP e adicione o caminho ao `PATH`.
 
-**updateUser:** Atualiza as informações do perfil do usuário no Firebase Authentication e no Firebase Firestore. Ele também lida com a reautenticação do usuário antes de atualizar o email e a senha.
+**3. Configuração do Flutter:**
 
-**isValidEmail:** Verifica se uma string é um endereço de email válido usando uma expressão regular.
+- Execute `flutter --version` no prompt de comando para verificar a instalação.
 
-Esta classe fornece uma interface de usuário para que os usuários possam visualizar e editar as informações de seu perfil. O usuário pode optar por editar o perfil clicando no botão "Editar" e, em seguida, salvar ou cancelar as alterações.
+**4. Download do Android Studio:**
+
+- Baixe e instale o [Android Studio](https://developer.android.com/studio).
+- Abra o Android Studio, vá para "Configure" > "Plugins" e instale o plugin Flutter.
+
+**5. Verificação de Dependências:**
+
+- Execute `flutter doctor` no prompt de comando para verificar e instalar dependências.
+
+**6. Baixando Dependências:**
+
+- Após a instalação bem-sucedida, clone este repositório e execute o comando `flutter pub get` para baixar as dependências do projeto.
+
+**Dependências do Projeto (pubspec.yaml):**
+```yaml
+dependencies:
+  font_awesome_flutter: ^10.6.0
+  url_launcher: ^6.2.1
+  cpf_cnpj_validator: 2.0.0
+  firebase_core: ^2.13.1
+  firebase_auth: ^4.6.2
+  cloud_firestore:
+  mask_text_input_formatter: ^2.5.0
+  cupertino_icons: ^1.0.2
+  date_time_picker: ^2.1.0
+  intl: ^0.17.0
+  http: ^1.1.0
+  pinput: ^3.0.1
+```
+**7. Rodando Aplicativo:**
+- Após baixar todas as dependências do projeto, execute a aplicação usando o comando `flutter run`.
+
+## ⚠️ Dificuldades na Instalação ou Configuração do Editor
+
+Caso você encontre dificuldades durante o processo de instalação do Flutter ou precise configurar um editor de código, consulte a [documentação oficial do Flutter](https://docs.flutter.dev/get-started/editor) para obter informações detalhadas.
+
 
 <br>
 <br>
-<h4 align="center"> 
-	🚧  Aplicativo MechClient 🚀 Em construção...  🚧
-</h4>
-
 <br>
 <br>
 
