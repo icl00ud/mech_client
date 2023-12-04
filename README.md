@@ -223,7 +223,7 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
 
 - Depois de selecionar o tipo de conta, preencha os dados com informações válidas.
 
-#### Verificação do Número de Telefone
+### Verificação do Número de Telefone
 
 - Após preencher todos os dados e não receber nenhum aviso de erro, clique no botão `Cadastrar-se`. Isso abrirá um `Dialog` para inserir os 5 dígitos do código enviado para o seu número de telefone.
 
@@ -328,6 +328,10 @@ Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
 ### Excluir ou Exibir Detalhes
 
 - Ao solicitar o serviço, você poderá excluí-lo clicando no ícone da ``Lixeira`` e visualizar os detalhes do serviço clicando no botão ``Detalhes``.
+
+ <div style="text-align:center;">
+    <img src="Document/Servico.png" alt="Conta" width="210" height="450">
+  </div>
 
 ### Serviço Aceito
 
