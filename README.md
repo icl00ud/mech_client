@@ -200,12 +200,12 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
 
 ### Sumário
 
-- [Cadastro](#cadastro)
-- [Login](#login)
-- [Tela Conta](#tela-conta)
-- [Tela Veículo](#tela-veículo)
-- [Tela Serviços Cliente](#tela-serviços-cliente)
-- [Tela Serviços Mecânica](#tela-serviços-mecânica)
+- [Cadastro](#1-cadastro-no-aplicativo)
+- [Login](#2-login-no-aplicativo)
+- [Tela Conta](#3-tela-de-conta)
+- [Tela Veículo](#4-tela-veículo)
+- [Tela Serviços Cliente](#5-tela-serviços-cliente)
+- [Tela Serviços Mecânica](#6-tela-serviços-mecânica)
 
 ### 1. Cadastro no Aplicativo
 
@@ -278,7 +278,7 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
   </div>
 
 
-### 4. Tela Veículo
+### 4. Tela Veículo 
 
 #### Cadastrar Veículo
 - Clique em ``Adicionar Veículo`` para cadastrar e preencha as informações. Caso seu veículo tenha placa Mercosul, ative-a.
