@@ -166,8 +166,6 @@ dependencies:
 
 Caso você encontre dificuldades durante o processo de instalação do Flutter ou precise configurar um editor de código, consulte a [documentação oficial do Flutter](https://docs.flutter.dev/get-started/editor) para obter informações detalhadas.
 
-<br>
-
 ## :iphone: Gerando APK
 
 **1. Gerar o APK no Computador**
