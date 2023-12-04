@@ -258,13 +258,13 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
 
 - Para poder excluir sua conta abra o menu lateral e clique em `Excluir Conta`.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/ExcluirConta.png" alt="DialogSenha" width="210" height="450">
   </div>
 
 - Ao clicar, você receberá uma mensagem de confirmação para excluir sua conta. Caso queira realmente excluir, confirme-a.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/ConfirmacaoExclusaoConta.png" alt="DialogSenha" width="210" height="450">
   </div>
 
@@ -291,15 +291,15 @@ Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
 
 - Ao clicar no ícone de ``Lápis``, você irá editar as informações do veículo.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/VeiculoEditar.png" alt="Conta" width="210" height="450">
-</div>
+  </div>
 
 - Ao clicar no icone de ``Lixeira``, você receberá uma mensagem de confirmação para excluir seu veículo. Caso queira realmente excluir, confirme-a.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/VeiculoExclusao.png" alt="Conta" width="210" height="450">
-</div>
+  </div>
 
 ### 5. Tela Serviços Cliente
 
@@ -307,15 +307,15 @@ Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
 
 - Na tela de serviços, você poderá solicitar um serviço para seu veículo caso necessário, clicando em ``Solicitar Serviço``.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/SolicitarServico.png" alt="Conta" width="210" height="450">
-</div>
+  </div>
 
 - Ao clicar, será necessário preencher o formulário, detalhando o máximo possível para que a mecânica compreenda seu problema.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/SolicitandoServico.png" alt="Conta" width="210" height="450">
-</div>
+  </div>
 
 #### Excluir ou Exibir Detalhes
 
@@ -331,21 +331,21 @@ Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
 
 - Na aba de serviços da mecânica, você receberá os serviços solicitados por contas de cliente.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/ServicoMecanica.png" alt="Conta" width="210" height="450">
-</div>
+  </div>
 
 - Ao clicar em ``Detalhes``, você poderá ver as informações sobre o serviço e poderá aceitar clicando no botão ``Aceitar``.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/ServicoMecanicaAceitar.png" alt="Conta" width="210" height="450">
-</div>
+  </div>
 
 - Ao aceitar o serviço, será direcionado para a aba de ``Serviços Aceitos`` e ao clicar em ``Detalhes`` novamente, você poderá entrar em contato com o cliente através do botão ``WhatsApp``.
 
-<div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/ServicoMecanicaWhatsapp.png" alt="Conta" width="210" height="450">
-</div>
+  </div>
 
 
 <h2 align="center">Contribuidores</h2>
