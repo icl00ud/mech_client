@@ -245,14 +245,13 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
 
 ### 3. Tela de Conta
 
-#### Editar Informações
-
 - Ao fazer o login no aplicativo, você será direcionado para a tela da conta do usuário, onde terá todas as informações da sua conta.
 
   <div style="text-align:center;">
     <img src="Document/Conta01.png" alt="Conta" width="210" height="450">
   </div>
-
+  
+### Editar Informações
 - Se desejar editar suas informações, exceto `CPF` e `Telefone`, clique em `Editar`. Será necessário inserir sua senha novamente como medida de segurança.
 
   <div style="text-align:center;">
@@ -263,7 +262,7 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
 
 - Se quiser alterar o número de telefone, clique em `Editar número de telefone`. O campo `Telefone` automaticamente torna-se editável, e ao concluir, a verificação por SMS será acionada novamente para evitar números inválidos.
 
-#### Excluir Conta
+### Excluir Conta
 
 - Para poder excluir sua conta abra o menu lateral e clique em `Excluir Conta`.
 
@@ -280,7 +279,7 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
 
 ### 4. Tela Veículo 
 
-#### Cadastrar Veículo
+### Cadastrar Veículo
 - Clique em ``Adicionar Veículo`` para cadastrar e preencha as informações. Caso seu veículo tenha placa Mercosul, ative-a.
 
 Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
@@ -290,7 +289,7 @@ Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
     <img src="Document/Veiculo02.png" alt="Conta" width="210" height="450">
   </div>
 
-#### Editar ou Excluir
+### Editar ou Excluir
 
 - Ao cadastrar seu veículo, você poderá ``Editar`` as informações, exceto a ``Placa``, ou ``Excluir`` seu veículo.
 
@@ -312,7 +311,7 @@ Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
 
 ### 5. Tela Serviços Cliente
 
-#### Solicitando Serviço 
+### Solicitando Serviço 
 
 - Na tela de serviços, você poderá solicitar um serviço para seu veículo caso necessário, clicando em ``Solicitar Serviço``.
 
@@ -326,17 +325,17 @@ Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
     <img src="Document/SolicitandoServico.png" alt="Conta" width="210" height="450">
   </div>
 
-#### Excluir ou Exibir Detalhes
+### Excluir ou Exibir Detalhes
 
 - Ao solicitar o serviço, você poderá excluí-lo clicando no ícone da ``Lixeira`` e visualizar os detalhes do serviço clicando no botão ``Detalhes``.
 
-#### Serviço Aceito
+### Serviço Aceito
 
 - Quando seu serviço for aceito por alguma mecânica, ele irá subir automaticamente para aba de `Serviços Aceitos`.
 
 ### 6. Tela Serviços Mecânica
 
-#### Aceitando Serviços
+### Aceitando Serviços
 
 - Na aba de serviços da mecânica, você receberá os serviços solicitados por contas de cliente.
 
