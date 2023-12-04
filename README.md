@@ -195,6 +195,56 @@ flutter build apk
 
 - Após a instalação, você pode encontrar o aplicativo na tela inicial do seu dispositivo Android e iniciá-lo.
 
+## Guia MechClient
+
+Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, especialmente se estiver enfrentando dificuldades de acesso.
+
+### 1. Cadastro no Aplicativo
+
+- Se você ainda não possui uma conta no aplicativo, comece clicando no botão `Registre-se aqui!`, conforme mostrado na imagem abaixo.
+
+  ![Passo 01](Document/Registro01.png)
+
+- Ao clicar neste botão, você será direcionado para a tela de cadastro, onde poderá criar uma conta como **Cliente** ou **Oficina Mecânica**.
+
+  ![Passo 02](Document/Registro02.png)
+
+- Depois de selecionar o tipo de conta, preencha os dados com informações válidas.
+
+### 2. Verificação do Número de Telefone
+
+- Após preencher todos os dados e não receber nenhum aviso de erro, clique no botão `Cadastrar-se`. Isso abrirá um `Dialog` para inserir os 5 dígitos do código enviado para o seu número de telefone.
+
+  **Observação:** O código enviado por SMS só funcionará para números cadastrados na sua conta Twilio, conforme explicado no [tópico acima](https://github.com/Pellegr1n1/mech_client#-api-twilio).
+
+  ![Passo 03](Document/Registro03.png)
+
+- Clique em `Verificar Código` e, se o código estiver correto, você receberá um feedback de sucesso, como `Cadastro efetuado com sucesso!`. Caso contrário, será necessário repetir o processo.
+
+### 3. Login no Aplicativo
+
+- Após efetuar o cadastro com sucesso, faça login utilizando as informações cadastradas anteriormente, informando o `email` e a `senha`.
+
+  ![Login](Document/Login01.png)
+
+### 4. Informações da Conta
+
+- Ao fazer o login no aplicativo, você será direcionado para a tela da conta do usuário, onde terá todas as informações da sua conta.
+
+  ![Conta](Document/Conta01.png)
+
+- Se desejar editar suas informações, exceto `CPF` e `Telefone`, clique em `Editar`. Será necessário inserir sua senha novamente como medida de segurança.
+
+  ![DialogSenha](Document/DialogSenha.png)
+
+- Após inserir a senha correta, os campos serão liberados para edição. Ao concluir, clique em `Salvar` e aguarde o feedback.
+
+- Se quiser alterar o número de telefone, clique em `Editar número de telefone`. O campo `Telefone` tornar-se-á editável, e ao concluir, a verificação por SMS será acionada novamente para evitar números inválidos.
+
+###
+
+
+
 
 <h2 align="center">Contribuidores</h2>
 <table align="center">
