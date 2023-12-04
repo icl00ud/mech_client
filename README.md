@@ -194,9 +194,18 @@ flutter build apk
 
 - Após a instalação, você pode encontrar o aplicativo na tela inicial do seu dispositivo Android e iniciá-lo.
 
-## Guia MechClient
+## 📋 Guia MechClient
 
 Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, especialmente se estiver enfrentando dificuldades de acesso.
+
+### Sumário
+
+- [Cadastro](#cadastro)
+- [Login](#login)
+- [Tela Conta](#tela-conta)
+- [Tela Veículo](#tela-veículo)
+- [Tela Serviços Cliente](#tela-serviços-cliente)
+- [Tela Serviços Mecânica](#tela-serviços-mecânica)
 
 ### 1. Cadastro no Aplicativo
 
@@ -214,7 +223,7 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
 
 - Depois de selecionar o tipo de conta, preencha os dados com informações válidas.
 
-### 2. Verificação do Número de Telefone
+#### Verificação do Número de Telefone
 
 - Após preencher todos os dados e não receber nenhum aviso de erro, clique no botão `Cadastrar-se`. Isso abrirá um `Dialog` para inserir os 5 dígitos do código enviado para o seu número de telefone.
 
@@ -226,7 +235,7 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
 
 - Clique em `Verificar Código` e, se o código estiver correto, você receberá um feedback de sucesso, como `Cadastro efetuado com sucesso!`. Caso contrário, será necessário repetir o processo.
 
-### 3. Login no Aplicativo
+### 2. Login no Aplicativo
 
 - Após efetuar o cadastro com sucesso, faça login utilizando as informações cadastradas anteriormente, informando o `email` e a `senha`.
 
@@ -234,7 +243,7 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
     <img src="Document/Login01.png" alt="Login" width="210" height="450">
   </div>
 
-### 4. Tela de Conta
+### 3. Tela de Conta
 
 #### Editar Informações
 
@@ -269,7 +278,7 @@ Este é um guia passo a passo para ajudar você a utilizar nosso aplicativo, esp
   </div>
 
 
-### 5. Tela Veículo
+### 4. Tela Veículo
 
 #### Cadastrar Veículo
 - Clique em ``Adicionar Veículo`` para cadastrar e preencha as informações. Caso seu veículo tenha placa Mercosul, ative-a.
