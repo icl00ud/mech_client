@@ -114,7 +114,7 @@ void main() async {
 }
 ```
 
-##  📲 Instalação
+##  📲 Instalação e Configuração do Flutter
 
 Para executar nosso aplicativo, é necessário ter o Flutter instalado e configurado em sua máquina. Para isso, siga os passos abaixo:
 
@@ -166,8 +166,36 @@ dependencies:
 
 Caso você encontre dificuldades durante o processo de instalação do Flutter ou precise configurar um editor de código, consulte a [documentação oficial do Flutter](https://docs.flutter.dev/get-started/editor) para obter informações detalhadas.
 
-
 <br>
+
+## :iphone: Gerando APK
+
+**1. Gerar o APK no Computador**
+
+- No terminal, navegue até o diretório do seu projeto Flutter e execute o seguinte comando para gerar o APK:
+```
+flutter build apk
+```
+
+**2. Localizar o Arquivo APK Gerado**
+
+- O comando acima irá gerar o arquivo APK na pasta `build/app/outputs/flutter-apk/`. O arquivo APK terá um nome como `app-release.apk`.
+
+**3. Transferir o APK para o Dispositivo Android**
+
+- Você pode transferir o arquivo APK para o seu dispositivo Android de várias maneiras, como usando um cabo USB, enviando-o por e-mail, usando serviços de armazenamento em nuvem, etc. Certifique-se de salvar o arquivo APK em um local acessível no seu dispositivo.
+
+**4. Permitir Instalação de Fontes Desconhecidas**
+
+- No seu dispositivo Android, vá para `Configurações > Segurança (ou Configurações > Biometria e Segurança)` e habilite a opção `Fontes Desconhecidas`. Isso permitirá a instalação de aplicativos fora da Play Store.
+
+**5. Instalar o APK no Dispositivo Android**
+
+- Localize o arquivo APK no seu dispositivo Android usando um gerenciador de arquivos e toque nele para iniciar o processo de instalação.
+
+**6. Executar o Aplicativo**
+
+- Após a instalação, você pode encontrar o aplicativo na tela inicial do seu dispositivo Android e iniciá-lo.
 
 
 <h2 align="center">Contribuidores</h2>
