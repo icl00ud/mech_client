@@ -329,7 +329,7 @@ Lembre-se: Cada usuário tem um limite de 3 veículos cadastrados.
 
 - Ao solicitar o serviço, você poderá excluí-lo clicando no ícone da ``Lixeira`` e visualizar os detalhes do serviço clicando no botão ``Detalhes``.
 
- <div style="text-align:center;">
+  <div style="text-align:center;">
     <img src="Document/Servico.png" alt="Conta" width="210" height="450">
   </div>
 
